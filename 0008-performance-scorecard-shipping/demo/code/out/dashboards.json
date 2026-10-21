@@ -1,0 +1,77 @@
+{
+ "strategy": "basis",
+ "windowMinutes": 40,
+ "trades": 19,
+ "misleading": {
+  "headline": "+1.31 USD gross, 37% win rate",
+  "hitRate": 0.3684,
+  "grossUsd": 1.3076,
+  "annualisedGrossUsd": 17181.86,
+  "longestWinStreak": 2,
+  "strategiesShown": 1,
+  "strategiesRun": 4
+ },
+ "honest": {
+  "trades": 19,
+  "wins": 0,
+  "losses": 19,
+  "hitRate": 0,
+  "avgWinUsd": null,
+  "avgLossUsd": -1.3312,
+  "payoffRatio": null,
+  "breakEvenHitRate": null,
+  "expectancyUsd": -1.3312,
+  "grossUsd": 1.3076,
+  "costsUsd": 26.6,
+  "netUsd": -25.2924,
+  "costShareOfGross": 20.3426,
+  "maxDrawdownUsd": 25.2924,
+  "maxDrawdownPct": 0.2529,
+  "longestUnderwaterSec": 2390,
+  "timeUnderwaterShare": 0.9938,
+  "tradedUsd": 38000,
+  "turnoverX": 3.8,
+  "avgHoldSec": 37,
+  "largestWinShare": 0.2672,
+  "perTradeSharpe": -3.9382,
+  "probFailure": null,
+  "enoughTrades": false
+ },
+ "tricks": [
+  {
+   "id": "gross",
+   "name": "Gross, not net",
+   "shown": "P&L +1.31 USD",
+   "hidden": "costs -26.60 USD",
+   "honest": "net -25.29 USD"
+  },
+  {
+   "id": "hit",
+   "name": "Hit rate on gross",
+   "shown": "37% of trades won",
+   "hidden": "a win that costs more than it earns is a loss",
+   "honest": "0% win after costs"
+  },
+  {
+   "id": "annual",
+   "name": "Annualised short window",
+   "shown": "+17,182 USD per year",
+   "hidden": "only 40 minutes of data",
+   "honest": "19 trades in 40 minutes"
+  },
+  {
+   "id": "pick",
+   "name": "Show the best strategy only",
+   "shown": "basis",
+   "hidden": "3 other strategies, together -28.41 USD net",
+   "honest": "all 4 reported"
+  },
+  {
+   "id": "risk",
+   "name": "No drawdown",
+   "shown": "win streak of 2",
+   "hidden": "drawdown and time under water",
+   "honest": "max drawdown 25.29 USD, 99% of the window under water"
+  }
+ ]
+}

@@ -1,0 +1,63 @@
+{
+ "cluster": "devnet",
+ "rpcHost": "api.devnet.solana.com",
+ "capturedAt": "2026-10-21T20:01:14.201Z",
+ "sender": "2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82",
+ "vault": "ARznxNAnQWFh47vFH72hv3Eo1mfwP23VuaDnew9hhxeP",
+ "vaultExplorer": "https://explorer.solana.com/address/ARznxNAnQWFh47vFH72hv3Eo1mfwP23VuaDnew9hhxeP?cluster=devnet",
+ "rule": "credit at confirmed, only if the transaction did not fail; mark final at finalized",
+ "rows": [
+  {
+   "label": "deposit 1",
+   "signature": "A9a4U7NNomqzSrdGmp56SeXU5PjoyP6kQtFWa9QBVwPG8FW4gHcxdAjjy8ZJs9Wh36kdYydBe429CZ5RgWEs3Kf",
+   "explorer": "https://explorer.solana.com/tx/A9a4U7NNomqzSrdGmp56SeXU5PjoyP6kQtFWa9QBVwPG8FW4gHcxdAjjy8ZJs9Wh36kdYydBe429CZ5RgWEs3Kf?cluster=devnet",
+   "sentLamports": 1000000,
+   "attemptedLamports": 1000000,
+   "slot": 513636427,
+   "ok": true,
+   "err": null,
+   "amountLamports": 1000000,
+   "credited": true,
+   "processedAfterMs": 410,
+   "confirmedAfterMs": 932,
+   "finalizedAfterMs": 931
+  },
+  {
+   "label": "deposit 2",
+   "signature": "gUBmDtq2iuS1ogrt8o4A5QJWVdy2HxhMeQkkTjB6cAKzFw9fgSqmy9bXACxgdgWrXTkUzYKaP7Dde9Bmnt2X29y",
+   "explorer": "https://explorer.solana.com/tx/gUBmDtq2iuS1ogrt8o4A5QJWVdy2HxhMeQkkTjB6cAKzFw9fgSqmy9bXACxgdgWrXTkUzYKaP7Dde9Bmnt2X29y?cluster=devnet",
+   "sentLamports": 1500000,
+   "attemptedLamports": 1500000,
+   "slot": 513636437,
+   "ok": true,
+   "err": null,
+   "amountLamports": 1500000,
+   "credited": true,
+   "processedAfterMs": 231,
+   "confirmedAfterMs": 534,
+   "finalizedAfterMs": 533
+  },
+  {
+   "label": "failing deposit (more than the sender holds)",
+   "signature": "qM1DbvYj8bxJ5crHTMXHbNPwV1KZByF8kcfJC6woszgJxKUQL5iU9F2sGtSuaAKTTQkeb1qeeGGtUsRG6Wze3oY",
+   "explorer": "https://explorer.solana.com/tx/qM1DbvYj8bxJ5crHTMXHbNPwV1KZByF8kcfJC6woszgJxKUQL5iU9F2sGtSuaAKTTQkeb1qeeGGtUsRG6Wze3oY?cluster=devnet",
+   "sentLamports": null,
+   "attemptedLamports": 1065964000,
+   "slot": 513636447,
+   "ok": false,
+   "err": {
+    "InstructionError": [
+     0,
+     {
+      "Custom": 1
+     }
+    ]
+   },
+   "amountLamports": 0,
+   "credited": false,
+   "processedAfterMs": 317,
+   "confirmedAfterMs": 654,
+   "finalizedAfterMs": 652
+  }
+ ]
+}

@@ -1,0 +1,3152 @@
+{
+ "maxAgeSec": 30,
+ "maxSlotsBehind": 75,
+ "source": "real Pyth SOL/USD PriceUpdateV2 reads over public RPC; points with simulated=true are the frozen-feed fault",
+ "points": [
+  {
+   "t": 1792606412,
+   "currentSlot": 459726303,
+   "postedSlot": 459726287,
+   "publishTime": 1792606406,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606417,
+   "currentSlot": 459726327,
+   "postedSlot": 459726287,
+   "publishTime": 1792606406,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606422,
+   "currentSlot": 459726350,
+   "postedSlot": 459726342,
+   "publishTime": 1792606416,
+   "ageSec": 6,
+   "slotsBehind": 8,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606427,
+   "currentSlot": 459726374,
+   "postedSlot": 459726342,
+   "publishTime": 1792606416,
+   "ageSec": 11,
+   "slotsBehind": 32,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606432,
+   "currentSlot": 459726397,
+   "postedSlot": 459726382,
+   "publishTime": 1792606426,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606437,
+   "currentSlot": 459726419,
+   "postedSlot": 459726382,
+   "publishTime": 1792606426,
+   "ageSec": 11,
+   "slotsBehind": 37,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606442,
+   "currentSlot": 459726442,
+   "postedSlot": 459726423,
+   "publishTime": 1792606436,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606447,
+   "currentSlot": 459726466,
+   "postedSlot": 459726423,
+   "publishTime": 1792606436,
+   "ageSec": 11,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606452,
+   "currentSlot": 459726491,
+   "postedSlot": 459726472,
+   "publishTime": 1792606446,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606457,
+   "currentSlot": 459726514,
+   "postedSlot": 459726472,
+   "publishTime": 1792606446,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606462,
+   "currentSlot": 459726536,
+   "postedSlot": 459726523,
+   "publishTime": 1792606456,
+   "ageSec": 6,
+   "slotsBehind": 13,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606467,
+   "currentSlot": 459726562,
+   "postedSlot": 459726523,
+   "publishTime": 1792606456,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606472,
+   "currentSlot": 459726585,
+   "postedSlot": 459726567,
+   "publishTime": 1792606466,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606477,
+   "currentSlot": 459726608,
+   "postedSlot": 459726567,
+   "publishTime": 1792606466,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606482,
+   "currentSlot": 459726633,
+   "postedSlot": 459726614,
+   "publishTime": 1792606476,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606487,
+   "currentSlot": 459726656,
+   "postedSlot": 459726614,
+   "publishTime": 1792606476,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606492,
+   "currentSlot": 459726678,
+   "postedSlot": 459726662,
+   "publishTime": 1792606486,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606497,
+   "currentSlot": 459726701,
+   "postedSlot": 459726662,
+   "publishTime": 1792606486,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606502,
+   "currentSlot": 459726726,
+   "postedSlot": 459726708,
+   "publishTime": 1792606496,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606507,
+   "currentSlot": 459726750,
+   "postedSlot": 459726708,
+   "publishTime": 1792606496,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606512,
+   "currentSlot": 459726773,
+   "postedSlot": 459726755,
+   "publishTime": 1792606506,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606517,
+   "currentSlot": 459726797,
+   "postedSlot": 459726755,
+   "publishTime": 1792606506,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606522,
+   "currentSlot": 459726822,
+   "postedSlot": 459726808,
+   "publishTime": 1792606516,
+   "ageSec": 6,
+   "slotsBehind": 14,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606527,
+   "currentSlot": 459726847,
+   "postedSlot": 459726808,
+   "publishTime": 1792606516,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606532,
+   "currentSlot": 459726871,
+   "postedSlot": 459726852,
+   "publishTime": 1792606526,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606537,
+   "currentSlot": 459726894,
+   "postedSlot": 459726852,
+   "publishTime": 1792606526,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606542,
+   "currentSlot": 459726918,
+   "postedSlot": 459726900,
+   "publishTime": 1792606536,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606547,
+   "currentSlot": 459726942,
+   "postedSlot": 459726900,
+   "publishTime": 1792606536,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606552,
+   "currentSlot": 459726965,
+   "postedSlot": 459726946,
+   "publishTime": 1792606546,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606557,
+   "currentSlot": 459726988,
+   "postedSlot": 459726946,
+   "publishTime": 1792606546,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606562,
+   "currentSlot": 459727011,
+   "postedSlot": 459726992,
+   "publishTime": 1792606556,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606567,
+   "currentSlot": 459727034,
+   "postedSlot": 459726992,
+   "publishTime": 1792606556,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606572,
+   "currentSlot": 459727059,
+   "postedSlot": 459727041,
+   "publishTime": 1792606566,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606577,
+   "currentSlot": 459727083,
+   "postedSlot": 459727041,
+   "publishTime": 1792606566,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606582,
+   "currentSlot": 459727111,
+   "postedSlot": 459727088,
+   "publishTime": 1792606576,
+   "ageSec": 6,
+   "slotsBehind": 23,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606587,
+   "currentSlot": 459727130,
+   "postedSlot": 459727088,
+   "publishTime": 1792606576,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606592,
+   "currentSlot": 459727154,
+   "postedSlot": 459727136,
+   "publishTime": 1792606586,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606597,
+   "currentSlot": 459727177,
+   "postedSlot": 459727136,
+   "publishTime": 1792606586,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606602,
+   "currentSlot": 459727201,
+   "postedSlot": 459727184,
+   "publishTime": 1792606596,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606607,
+   "currentSlot": 459727223,
+   "postedSlot": 459727184,
+   "publishTime": 1792606596,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606612,
+   "currentSlot": 459727247,
+   "postedSlot": 459727231,
+   "publishTime": 1792606606,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606617,
+   "currentSlot": 459727271,
+   "postedSlot": 459727231,
+   "publishTime": 1792606606,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606622,
+   "currentSlot": 459727294,
+   "postedSlot": 459727278,
+   "publishTime": 1792606616,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606627,
+   "currentSlot": 459727316,
+   "postedSlot": 459727278,
+   "publishTime": 1792606616,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606632,
+   "currentSlot": 459727341,
+   "postedSlot": 459727278,
+   "publishTime": 1792606616,
+   "ageSec": 16,
+   "slotsBehind": 63,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606637,
+   "currentSlot": 459727365,
+   "postedSlot": 459727278,
+   "publishTime": 1792606616,
+   "ageSec": 21,
+   "slotsBehind": 87,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606642,
+   "currentSlot": 459727389,
+   "postedSlot": 459727370,
+   "publishTime": 1792606636,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606647,
+   "currentSlot": 459727411,
+   "postedSlot": 459727370,
+   "publishTime": 1792606636,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606652,
+   "currentSlot": 459727434,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 6,
+   "slotsBehind": 10,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606657,
+   "currentSlot": 459727459,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 11,
+   "slotsBehind": 35,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606662,
+   "currentSlot": 459727481,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 16,
+   "slotsBehind": 57,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606667,
+   "currentSlot": 459727506,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 21,
+   "slotsBehind": 82,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606672,
+   "currentSlot": 459727531,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 26,
+   "slotsBehind": 107,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606677,
+   "currentSlot": 459727554,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 31,
+   "slotsBehind": 130,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606682,
+   "currentSlot": 459727579,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 36,
+   "slotsBehind": 155,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606687,
+   "currentSlot": 459727602,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 41,
+   "slotsBehind": 178,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606692,
+   "currentSlot": 459727627,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 46,
+   "slotsBehind": 203,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606697,
+   "currentSlot": 459727651,
+   "postedSlot": 459727424,
+   "publishTime": 1792606646,
+   "ageSec": 51,
+   "slotsBehind": 227,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606702,
+   "currentSlot": 459727673,
+   "postedSlot": 459727667,
+   "publishTime": 1792606700,
+   "ageSec": 2,
+   "slotsBehind": 6,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606707,
+   "currentSlot": 459727696,
+   "postedSlot": 459727667,
+   "publishTime": 1792606700,
+   "ageSec": 7,
+   "slotsBehind": 29,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606712,
+   "currentSlot": 459727719,
+   "postedSlot": 459727703,
+   "publishTime": 1792606706,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606717,
+   "currentSlot": 459727743,
+   "postedSlot": 459727703,
+   "publishTime": 1792606706,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606722,
+   "currentSlot": 459727766,
+   "postedSlot": 459727751,
+   "publishTime": 1792606716,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606727,
+   "currentSlot": 459727790,
+   "postedSlot": 459727751,
+   "publishTime": 1792606716,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606732,
+   "currentSlot": 459727812,
+   "postedSlot": 459727797,
+   "publishTime": 1792606726,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606737,
+   "currentSlot": 459727837,
+   "postedSlot": 459727797,
+   "publishTime": 1792606726,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606742,
+   "currentSlot": 459727860,
+   "postedSlot": 459727842,
+   "publishTime": 1792606736,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606747,
+   "currentSlot": 459727885,
+   "postedSlot": 459727842,
+   "publishTime": 1792606736,
+   "ageSec": 11,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606752,
+   "currentSlot": 459727908,
+   "postedSlot": 459727891,
+   "publishTime": 1792606746,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606757,
+   "currentSlot": 459727930,
+   "postedSlot": 459727891,
+   "publishTime": 1792606746,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606762,
+   "currentSlot": 459727955,
+   "postedSlot": 459727936,
+   "publishTime": 1792606756,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606767,
+   "currentSlot": 459727977,
+   "postedSlot": 459727936,
+   "publishTime": 1792606756,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606772,
+   "currentSlot": 459728000,
+   "postedSlot": 459727986,
+   "publishTime": 1792606766,
+   "ageSec": 6,
+   "slotsBehind": 14,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606777,
+   "currentSlot": 459728024,
+   "postedSlot": 459727986,
+   "publishTime": 1792606766,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606782,
+   "currentSlot": 459728048,
+   "postedSlot": 459728031,
+   "publishTime": 1792606776,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606787,
+   "currentSlot": 459728071,
+   "postedSlot": 459728031,
+   "publishTime": 1792606776,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606792,
+   "currentSlot": 459728095,
+   "postedSlot": 459728077,
+   "publishTime": 1792606786,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606797,
+   "currentSlot": 459728117,
+   "postedSlot": 459728077,
+   "publishTime": 1792606786,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606802,
+   "currentSlot": 459728142,
+   "postedSlot": 459728077,
+   "publishTime": 1792606786,
+   "ageSec": 16,
+   "slotsBehind": 65,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606807,
+   "currentSlot": 459728165,
+   "postedSlot": 459728077,
+   "publishTime": 1792606786,
+   "ageSec": 21,
+   "slotsBehind": 88,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606812,
+   "currentSlot": 459728188,
+   "postedSlot": 459728172,
+   "publishTime": 1792606806,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606817,
+   "currentSlot": 459728213,
+   "postedSlot": 459728172,
+   "publishTime": 1792606806,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606822,
+   "currentSlot": 459728236,
+   "postedSlot": 459728218,
+   "publishTime": 1792606816,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606827,
+   "currentSlot": 459728262,
+   "postedSlot": 459728218,
+   "publishTime": 1792606816,
+   "ageSec": 11,
+   "slotsBehind": 44,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606832,
+   "currentSlot": 459728286,
+   "postedSlot": 459728267,
+   "publishTime": 1792606826,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606837,
+   "currentSlot": 459728309,
+   "postedSlot": 459728267,
+   "publishTime": 1792606826,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606842,
+   "currentSlot": 459728329,
+   "postedSlot": 459728313,
+   "publishTime": 1792606836,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606847,
+   "currentSlot": 459728353,
+   "postedSlot": 459728313,
+   "publishTime": 1792606836,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606852,
+   "currentSlot": 459728378,
+   "postedSlot": 459728313,
+   "publishTime": 1792606836,
+   "ageSec": 16,
+   "slotsBehind": 65,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606857,
+   "currentSlot": 459728401,
+   "postedSlot": 459728313,
+   "publishTime": 1792606836,
+   "ageSec": 21,
+   "slotsBehind": 88,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606862,
+   "currentSlot": 459728425,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606867,
+   "currentSlot": 459728449,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606872,
+   "currentSlot": 459728474,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 16,
+   "slotsBehind": 66,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606877,
+   "currentSlot": 459728498,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 21,
+   "slotsBehind": 90,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606882,
+   "currentSlot": 459728521,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 26,
+   "slotsBehind": 113,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606887,
+   "currentSlot": 459728545,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 31,
+   "slotsBehind": 137,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606892,
+   "currentSlot": 459728569,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 36,
+   "slotsBehind": 161,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606897,
+   "currentSlot": 459728593,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 41,
+   "slotsBehind": 185,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606902,
+   "currentSlot": 459728617,
+   "postedSlot": 459728408,
+   "publishTime": 1792606856,
+   "ageSec": 46,
+   "slotsBehind": 209,
+   "ok": false,
+   "simulated": false
+  },
+  {
+   "t": 1792606907,
+   "currentSlot": 459728639,
+   "postedSlot": 459728637,
+   "publishTime": 1792606906,
+   "ageSec": 1,
+   "slotsBehind": 2,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606912,
+   "currentSlot": 459728664,
+   "postedSlot": 459728637,
+   "publishTime": 1792606906,
+   "ageSec": 6,
+   "slotsBehind": 27,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606917,
+   "currentSlot": 459728687,
+   "postedSlot": 459728637,
+   "publishTime": 1792606906,
+   "ageSec": 11,
+   "slotsBehind": 50,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606922,
+   "currentSlot": 459728711,
+   "postedSlot": 459728693,
+   "publishTime": 1792606916,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606927,
+   "currentSlot": 459728734,
+   "postedSlot": 459728693,
+   "publishTime": 1792606916,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606932,
+   "currentSlot": 459728759,
+   "postedSlot": 459728740,
+   "publishTime": 1792606926,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606937,
+   "currentSlot": 459728783,
+   "postedSlot": 459728740,
+   "publishTime": 1792606926,
+   "ageSec": 11,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606942,
+   "currentSlot": 459728806,
+   "postedSlot": 459728791,
+   "publishTime": 1792606936,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606947,
+   "currentSlot": 459728828,
+   "postedSlot": 459728791,
+   "publishTime": 1792606936,
+   "ageSec": 11,
+   "slotsBehind": 37,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606952,
+   "currentSlot": 459728854,
+   "postedSlot": 459728845,
+   "publishTime": 1792606946,
+   "ageSec": 6,
+   "slotsBehind": 9,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606957,
+   "currentSlot": 459728878,
+   "postedSlot": 459728845,
+   "publishTime": 1792606946,
+   "ageSec": 11,
+   "slotsBehind": 33,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606962,
+   "currentSlot": 459728901,
+   "postedSlot": 459728885,
+   "publishTime": 1792606956,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606967,
+   "currentSlot": 459728926,
+   "postedSlot": 459728885,
+   "publishTime": 1792606956,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606972,
+   "currentSlot": 459728949,
+   "postedSlot": 459728930,
+   "publishTime": 1792606966,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606977,
+   "currentSlot": 459728971,
+   "postedSlot": 459728930,
+   "publishTime": 1792606966,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606982,
+   "currentSlot": 459728995,
+   "postedSlot": 459728976,
+   "publishTime": 1792606976,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606987,
+   "currentSlot": 459729017,
+   "postedSlot": 459728976,
+   "publishTime": 1792606976,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606992,
+   "currentSlot": 459729037,
+   "postedSlot": 459729025,
+   "publishTime": 1792606986,
+   "ageSec": 6,
+   "slotsBehind": 12,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792606997,
+   "currentSlot": 459729065,
+   "postedSlot": 459729025,
+   "publishTime": 1792606986,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607002,
+   "currentSlot": 459729089,
+   "postedSlot": 459729072,
+   "publishTime": 1792606996,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607007,
+   "currentSlot": 459729113,
+   "postedSlot": 459729072,
+   "publishTime": 1792606996,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607012,
+   "currentSlot": 459729135,
+   "postedSlot": 459729118,
+   "publishTime": 1792607006,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607017,
+   "currentSlot": 459729161,
+   "postedSlot": 459729118,
+   "publishTime": 1792607006,
+   "ageSec": 11,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607022,
+   "currentSlot": 459729184,
+   "postedSlot": 459729166,
+   "publishTime": 1792607016,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607027,
+   "currentSlot": 459729208,
+   "postedSlot": 459729166,
+   "publishTime": 1792607016,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607032,
+   "currentSlot": 459729232,
+   "postedSlot": 459729215,
+   "publishTime": 1792607026,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607037,
+   "currentSlot": 459729254,
+   "postedSlot": 459729215,
+   "publishTime": 1792607026,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607042,
+   "currentSlot": 459729276,
+   "postedSlot": 459729259,
+   "publishTime": 1792607036,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607047,
+   "currentSlot": 459729300,
+   "postedSlot": 459729259,
+   "publishTime": 1792607036,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607052,
+   "currentSlot": 459729325,
+   "postedSlot": 459729308,
+   "publishTime": 1792607046,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607057,
+   "currentSlot": 459729347,
+   "postedSlot": 459729308,
+   "publishTime": 1792607046,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607062,
+   "currentSlot": 459729371,
+   "postedSlot": 459729353,
+   "publishTime": 1792607056,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607067,
+   "currentSlot": 459729391,
+   "postedSlot": 459729353,
+   "publishTime": 1792607056,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607072,
+   "currentSlot": 459729416,
+   "postedSlot": 459729403,
+   "publishTime": 1792607066,
+   "ageSec": 6,
+   "slotsBehind": 13,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607077,
+   "currentSlot": 459729440,
+   "postedSlot": 459729403,
+   "publishTime": 1792607066,
+   "ageSec": 11,
+   "slotsBehind": 37,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607082,
+   "currentSlot": 459729465,
+   "postedSlot": 459729450,
+   "publishTime": 1792607076,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607087,
+   "currentSlot": 459729488,
+   "postedSlot": 459729450,
+   "publishTime": 1792607076,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607092,
+   "currentSlot": 459729512,
+   "postedSlot": 459729494,
+   "publishTime": 1792607086,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607098,
+   "currentSlot": 459729537,
+   "postedSlot": 459729494,
+   "publishTime": 1792607086,
+   "ageSec": 12,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607102,
+   "currentSlot": 459729559,
+   "postedSlot": 459729542,
+   "publishTime": 1792607096,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607107,
+   "currentSlot": 459729583,
+   "postedSlot": 459729542,
+   "publishTime": 1792607096,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607112,
+   "currentSlot": 459729607,
+   "postedSlot": 459729591,
+   "publishTime": 1792607106,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607117,
+   "currentSlot": 459729631,
+   "postedSlot": 459729591,
+   "publishTime": 1792607106,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607122,
+   "currentSlot": 459729654,
+   "postedSlot": 459729641,
+   "publishTime": 1792607116,
+   "ageSec": 6,
+   "slotsBehind": 13,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607127,
+   "currentSlot": 459729676,
+   "postedSlot": 459729641,
+   "publishTime": 1792607116,
+   "ageSec": 11,
+   "slotsBehind": 35,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607132,
+   "currentSlot": 459729702,
+   "postedSlot": 459729686,
+   "publishTime": 1792607126,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607137,
+   "currentSlot": 459729726,
+   "postedSlot": 459729686,
+   "publishTime": 1792607126,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607142,
+   "currentSlot": 459729750,
+   "postedSlot": 459729733,
+   "publishTime": 1792607136,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607147,
+   "currentSlot": 459729775,
+   "postedSlot": 459729733,
+   "publishTime": 1792607136,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607152,
+   "currentSlot": 459729798,
+   "postedSlot": 459729780,
+   "publishTime": 1792607146,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607157,
+   "currentSlot": 459729822,
+   "postedSlot": 459729780,
+   "publishTime": 1792607146,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607162,
+   "currentSlot": 459729843,
+   "postedSlot": 459729828,
+   "publishTime": 1792607156,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607167,
+   "currentSlot": 459729870,
+   "postedSlot": 459729828,
+   "publishTime": 1792607156,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607172,
+   "currentSlot": 459729893,
+   "postedSlot": 459729877,
+   "publishTime": 1792607166,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607177,
+   "currentSlot": 459729914,
+   "postedSlot": 459729877,
+   "publishTime": 1792607166,
+   "ageSec": 11,
+   "slotsBehind": 37,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607182,
+   "currentSlot": 459729937,
+   "postedSlot": 459729922,
+   "publishTime": 1792607176,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607187,
+   "currentSlot": 459729960,
+   "postedSlot": 459729922,
+   "publishTime": 1792607176,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607192,
+   "currentSlot": 459729986,
+   "postedSlot": 459729967,
+   "publishTime": 1792607186,
+   "ageSec": 6,
+   "slotsBehind": 19,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607197,
+   "currentSlot": 459730010,
+   "postedSlot": 459729967,
+   "publishTime": 1792607186,
+   "ageSec": 11,
+   "slotsBehind": 43,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607202,
+   "currentSlot": 459730032,
+   "postedSlot": 459730017,
+   "publishTime": 1792607196,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607207,
+   "currentSlot": 459730056,
+   "postedSlot": 459730017,
+   "publishTime": 1792607196,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607212,
+   "currentSlot": 459730080,
+   "postedSlot": 459730066,
+   "publishTime": 1792607206,
+   "ageSec": 6,
+   "slotsBehind": 14,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607217,
+   "currentSlot": 459730101,
+   "postedSlot": 459730066,
+   "publishTime": 1792607206,
+   "ageSec": 11,
+   "slotsBehind": 35,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607222,
+   "currentSlot": 459730123,
+   "postedSlot": 459730108,
+   "publishTime": 1792607216,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607227,
+   "currentSlot": 459730147,
+   "postedSlot": 459730108,
+   "publishTime": 1792607216,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607232,
+   "currentSlot": 459730171,
+   "postedSlot": 459730154,
+   "publishTime": 1792607226,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607237,
+   "currentSlot": 459730195,
+   "postedSlot": 459730154,
+   "publishTime": 1792607226,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607242,
+   "currentSlot": 459730220,
+   "postedSlot": 459730203,
+   "publishTime": 1792607236,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607247,
+   "currentSlot": 459730241,
+   "postedSlot": 459730203,
+   "publishTime": 1792607236,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607252,
+   "currentSlot": 459730265,
+   "postedSlot": 459730248,
+   "publishTime": 1792607246,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607257,
+   "currentSlot": 459730288,
+   "postedSlot": 459730248,
+   "publishTime": 1792607246,
+   "ageSec": 11,
+   "slotsBehind": 40,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607262,
+   "currentSlot": 459730312,
+   "postedSlot": 459730297,
+   "publishTime": 1792607256,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607267,
+   "currentSlot": 459730336,
+   "postedSlot": 459730297,
+   "publishTime": 1792607256,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607272,
+   "currentSlot": 459730359,
+   "postedSlot": 459730341,
+   "publishTime": 1792607266,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607277,
+   "currentSlot": 459730383,
+   "postedSlot": 459730341,
+   "publishTime": 1792607266,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607282,
+   "currentSlot": 459730404,
+   "postedSlot": 459730389,
+   "publishTime": 1792607276,
+   "ageSec": 6,
+   "slotsBehind": 15,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607287,
+   "currentSlot": 459730427,
+   "postedSlot": 459730389,
+   "publishTime": 1792607276,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607292,
+   "currentSlot": 459730448,
+   "postedSlot": 459730435,
+   "publishTime": 1792607286,
+   "ageSec": 6,
+   "slotsBehind": 13,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607297,
+   "currentSlot": 459730473,
+   "postedSlot": 459730435,
+   "publishTime": 1792607286,
+   "ageSec": 11,
+   "slotsBehind": 38,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607302,
+   "currentSlot": 459730496,
+   "postedSlot": 459730479,
+   "publishTime": 1792607296,
+   "ageSec": 6,
+   "slotsBehind": 17,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607307,
+   "currentSlot": 459730520,
+   "postedSlot": 459730479,
+   "publishTime": 1792607296,
+   "ageSec": 11,
+   "slotsBehind": 41,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607312,
+   "currentSlot": 459730543,
+   "postedSlot": 459730525,
+   "publishTime": 1792607306,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607317,
+   "currentSlot": 459730567,
+   "postedSlot": 459730525,
+   "publishTime": 1792607306,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607322,
+   "currentSlot": 459730590,
+   "postedSlot": 459730572,
+   "publishTime": 1792607316,
+   "ageSec": 6,
+   "slotsBehind": 18,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607327,
+   "currentSlot": 459730614,
+   "postedSlot": 459730572,
+   "publishTime": 1792607316,
+   "ageSec": 11,
+   "slotsBehind": 42,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607332,
+   "currentSlot": 459730638,
+   "postedSlot": 459730622,
+   "publishTime": 1792607326,
+   "ageSec": 6,
+   "slotsBehind": 16,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607337,
+   "currentSlot": 459730661,
+   "postedSlot": 459730622,
+   "publishTime": 1792607326,
+   "ageSec": 11,
+   "slotsBehind": 39,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607342,
+   "currentSlot": 459730686,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 6,
+   "slotsBehind": 20,
+   "ok": true,
+   "simulated": false
+  },
+  {
+   "t": 1792607347,
+   "currentSlot": 459730710,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 11,
+   "slotsBehind": 44,
+   "ok": true,
+   "simulated": true
+  },
+  {
+   "t": 1792607352,
+   "currentSlot": 459730733,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 16,
+   "slotsBehind": 67,
+   "ok": true,
+   "simulated": true
+  },
+  {
+   "t": 1792607357,
+   "currentSlot": 459730756,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 21,
+   "slotsBehind": 90,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607362,
+   "currentSlot": 459730778,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 26,
+   "slotsBehind": 112,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607367,
+   "currentSlot": 459730802,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 31,
+   "slotsBehind": 136,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607372,
+   "currentSlot": 459730825,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 36,
+   "slotsBehind": 159,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607377,
+   "currentSlot": 459730848,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 41,
+   "slotsBehind": 182,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607382,
+   "currentSlot": 459730871,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 46,
+   "slotsBehind": 205,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607387,
+   "currentSlot": 459730895,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 51,
+   "slotsBehind": 229,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607392,
+   "currentSlot": 459730918,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 56,
+   "slotsBehind": 252,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607397,
+   "currentSlot": 459730940,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 61,
+   "slotsBehind": 274,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607402,
+   "currentSlot": 459730964,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 66,
+   "slotsBehind": 298,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607407,
+   "currentSlot": 459730986,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 71,
+   "slotsBehind": 320,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607412,
+   "currentSlot": 459731009,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 76,
+   "slotsBehind": 343,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607417,
+   "currentSlot": 459731031,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 81,
+   "slotsBehind": 365,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607422,
+   "currentSlot": 459731055,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 86,
+   "slotsBehind": 389,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607427,
+   "currentSlot": 459731077,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 91,
+   "slotsBehind": 411,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607432,
+   "currentSlot": 459731101,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 96,
+   "slotsBehind": 435,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607437,
+   "currentSlot": 459731124,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 101,
+   "slotsBehind": 458,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607442,
+   "currentSlot": 459731148,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 106,
+   "slotsBehind": 482,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607447,
+   "currentSlot": 459731169,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 111,
+   "slotsBehind": 503,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607452,
+   "currentSlot": 459731193,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 116,
+   "slotsBehind": 527,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607457,
+   "currentSlot": 459731216,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 121,
+   "slotsBehind": 550,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607462,
+   "currentSlot": 459731242,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 126,
+   "slotsBehind": 576,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607467,
+   "currentSlot": 459731265,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 131,
+   "slotsBehind": 599,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607472,
+   "currentSlot": 459731288,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 136,
+   "slotsBehind": 622,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607477,
+   "currentSlot": 459731311,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 141,
+   "slotsBehind": 645,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607482,
+   "currentSlot": 459731333,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 146,
+   "slotsBehind": 667,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607487,
+   "currentSlot": 459731356,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 151,
+   "slotsBehind": 690,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607492,
+   "currentSlot": 459731380,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 156,
+   "slotsBehind": 714,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607497,
+   "currentSlot": 459731402,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 161,
+   "slotsBehind": 736,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607502,
+   "currentSlot": 459731428,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 166,
+   "slotsBehind": 762,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607507,
+   "currentSlot": 459731452,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 171,
+   "slotsBehind": 786,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607512,
+   "currentSlot": 459731475,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 176,
+   "slotsBehind": 809,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607517,
+   "currentSlot": 459731499,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 181,
+   "slotsBehind": 833,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607522,
+   "currentSlot": 459731522,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 186,
+   "slotsBehind": 856,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607527,
+   "currentSlot": 459731545,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 191,
+   "slotsBehind": 879,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607532,
+   "currentSlot": 459731567,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 196,
+   "slotsBehind": 901,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607537,
+   "currentSlot": 459731592,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 201,
+   "slotsBehind": 926,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607542,
+   "currentSlot": 459731615,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 206,
+   "slotsBehind": 949,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607547,
+   "currentSlot": 459731638,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 211,
+   "slotsBehind": 972,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607552,
+   "currentSlot": 459731662,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 216,
+   "slotsBehind": 996,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607557,
+   "currentSlot": 459731684,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 221,
+   "slotsBehind": 1018,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607562,
+   "currentSlot": 459731708,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 226,
+   "slotsBehind": 1042,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607567,
+   "currentSlot": 459731731,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 231,
+   "slotsBehind": 1065,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607572,
+   "currentSlot": 459731755,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 236,
+   "slotsBehind": 1089,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607577,
+   "currentSlot": 459731778,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 241,
+   "slotsBehind": 1112,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607582,
+   "currentSlot": 459731803,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 246,
+   "slotsBehind": 1137,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607587,
+   "currentSlot": 459731825,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 251,
+   "slotsBehind": 1159,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607592,
+   "currentSlot": 459731848,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 256,
+   "slotsBehind": 1182,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607597,
+   "currentSlot": 459731873,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 261,
+   "slotsBehind": 1207,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607602,
+   "currentSlot": 459731897,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 266,
+   "slotsBehind": 1231,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607607,
+   "currentSlot": 459731921,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 271,
+   "slotsBehind": 1255,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607612,
+   "currentSlot": 459731945,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 276,
+   "slotsBehind": 1279,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607618,
+   "currentSlot": 459731970,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 282,
+   "slotsBehind": 1304,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607622,
+   "currentSlot": 459731994,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 286,
+   "slotsBehind": 1328,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607627,
+   "currentSlot": 459732017,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 291,
+   "slotsBehind": 1351,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607632,
+   "currentSlot": 459732039,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 296,
+   "slotsBehind": 1373,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607637,
+   "currentSlot": 459732062,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 301,
+   "slotsBehind": 1396,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607642,
+   "currentSlot": 459732087,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 306,
+   "slotsBehind": 1421,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607647,
+   "currentSlot": 459732110,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 311,
+   "slotsBehind": 1444,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607652,
+   "currentSlot": 459732135,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 316,
+   "slotsBehind": 1469,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607657,
+   "currentSlot": 459732158,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 321,
+   "slotsBehind": 1492,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607662,
+   "currentSlot": 459732181,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 326,
+   "slotsBehind": 1515,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607667,
+   "currentSlot": 459732203,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 331,
+   "slotsBehind": 1537,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607672,
+   "currentSlot": 459732226,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 336,
+   "slotsBehind": 1560,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607677,
+   "currentSlot": 459732249,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 341,
+   "slotsBehind": 1583,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607682,
+   "currentSlot": 459732274,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 346,
+   "slotsBehind": 1608,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607687,
+   "currentSlot": 459732296,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 351,
+   "slotsBehind": 1630,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607692,
+   "currentSlot": 459732319,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 356,
+   "slotsBehind": 1653,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607697,
+   "currentSlot": 459732343,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 361,
+   "slotsBehind": 1677,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607702,
+   "currentSlot": 459732366,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 366,
+   "slotsBehind": 1700,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607707,
+   "currentSlot": 459732388,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 371,
+   "slotsBehind": 1722,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607712,
+   "currentSlot": 459732413,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 376,
+   "slotsBehind": 1747,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607717,
+   "currentSlot": 459732436,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 381,
+   "slotsBehind": 1770,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607722,
+   "currentSlot": 459732461,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 386,
+   "slotsBehind": 1795,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607727,
+   "currentSlot": 459732482,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 391,
+   "slotsBehind": 1816,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607732,
+   "currentSlot": 459732507,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 396,
+   "slotsBehind": 1841,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607737,
+   "currentSlot": 459732529,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 401,
+   "slotsBehind": 1863,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607742,
+   "currentSlot": 459732552,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 406,
+   "slotsBehind": 1886,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607747,
+   "currentSlot": 459732575,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 411,
+   "slotsBehind": 1909,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607752,
+   "currentSlot": 459732598,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 416,
+   "slotsBehind": 1932,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607757,
+   "currentSlot": 459732621,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 421,
+   "slotsBehind": 1955,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607762,
+   "currentSlot": 459732645,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 426,
+   "slotsBehind": 1979,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607767,
+   "currentSlot": 459732665,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 431,
+   "slotsBehind": 1999,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607772,
+   "currentSlot": 459732687,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 436,
+   "slotsBehind": 2021,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607777,
+   "currentSlot": 459732712,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 441,
+   "slotsBehind": 2046,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607782,
+   "currentSlot": 459732736,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 446,
+   "slotsBehind": 2070,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607787,
+   "currentSlot": 459732759,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 451,
+   "slotsBehind": 2093,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607792,
+   "currentSlot": 459732784,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 456,
+   "slotsBehind": 2118,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607797,
+   "currentSlot": 459732809,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 461,
+   "slotsBehind": 2143,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607802,
+   "currentSlot": 459732831,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 466,
+   "slotsBehind": 2165,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607808,
+   "currentSlot": 459732857,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 472,
+   "slotsBehind": 2191,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607812,
+   "currentSlot": 459732880,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 476,
+   "slotsBehind": 2214,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607817,
+   "currentSlot": 459732904,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 481,
+   "slotsBehind": 2238,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607822,
+   "currentSlot": 459732928,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 486,
+   "slotsBehind": 2262,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607827,
+   "currentSlot": 459732951,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 491,
+   "slotsBehind": 2285,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607832,
+   "currentSlot": 459732975,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 496,
+   "slotsBehind": 2309,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607837,
+   "currentSlot": 459732999,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 501,
+   "slotsBehind": 2333,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607842,
+   "currentSlot": 459733023,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 506,
+   "slotsBehind": 2357,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607847,
+   "currentSlot": 459733047,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 511,
+   "slotsBehind": 2381,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607852,
+   "currentSlot": 459733070,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 516,
+   "slotsBehind": 2404,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607857,
+   "currentSlot": 459733094,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 521,
+   "slotsBehind": 2428,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607862,
+   "currentSlot": 459733116,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 526,
+   "slotsBehind": 2450,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607867,
+   "currentSlot": 459733140,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 531,
+   "slotsBehind": 2474,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607872,
+   "currentSlot": 459733163,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 536,
+   "slotsBehind": 2497,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607877,
+   "currentSlot": 459733187,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 541,
+   "slotsBehind": 2521,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607882,
+   "currentSlot": 459733211,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 546,
+   "slotsBehind": 2545,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607887,
+   "currentSlot": 459733233,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 551,
+   "slotsBehind": 2567,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607892,
+   "currentSlot": 459733258,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 556,
+   "slotsBehind": 2592,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607897,
+   "currentSlot": 459733280,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 561,
+   "slotsBehind": 2614,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607902,
+   "currentSlot": 459733305,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 566,
+   "slotsBehind": 2639,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607907,
+   "currentSlot": 459733327,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 571,
+   "slotsBehind": 2661,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607913,
+   "currentSlot": 459733353,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 577,
+   "slotsBehind": 2687,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607917,
+   "currentSlot": 459733376,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 581,
+   "slotsBehind": 2710,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607922,
+   "currentSlot": 459733398,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 586,
+   "slotsBehind": 2732,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607927,
+   "currentSlot": 459733420,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 591,
+   "slotsBehind": 2754,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607932,
+   "currentSlot": 459733442,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 596,
+   "slotsBehind": 2776,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607937,
+   "currentSlot": 459733468,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 601,
+   "slotsBehind": 2802,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607942,
+   "currentSlot": 459733489,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 606,
+   "slotsBehind": 2823,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607947,
+   "currentSlot": 459733513,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 611,
+   "slotsBehind": 2847,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607952,
+   "currentSlot": 459733535,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 616,
+   "slotsBehind": 2869,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607957,
+   "currentSlot": 459733560,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 621,
+   "slotsBehind": 2894,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607962,
+   "currentSlot": 459733583,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 626,
+   "slotsBehind": 2917,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607967,
+   "currentSlot": 459733607,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 631,
+   "slotsBehind": 2941,
+   "ok": false,
+   "simulated": true
+  },
+  {
+   "t": 1792607972,
+   "currentSlot": 459733631,
+   "postedSlot": 459730666,
+   "publishTime": 1792607336,
+   "ageSec": 636,
+   "slotsBehind": 2965,
+   "ok": false,
+   "simulated": true
+  }
+ ],
+ "injectedFault": {
+  "startT": 1792607347,
+  "kind": "frozen feed (simulated by repeating the last value)",
+  "simulated": true,
+  "note": "SIMULATED on top of real data: from startT the publishTime and postedSlot are repeated from the last real read; t and currentSlot stay real. Nothing in the real feed froze."
+ },
+ "stats": {
+  "points": 313,
+  "realPoints": 187,
+  "simulatedPoints": 126,
+  "realStaleCount": 16,
+  "maxRealAgeSec": 51,
+  "maxRealSlotsBehind": 227,
+  "firstStaleDetectedAfterFaultSec": 10
+ }
+}

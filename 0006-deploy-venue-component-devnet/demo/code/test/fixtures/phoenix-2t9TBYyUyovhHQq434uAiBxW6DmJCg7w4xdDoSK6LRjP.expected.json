@@ -1,0 +1,55 @@
+{
+ "address": "2t9TBYyUyovhHQq434uAiBxW6DmJCg7w4xdDoSK6LRjP",
+ "name": "JitoSOL/SOL",
+ "source": "expected values computed by the official @ellipsis-labs/phoenix-sdk 2.0.3 (deserializeMarketData + getUiLadder) on this exact account file, 2026-10-22",
+ "slot": 459753246,
+ "capturedAt": "2026-10-21T19:49:23.264Z",
+ "bids": [
+  {
+   "price": 1.28216,
+   "size": 1.8408
+  },
+  {
+   "price": 1.28,
+   "size": 4.5434
+  },
+  {
+   "price": 1.27,
+   "size": 5.1729
+  },
+  {
+   "price": 1.211,
+   "size": 24.8498
+  },
+  {
+   "price": 1,
+   "size": 23.8928
+  }
+ ],
+ "asks": [
+  {
+   "price": 1.31,
+   "size": 0.0006
+  },
+  {
+   "price": 1.32,
+   "size": 5.0654
+  },
+  {
+   "price": 1.35,
+   "size": 27.2864
+  },
+  {
+   "price": 1.369,
+   "size": 0.5
+  },
+  {
+   "price": 89,
+   "size": 0.4
+  }
+ ],
+ "counts": {
+  "bids": 36,
+  "asks": 26
+ }
+}

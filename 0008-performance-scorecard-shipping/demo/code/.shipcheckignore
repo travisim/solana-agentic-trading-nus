@@ -1,0 +1,2 @@
+# Files that hold made-up example secrets on purpose (the ship-check demo's leaky sample). Not real keys.
+out/shipcheck.json

@@ -1,0 +1,23 @@
+{
+ "address": "626t4FAUCVWMSvZsjzyPDJjPAKvdrafJB2pAcC6Ags2m",
+ "name": "wSOL/USDC (devnet test tokens)",
+ "source": "expected values computed by the official @ellipsis-labs/phoenix-sdk 2.0.3 (deserializeMarketData + getUiLadder) on this exact account file, 2026-10-22",
+ "slot": 513633469,
+ "capturedAt": "2026-10-21T19:49:22.882Z",
+ "bids": [
+  {
+   "price": 1.10654,
+   "size": 0.0903
+  }
+ ],
+ "asks": [
+  {
+   "price": 1.10699,
+   "size": 0.0903
+  }
+ ],
+ "counts": {
+  "bids": 1,
+  "asks": 1
+ }
+}

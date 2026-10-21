@@ -1,0 +1,798 @@
+{
+ "note": "Simulated, on recorded data; not advice.",
+ "params": {
+  "startUsd": 10000,
+  "maxFraction": 0.25,
+  "step": 0.1,
+  "maxImpactBps": 5,
+  "minOrderUsd": 25,
+  "horizonSec": 300,
+  "combine": "average",
+  "feeBps": 4,
+  "useImpact": true,
+  "injected": true,
+  "signal": {
+   "lookback": 12,
+   "volWindow": 60,
+   "minZ": 1,
+   "cooldownSec": 30
+  }
+ },
+ "limits": {
+  "maxNotionalUsd": 1000,
+  "maxOracleGapBps": 50,
+  "maxOracleAgeSec": 60
+ },
+ "rules": [
+  {
+   "id": "max-notional",
+   "description": "Reject any order bigger than the notional limit",
+   "limit": 1000,
+   "unit": "USD"
+  },
+  {
+   "id": "max-oracle-gap",
+   "description": "Reject if the order price is too far from the oracle price",
+   "limit": 50,
+   "unit": "bps"
+  },
+  {
+   "id": "max-oracle-age",
+   "description": "Reject if the oracle price is older than the limit",
+   "limit": 60,
+   "unit": "seconds"
+  },
+  {
+   "id": "unit-sanity",
+   "description": "Reject non-positive, non-numeric or wrong-unit values (e.g. cents, lamports)",
+   "limit": null,
+   "unit": null
+  }
+ ],
+ "curve": [
+  {
+   "p": 0.5,
+   "z": 0,
+   "m": 0
+  },
+  {
+   "p": 0.51,
+   "z": 0.02,
+   "m": 0.016
+  },
+  {
+   "p": 0.52,
+   "z": 0.04,
+   "m": 0.0319
+  },
+  {
+   "p": 0.53,
+   "z": 0.0601,
+   "m": 0.0479
+  },
+  {
+   "p": 0.54,
+   "z": 0.0803,
+   "m": 0.064
+  },
+  {
+   "p": 0.55,
+   "z": 0.1005,
+   "m": 0.0801
+  },
+  {
+   "p": 0.56,
+   "z": 0.1209,
+   "m": 0.0962
+  },
+  {
+   "p": 0.57,
+   "z": 0.1414,
+   "m": 0.1124
+  },
+  {
+   "p": 0.58,
+   "z": 0.1621,
+   "m": 0.1288
+  },
+  {
+   "p": 0.59,
+   "z": 0.183,
+   "m": 0.1452
+  },
+  {
+   "p": 0.6,
+   "z": 0.2041,
+   "m": 0.1617
+  },
+  {
+   "p": 0.61,
+   "z": 0.2255,
+   "m": 0.1784
+  },
+  {
+   "p": 0.62,
+   "z": 0.2472,
+   "m": 0.1953
+  },
+  {
+   "p": 0.63,
+   "z": 0.2693,
+   "m": 0.2123
+  },
+  {
+   "p": 0.64,
+   "z": 0.2917,
+   "m": 0.2295
+  },
+  {
+   "p": 0.65,
+   "z": 0.3145,
+   "m": 0.2468
+  },
+  {
+   "p": 0.66,
+   "z": 0.3378,
+   "m": 0.2645
+  },
+  {
+   "p": 0.67,
+   "z": 0.3615,
+   "m": 0.2823
+  },
+  {
+   "p": 0.68,
+   "z": 0.3859,
+   "m": 0.3004
+  },
+  {
+   "p": 0.69,
+   "z": 0.4108,
+   "m": 0.3188
+  },
+  {
+   "p": 0.7,
+   "z": 0.4364,
+   "m": 0.3375
+  },
+  {
+   "p": 0.71,
+   "z": 0.4628,
+   "m": 0.3565
+  },
+  {
+   "p": 0.72,
+   "z": 0.49,
+   "m": 0.3759
+  },
+  {
+   "p": 0.73,
+   "z": 0.5181,
+   "m": 0.3956
+  },
+  {
+   "p": 0.74,
+   "z": 0.5472,
+   "m": 0.4157
+  },
+  {
+   "p": 0.75,
+   "z": 0.5774,
+   "m": 0.4363
+  },
+  {
+   "p": 0.76,
+   "z": 0.6088,
+   "m": 0.4573
+  },
+  {
+   "p": 0.77,
+   "z": 0.6416,
+   "m": 0.4789
+  },
+  {
+   "p": 0.78,
+   "z": 0.6759,
+   "m": 0.5009
+  },
+  {
+   "p": 0.79,
+   "z": 0.712,
+   "m": 0.5235
+  },
+  {
+   "p": 0.8,
+   "z": 0.75,
+   "m": 0.5467
+  },
+  {
+   "p": 0.81,
+   "z": 0.7902,
+   "m": 0.5706
+  },
+  {
+   "p": 0.82,
+   "z": 0.8329,
+   "m": 0.5951
+  },
+  {
+   "p": 0.83,
+   "z": 0.8785,
+   "m": 0.6203
+  },
+  {
+   "p": 0.84,
+   "z": 0.9274,
+   "m": 0.6463
+  },
+  {
+   "p": 0.85,
+   "z": 0.9802,
+   "m": 0.673
+  },
+  {
+   "p": 0.86,
+   "z": 1.0375,
+   "m": 0.7005
+  },
+  {
+   "p": 0.87,
+   "z": 1.1002,
+   "m": 0.7288
+  },
+  {
+   "p": 0.88,
+   "z": 1.1694,
+   "m": 0.7577
+  },
+  {
+   "p": 0.89,
+   "z": 1.2464,
+   "m": 0.7874
+  },
+  {
+   "p": 0.9,
+   "z": 1.3333,
+   "m": 0.8176
+  },
+  {
+   "p": 0.91,
+   "z": 1.4327,
+   "m": 0.848
+  },
+  {
+   "p": 0.92,
+   "z": 1.5481,
+   "m": 0.8784
+  },
+  {
+   "p": 0.93,
+   "z": 1.6853,
+   "m": 0.9081
+  },
+  {
+   "p": 0.94,
+   "z": 1.8527,
+   "m": 0.9361
+  },
+  {
+   "p": 0.95,
+   "z": 2.0647,
+   "m": 0.9611
+  },
+  {
+   "p": 0.96,
+   "z": 2.3474,
+   "m": 0.9811
+  },
+  {
+   "p": 0.97,
+   "z": 2.7552,
+   "m": 0.9941
+  },
+  {
+   "p": 0.98,
+   "z": 3.4286,
+   "m": 0.9994
+  },
+  {
+   "p": 0.99,
+   "z": 4.9247,
+   "m": 1
+  }
+ ],
+ "checks": {
+  "phi0": 0.5000000005,
+  "phi1": 0.841345
+ },
+ "impact": {
+  "capturedAt": "2026-10-21T19:36:02.316Z",
+  "source": "Jupiter lite-api /swap/v1/quote, slippageBps=50, token<->USDC",
+  "pairs": [
+   {
+    "id": "SOL/USDC",
+    "note": "the pair this session trades; the deepest market on Solana",
+    "quotes": [
+     {
+      "side": "sell",
+      "sizeUsd": 100,
+      "inAmount": "923726917",
+      "outAmount": "99953816",
+      "execPrice": 108.207106,
+      "impactBps": 0.007,
+      "jupiterImpactPct": "0.0000723392266928480051502133",
+      "routes": [
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 1000,
+      "inAmount": "9237269170",
+      "outAmount": "999544432",
+      "execPrice": 108.207785,
+      "impactBps": 0,
+      "jupiterImpactPct": "0",
+      "routes": [
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 10000,
+      "inAmount": "92372691700",
+      "outAmount": "9995250867",
+      "execPrice": 108.20569,
+      "impactBps": 0.002,
+      "jupiterImpactPct": "0.0000244563658375313934054458",
+      "routes": [
+       "BisonFi",
+       "Deriverse",
+       "Kipseli",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 50000,
+      "inAmount": "461863458500",
+      "outAmount": "49974820752",
+      "execPrice": 108.202586,
+      "impactBps": 0.008,
+      "jupiterImpactPct": "0.0000758691975391674084308675",
+      "routes": [
+       "Kipseli",
+       "Obsidian",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 100000,
+      "inAmount": "923726917000",
+      "outAmount": "99945909154",
+      "execPrice": 108.198546,
+      "impactBps": 0,
+      "jupiterImpactPct": "0.0000041819431535192507163083",
+      "routes": [
+       "Kipseli",
+       "Obsidian",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 250000,
+      "inAmount": "2309317292500",
+      "outAmount": "249854513692",
+      "execPrice": 108.194103,
+      "impactBps": 0.017,
+      "jupiterImpactPct": "0.0001680268568193419994440899",
+      "routes": [
+       "BisonFi",
+       "Kipseli",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 500000,
+      "inAmount": "4618634585000",
+      "outAmount": "499779207023",
+      "execPrice": 108.209298,
+      "impactBps": 0.035,
+      "jupiterImpactPct": "0.0003547025762892465381988093",
+      "routes": [
+       "Kipseli",
+       "BisonFi",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 1000000,
+      "inAmount": "9237269170000",
+      "outAmount": "999162480512",
+      "execPrice": 108.166436,
+      "impactBps": 0.061,
+      "jupiterImpactPct": "0.0006081001095985931468811993",
+      "routes": [
+       "Kipseli",
+       "TesseraV",
+       "GoonFi V2"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 100,
+      "inAmount": "100000000",
+      "outAmount": "923682794",
+      "execPrice": 108.262274,
+      "impactBps": 0.007,
+      "jupiterImpactPct": "0.0000703308529906375458493593",
+      "routes": [
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 1000,
+      "inAmount": "1000000000",
+      "outAmount": "9236973947",
+      "execPrice": 108.260563,
+      "impactBps": 0,
+      "jupiterImpactPct": "0",
+      "routes": [
+       "Obsidian"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 10000,
+      "inAmount": "10000000000",
+      "outAmount": "92376327506",
+      "execPrice": 108.252842,
+      "impactBps": 0.014,
+      "jupiterImpactPct": "0.000142822047977856090311684",
+      "routes": [
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 50000,
+      "inAmount": "50000000000",
+      "outAmount": "461884207950",
+      "execPrice": 108.25224,
+      "impactBps": 0,
+      "jupiterImpactPct": "0",
+      "routes": [
+       "BisonFi"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 100000,
+      "inAmount": "100000000000",
+      "outAmount": "923935684531",
+      "execPrice": 108.232642,
+      "impactBps": 0.005,
+      "jupiterImpactPct": "0.0000516393490223465976964226",
+      "routes": [
+       "Kipseli",
+       "TesseraV",
+       "Obsidian"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 250000,
+      "inAmount": "250000000000",
+      "outAmount": "2309545345607",
+      "execPrice": 108.246413,
+      "impactBps": 0.021,
+      "jupiterImpactPct": "0.000210325858979081978516073",
+      "routes": [
+       "BisonFi",
+       "Kipseli",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 500000,
+      "inAmount": "500000000000",
+      "outAmount": "4617838612085",
+      "execPrice": 108.275763,
+      "impactBps": 0.037,
+      "jupiterImpactPct": "0.0003655386987208850404789211",
+      "routes": [
+       "Kipseli",
+       "TesseraV",
+       "BisonFi"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 1000000,
+      "inAmount": "1000000000000",
+      "outAmount": "9234584552018",
+      "execPrice": 108.288575,
+      "impactBps": 0.066,
+      "jupiterImpactPct": "0.0006581826800731604611260038",
+      "routes": [
+       "GoonFi V2",
+       "TesseraV",
+       "Manifest"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "ORCA/USDC",
+    "note": "a thinner token, captured to show what the cap does when a pool is shallower",
+    "quotes": [
+     {
+      "side": "sell",
+      "sizeUsd": 100,
+      "inAmount": "52753731",
+      "outAmount": "99659918",
+      "execPrice": 1.889154,
+      "impactBps": 0,
+      "jupiterImpactPct": "0",
+      "routes": [
+       "Whirlpool",
+       "Obsidian"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 1000,
+      "inAmount": "527537310",
+      "outAmount": "996241259",
+      "execPrice": 1.888475,
+      "impactBps": 0,
+      "jupiterImpactPct": "0",
+      "routes": [
+       "Whirlpool",
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 10000,
+      "inAmount": "5275373100",
+      "outAmount": "9935878623",
+      "execPrice": 1.883446,
+      "impactBps": 0.244,
+      "jupiterImpactPct": "0.0024353781953497329289976204",
+      "routes": [
+       "Whirlpool",
+       "Orca V2",
+       "BisonFi",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 50000,
+      "inAmount": "26376865500",
+      "outAmount": "49101240258",
+      "execPrice": 1.861527,
+      "impactBps": 1.404,
+      "jupiterImpactPct": "0.0140447155880873867008157033",
+      "routes": [
+       "Whirlpool",
+       "Orca V2",
+       "TesseraV",
+       "BisonFi"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 100000,
+      "inAmount": "52753731000",
+      "outAmount": "96586047516",
+      "execPrice": 1.830886,
+      "impactBps": 3.027,
+      "jupiterImpactPct": "0.0302737420838909903309723033",
+      "routes": [
+       "Orca V2",
+       "Whirlpool",
+       "BisonFi",
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 250000,
+      "inAmount": "131884327500",
+      "outAmount": "226729559100",
+      "execPrice": 1.719155,
+      "impactBps": 8.945,
+      "jupiterImpactPct": "0.0894518926510980532427721147",
+      "routes": [
+       "Whirlpool",
+       "Orca V2",
+       "BisonFi",
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 500000,
+      "inAmount": "263768655000",
+      "outAmount": "392439598615",
+      "execPrice": 1.487817,
+      "impactBps": 21.198,
+      "jupiterImpactPct": "0.2119793837510906804687589318",
+      "routes": [
+       "Orca V2",
+       "Whirlpool",
+       "Kipseli",
+       "TesseraV"
+      ]
+     },
+     {
+      "side": "sell",
+      "sizeUsd": 1000000,
+      "inAmount": "527537310000",
+      "outAmount": "577981513313",
+      "execPrice": 1.095622,
+      "impactBps": 41.971,
+      "jupiterImpactPct": "0.4197051598401331654206062383",
+      "routes": [
+       "Orca V2",
+       "Whirlpool",
+       "TesseraV",
+       "Kipseli"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 100,
+      "inAmount": "100000000",
+      "outAmount": "52754004",
+      "execPrice": 1.895591,
+      "impactBps": 0.398,
+      "jupiterImpactPct": "0.0039813137025511189329548466",
+      "routes": [
+       "GoonFi V2",
+       "Manifest",
+       "Whirlpool"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 1000,
+      "inAmount": "1000000000",
+      "outAmount": "527337596",
+      "execPrice": 1.896318,
+      "impactBps": 0.436,
+      "jupiterImpactPct": "0.0043635368356592726595965947",
+      "routes": [
+       "Obsidian",
+       "Whirlpool"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 10000,
+      "inAmount": "10000000000",
+      "outAmount": "5259436662",
+      "execPrice": 1.901344,
+      "impactBps": 0.7,
+      "jupiterImpactPct": "0.0069953373112911614908140509",
+      "routes": [
+       "Kipseli",
+       "Whirlpool",
+       "Orca V2",
+       "Hadron"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 50000,
+      "inAmount": "50000000000",
+      "outAmount": "25994325175",
+      "execPrice": 1.923497,
+      "impactBps": 1.843,
+      "jupiterImpactPct": "0.0184315256149200357418681359",
+      "routes": [
+       "Kipseli",
+       "Whirlpool",
+       "GoonFi V2",
+       "Orca V2"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 100000,
+      "inAmount": "100000000000",
+      "outAmount": "51207771425",
+      "execPrice": 1.952829,
+      "impactBps": 3.317,
+      "jupiterImpactPct": "0.0331748615148047935412967267",
+      "routes": [
+       "Obsidian",
+       "Kipseli",
+       "Orca V2",
+       "Whirlpool"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 250000,
+      "inAmount": "250000000000",
+      "outAmount": "122351399696",
+      "execPrice": 2.043295,
+      "impactBps": 7.598,
+      "jupiterImpactPct": "0.0759808078881443282101429985",
+      "routes": [
+       "BisonFi",
+       "Orca V2",
+       "TesseraV",
+       "Whirlpool"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 500000,
+      "inAmount": "500000000000",
+      "outAmount": "228926335737",
+      "execPrice": 2.184109,
+      "impactBps": 13.555,
+      "jupiterImpactPct": "0.1355541157419805935725774991",
+      "routes": [
+       "TesseraV",
+       "Orca V2",
+       "GoonFi V2",
+       "Whirlpool"
+      ]
+     },
+     {
+      "side": "buy",
+      "sizeUsd": 1000000,
+      "inAmount": "1000000000000",
+      "outAmount": "380277146419",
+      "execPrice": 2.629661,
+      "impactBps": 28.202,
+      "jupiterImpactPct": "0.2820201025780052692650581617",
+      "routes": [
+       "TesseraV",
+       "Orca V2",
+       "Whirlpool"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "inventory": {
+  "mode": "recorded",
+  "capturedAt": "2026-10-21T19:36:08.124Z",
+  "source": "getAccountInfo on solana-rpc.publicnode.com, SPL token account layout (amount at bytes 64..72)",
+  "balances": [
+   {
+    "label": "Orca SOL/USDC pool: SOL vault",
+    "address": "EUuUbDcafPrmVTD5M6qoJAoyyNbihBhugADAxRMn5he9",
+    "mint": "So11111111111111111111111111111111111111112",
+    "owner": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+    "amountRaw": "178735786627728",
+    "decimals": 9,
+    "amount": 178735.786627728,
+    "slot": 459749513
+   },
+   {
+    "label": "Orca SOL/USDC pool: USDC vault",
+    "address": "2WLWEuKDgkDUccTpbwYp1GToYktiSB1cXvreHUwiSUVP",
+    "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "owner": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+    "amountRaw": "10692374792807",
+    "decimals": 6,
+    "amount": 10692374.792807,
+    "slot": 459749514
+   }
+  ]
+ }
+}

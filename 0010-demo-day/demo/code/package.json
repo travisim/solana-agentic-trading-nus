@@ -1,0 +1,21 @@
+{
+  "name": "demo-day-kit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo Day: a projects.json validator, a gallery generator and a ship-readiness check. Reads public Solana data; every write is devnet only; no real funds.",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "demo:live": "node src/demo.ts --live",
+    "validate": "node src/validate.ts",
+    "ship": "node src/ship.ts",
+    "collect": "node src/collect.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

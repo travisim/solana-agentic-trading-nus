@@ -1,0 +1,61 @@
+{
+  "date": "2027-02-18",
+  "tz": "SGT",
+  "demoMin": 3,
+  "qaMin": 2,
+  "firstStart": "18:20",
+  "slots": [
+    {
+      "slot": 1,
+      "start": "18:20",
+      "demoEnds": "18:23",
+      "end": "18:25",
+      "projectId": "example-agent"
+    },
+    {
+      "slot": 2,
+      "start": "18:25",
+      "demoEnds": "18:28",
+      "end": "18:30",
+      "projectId": "example-exchange"
+    },
+    {
+      "slot": 3,
+      "start": "18:30",
+      "demoEnds": "18:33",
+      "end": "18:35",
+      "projectId": "example-tooling"
+    },
+    {
+      "slot": 4,
+      "start": "18:35",
+      "demoEnds": "18:38",
+      "end": "18:40",
+      "projectId": null
+    },
+    {
+      "slot": 5,
+      "start": "18:40",
+      "demoEnds": "18:43",
+      "end": "18:45",
+      "projectId": null
+    },
+    {
+      "slot": 6,
+      "start": "18:45",
+      "demoEnds": "18:48",
+      "end": "18:50",
+      "projectId": null
+    },
+    {
+      "slot": 7,
+      "start": "18:50",
+      "demoEnds": "18:53",
+      "end": "18:55",
+      "projectId": null
+    }
+  ],
+  "overflow": 0,
+  "window": "18:20-18:55",
+  "peerGallery": "18:55-19:10"
+}

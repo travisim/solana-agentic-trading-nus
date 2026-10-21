@@ -1,0 +1,354 @@
+{
+ "cluster": "local",
+ "rpcHost": "127.0.0.1:8899",
+ "capturedAt": "2026-10-21T20:10:31.662Z",
+ "programId": "UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL",
+ "bookAccount": "3Ammg6uMka4jDgUoJWkQ6Afco9FA4kWStPx9NE5msDry",
+ "payer": "37cSeQcqFPuKjuXX84Z3y6WbFhXGd8yb7QpH7fJQ4Ziu",
+ "programExplorer": null,
+ "bookExplorer": null,
+ "rentLamports": 2784000,
+ "payerSpentLamports": 2834000,
+ "txs": [
+  {
+   "step": 1,
+   "label": "init: create the book account and initialize it",
+   "kind": "init",
+   "signature": "j4Rx7imhhjjUj9VsHV3VTbDSK4wAbpvAyio2N6wg9q2m3pPMq5Gb4zksBDuc6ANh8F7sEDL1dCUxZq757gJq8tA",
+   "slot": 533,
+   "blockTime": 1792613405,
+   "ok": true,
+   "err": null,
+   "fee": 10000,
+   "computeUnits": 266,
+   "logs": [
+    "Program 11111111111111111111111111111111 invoke [1]",
+    "Program 11111111111111111111111111111111 success",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 116 of 202850 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [],
+   "mirrorError": null,
+   "sentAtMs": 1792613405939,
+   "processedAfterMs": 392,
+   "confirmedAfterMs": 427,
+   "finalizedAfterMs": 17152,
+   "explorer": null
+  },
+  {
+   "step": 2,
+   "label": "ask 5 @ 101 rests",
+   "kind": "place",
+   "signature": "5Q8oV4Y3egXnf6bRHvhHRjKotmGctXMnzULA4xMnK6z22zdJdGAmjQRQVRU7UzEhz4x8YDCFQMxPBmSeVANearrv",
+   "slot": 535,
+   "blockTime": 1792613406,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 1237,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=1 ASK px=101 qty=5",
+    "Program log: REST id=1 qty=5",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 1237 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=1 ASK px=101 qty=5",
+    "REST id=1 qty=5"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "ask",
+    "price": 101,
+    "qty": 5
+   },
+   "sentAtMs": 1792613407123,
+   "processedAfterMs": 313,
+   "confirmedAfterMs": 342,
+   "finalizedAfterMs": 17056,
+   "explorer": null
+  },
+  {
+   "step": 3,
+   "label": "ask 4 @ 102 rests",
+   "kind": "place",
+   "signature": "5fYgrVBKVCEaEv1jqSmQtGVNq66AxpVWGBY2w6aMPDKdGwD76Hcedhu59iA8u1t6mGMesPSig8nsGWqQTXEakeVD",
+   "slot": 537,
+   "blockTime": 1792613407,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 1244,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=2 ASK px=102 qty=4",
+    "Program log: REST id=2 qty=4",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 1244 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=2 ASK px=102 qty=4",
+    "REST id=2 qty=4"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "ask",
+    "price": 102,
+    "qty": 4
+   },
+   "sentAtMs": 1792613408222,
+   "processedAfterMs": 300,
+   "confirmedAfterMs": 331,
+   "finalizedAfterMs": 17003,
+   "explorer": null
+  },
+  {
+   "step": 4,
+   "label": "bid 6 @ 99 rests",
+   "kind": "place",
+   "signature": "4c5rw8ge7PDeNQiVVRuDfrQxLmcVzLuD3EAXJtdXVeBeGLmZgbfDo8ijmG3T8Nb4PBRafzCfd41DAnx5T3v67QDq",
+   "slot": 539,
+   "blockTime": 1792613408,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 1248,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=3 BID px=99 qty=6",
+    "Program log: REST id=3 qty=6",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 1248 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=3 BID px=99 qty=6",
+    "REST id=3 qty=6"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "bid",
+    "price": 99,
+    "qty": 6
+   },
+   "sentAtMs": 1792613409310,
+   "processedAfterMs": 297,
+   "confirmedAfterMs": 329,
+   "finalizedAfterMs": 16984,
+   "explorer": null
+  },
+  {
+   "step": 5,
+   "label": "bid 3 @ 98 rests",
+   "kind": "place",
+   "signature": "2VBYvmZc5B52x7u5sFBDLTaYUSdAuAHzteTSCZyw7RuABbe5GHfyaGU7qtkYN9HKk111QtWt35NZkh8ZN4z1oefm",
+   "slot": 541,
+   "blockTime": 1792613409,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 1255,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=4 BID px=98 qty=3",
+    "Program log: REST id=4 qty=3",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 1255 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=4 BID px=98 qty=3",
+    "REST id=4 qty=3"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "bid",
+    "price": 98,
+    "qty": 3
+   },
+   "sentAtMs": 1792613410396,
+   "processedAfterMs": 312,
+   "confirmedAfterMs": 335,
+   "finalizedAfterMs": 16981,
+   "explorer": null
+  },
+  {
+   "step": 6,
+   "label": "bid 7 @ 101 crosses: fills 5 @ 101, rests 2",
+   "kind": "place",
+   "signature": "61sr9LCFUiwRy3iTWmFHuG6yjaJ3GCZK2Dm438JHLTgYiZHxnYJdWCQcC6LCou1frkF4pGhzBGSVxwSeQEy4vzyP",
+   "slot": 543,
+   "blockTime": 1792613410,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 2156,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=5 BID px=101 qty=7",
+    "Program log: FILL taker=5 maker=1 px=101 qty=5",
+    "Program log: REST id=5 qty=2",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 2156 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=5 BID px=101 qty=7",
+    "FILL taker=5 maker=1 px=101 qty=5",
+    "REST id=5 qty=2"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "bid",
+    "price": 101,
+    "qty": 7
+   },
+   "sentAtMs": 1792613411485,
+   "processedAfterMs": 293,
+   "confirmedAfterMs": 328,
+   "finalizedAfterMs": 16956,
+   "explorer": null
+  },
+  {
+   "step": 7,
+   "label": "ask 9 @ 99 crosses: price priority, then rests 1",
+   "kind": "place",
+   "signature": "61dCU2jVDU1h21vcPQy2LKQRVsxgvTq7juRbjwCAaRhR5nHkmDFkshV1h4q2ot8mnXKC3yPhDyYnYqeuGEmL5DFP",
+   "slot": 545,
+   "blockTime": 1792613411,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 3018,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: ORDER id=6 ASK px=99 qty=9",
+    "Program log: FILL taker=6 maker=5 px=101 qty=2",
+    "Program log: FILL taker=6 maker=3 px=99 qty=6",
+    "Program log: REST id=6 qty=1",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 3018 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "ORDER id=6 ASK px=99 qty=9",
+    "FILL taker=6 maker=5 px=101 qty=2",
+    "FILL taker=6 maker=3 px=99 qty=6",
+    "REST id=6 qty=1"
+   ],
+   "mirrorError": null,
+   "order": {
+    "side": "ask",
+    "price": 99,
+    "qty": 9
+   },
+   "sentAtMs": 1792613412567,
+   "processedAfterMs": 298,
+   "confirmedAfterMs": 329,
+   "finalizedAfterMs": 16977,
+   "explorer": null
+  },
+  {
+   "step": 8,
+   "label": "bid with quantity 0 is rejected (fee still paid)",
+   "kind": "place",
+   "signature": "5vdgpkhm5QzPghG2LSyCVqRN79C2RwGyHLx7GApeWw9yYuwANRcbyDsmHj96AS4n13H2tpA34piR3kZHTqBaSwYz",
+   "slot": 547,
+   "blockTime": 1792613412,
+   "ok": false,
+   "err": {
+    "InstructionError": [
+     0,
+     {
+      "Custom": 5
+     }
+    ]
+   },
+   "fee": 5000,
+   "computeUnits": 141,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 141 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL failed: custom program error: 0x5"
+   ],
+   "mirrorLogs": [],
+   "mirrorError": 5,
+   "order": {
+    "side": "bid",
+    "price": 100,
+    "qty": 0
+   },
+   "sentAtMs": 1792613413652,
+   "processedAfterMs": 287,
+   "confirmedAfterMs": 321,
+   "finalizedAfterMs": 16952,
+   "explorer": null
+  },
+  {
+   "step": 9,
+   "label": "cancel order 4",
+   "kind": "cancel",
+   "signature": "61JPAGssepPvy6YMTQSzy8fD2DUtKSqp8DuJX8v5Tf1otE9VdtmGxNnaN7a6g2hE7u93x2xQEUNGLbxX44LJc2n5",
+   "slot": 549,
+   "blockTime": 1792613413,
+   "ok": true,
+   "err": null,
+   "fee": 5000,
+   "computeUnits": 468,
+   "logs": [
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL invoke [1]",
+    "Program log: CANCEL id=4",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL consumed 468 of 200000 compute units",
+    "Program UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL success"
+   ],
+   "mirrorLogs": [
+    "CANCEL id=4"
+   ],
+   "mirrorError": null,
+   "sentAtMs": 1792613414729,
+   "processedAfterMs": 300,
+   "confirmedAfterMs": 332,
+   "finalizedAfterMs": 16931,
+   "explorer": null
+  }
+ ],
+ "finalBook": {
+  "slot": 549,
+  "base64": "TUJLMQcAAAADAAAAYwAAAAYAAAACAAAAYwAAAAEAAAACAAAAAgAAAGYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  "sha256": "e728c48eddaa483fed44a131e8f65ccfe20a14d7e1b2ee1d1cb02b520b87c264",
+  "view": {
+   "nextId": 7,
+   "fills": 3,
+   "lastFillPrice": 99,
+   "orders": [
+    {
+     "id": 6,
+     "side": "ask",
+     "price": 99,
+     "qty": 1
+    },
+    {
+     "id": 2,
+     "side": "ask",
+     "price": 102,
+     "qty": 4
+    }
+   ],
+   "bids": [],
+   "asks": [
+    {
+     "id": 6,
+     "side": "ask",
+     "price": 99,
+     "qty": 1
+    },
+    {
+     "id": 2,
+     "side": "ask",
+     "price": 102,
+     "qty": 4
+    }
+   ]
+  }
+ },
+ "mirrorEqual": true,
+ "unfinalized": []
+}

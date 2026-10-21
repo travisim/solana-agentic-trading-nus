@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ship Readiness</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.lvwrap{margin-left:auto;padding-top:.5rem}
+
+.cols{display:grid;grid-template-columns:3fr 1fr;gap:1rem;flex:1;min-height:0}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;align-content:start;overflow:auto;min-height:0}
+.it{display:grid;grid-template-columns:1.8rem 1fr auto;gap:.1rem .6rem;align-items:center;text-align:left;padding:.35rem .8rem;width:100%}
+.it .mk{font-size:1.3rem;grid-row:1/3}.it .lb{font-size:1.05rem}.it .dt{grid-column:2;color:var(--muted);font-size:.85rem}.it .fx{grid-column:2/4;color:var(--warn);font-size:.85rem}
+.it[aria-pressed=true]{border-color:var(--mint);color:var(--fg)} .it[aria-pressed=false]{border-color:var(--bad)}
+.verdict{font-size:2.6rem;font-weight:300;line-height:1.05}
+input[type=text]{font:inherit;font-size:.95rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.7rem;padding:.45rem .7rem;width:100%}
+input[type=text]:disabled,button:disabled{opacity:.45;cursor:not-allowed}
+</style></head><body>
+<div class="page">
+<div class="row" style="align-items:flex-start;justify-content:space-between"><h1>Ship-readiness check</h1><div id="livebar" class="lvwrap"></div></div>
+<p class="cap">Can a stranger clone it, run it and trust it? Two example repos. Click any row to ask what if.</p>
+<main id="main" aria-label="Ship readiness check demo">
+<div class="row" style="gap:.6rem"><div role="group" aria-label="Example repo" id="tabs" class="row" style="gap:.5rem"></div><button id="reset" type="button">Reset to the real result</button><span style="flex:1"></span><div id="pulse"></div></div>
+<div class="cols">
+  <div class="items" id="items"></div>
+  <div class="grid" style="gap:.8rem;align-content:start">
+    <div class="box" id="vbox" aria-live="polite"><div class="lab">Verdict</div><div class="verdict" id="verdict"></div><div id="counts" class="num mut" style="margin-top:.4rem"></div><div id="why" class="mut" style="margin-top:.4rem;font-size:.95rem"></div></div>
+    <div class="box"><div class="lab">Check a devnet signature (read only)</div>
+      <input type="text" id="sig" placeholder="paste a transaction signature" aria-label="Devnet transaction signature" spellcheck="false" autocomplete="off">
+      <div class="row" style="margin-top:.5rem"><button id="chk" type="button">Check on devnet</button><span id="res" class="mut" style="font-size:.95rem"></span></div>
+      <div class="mut" style="font-size:.85rem;margin-top:.4rem" id="sighint"></div></div>
+  </div>
+</div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+const sgt=sec=>new Date((sec+8*3600)*1000).toISOString().replace('T',' ').slice(0,16)+' SGT';
+/* footer caption: says whether the data is recorded/live/fixture, its capture date, and what the page shows.
+   opts.sim = extra sentence flagging a simulated element. */
+function sourceLine(el,data,what,ts,opts={}){
+  const vals=Object.values(data);
+  const fx=vals.some(d=>d&&d.fixture);
+  const d0=vals.find(d=>d.capturedAt||d.generatedAt)||vals[0];
+  const mode=d0.mode||'recorded';
+  const iso=(d0.capturedAt||d0.generatedAt||'');
+  const when=iso?sgt(Date.parse(iso)/1000):(ts?sgt(ts):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.append((mode==='live'?'Live data':'Recorded data (not live)')+', captured '+when+'. ');
+  a.append(what+' Public mainnet reads, no keys.');
+  if(opts.sim)H('span',{class:'fx'},a,' '+opts.sim);
+  H('span',{style:'white-space:nowrap'},el,'Demo Day');
+}
+function tlab(t,span){const s=new Date((t+28800)*1000).toISOString();return span<600?s.slice(11,19):s.slice(11,16)}
+
+/* Slot pulse: a small strip that shows the Solana mainnet slot. Recorded: the captured read. Live: the latest read, with how far it moved. */
+function makePulse(el){
+  el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;font-size:.95rem';
+  const dot=H('span',{style:'width:.7rem;height:.7rem;border-radius:50%;border:1.5px solid var(--muted);display:inline-block;flex:none'},el);
+  const txt=H('span',{class:'num mut','aria-live':'off'},el);
+  let last=null;
+  return {
+    recorded(net){last=null;dot.style.background='transparent';dot.style.borderColor='var(--muted)';
+      txt.className='num mut';txt.textContent='Mainnet slot '+Number(net.slot).toLocaleString('en-US')+' (recorded '+sgt(Date.parse(net.capturedAt)/1000).slice(5)+(net.slotsPerSecond?', about '+f2(net.slotsPerSecond,1)+' slots per second':'')+')'},
+    live(slot){const now=Date.now();let extra='';
+      if(last&&slot>=last.slot&&now>last.t){const dt=(now-last.t)/1000;extra=' · +'+(slot-last.slot)+' in '+f2(dt,1)+' s · about '+f2((slot-last.slot)/dt,1)+' slots per second'}
+      last={slot,t:now};dot.style.background='var(--mint)';dot.style.borderColor='var(--mint)';
+      txt.className='num mint';txt.textContent='Mainnet slot '+slot.toLocaleString('en-US')+extra},
+    waiting(){txt.className='num mut';txt.textContent='Mainnet slot: waiting for the first live read...'},
+  };
+}
+</script>
+<script>/* Pure functions used by the demos (browser) and by verify.mjs (Node). Ports of ../code/src/{validate,rubric,schedule}.ts; verify.mjs checks they agree. No DOM, no dependencies. */
+const CALC=(()=>{
+  const LANES=['agent','exchange','tooling'];
+  const B58=/^[1-9A-HJ-NP-Za-km-z]+$/,ID=/^[a-z0-9][a-z0-9-]{1,40}$/,HANDLE=/^@?[A-Za-z0-9_-]{2,39}$/;
+  const RETURNS=/\b(returns?|profit|profits|profitable|apy|apr|roi|pnl|gains?|alpha)\b/i;
+  const SECRET_KEYS=/^(privatekey|secretkey|secret|seed|seedphrase|mnemonic|apikey|password|token)$/i;
+  const KNOWN=new Set(['id','name','lane','team','summary','repo','demo','devnetSignature','programId','tests','limitation','example']);
+  const isObj=x=>typeof x==='object'&&x!==null&&!Array.isArray(x);
+  function httpsUrl(v){
+    if(typeof v!=='string')return 'must be a text link';
+    let u;try{u=new URL(v)}catch(e){return 'is not a valid link'}
+    return u.protocol!=='https:'?'must start with https://':null;
+  }
+  /* same rules, same messages as validate.ts */
+  function validate(input){
+    const errors=[],warnings=[],counts={projects:0,agent:0,exchange:0,tooling:0};
+    const err=(id,field,message)=>errors.push({id,field,message}),warn=(id,field,message)=>warnings.push({id,field,message});
+    if(!isObj(input)){err('(file)','(root)','the file must be a JSON object with an event and a projects list');return {ok:false,errors,warnings,counts}}
+    if(typeof input.event!=='string'||!input.event.trim())err('(file)','event','needs an event name');
+    const list=input.projects;
+    if(!Array.isArray(list)||list.length===0){err('(file)','projects','needs a non-empty projects list');return {ok:false,errors,warnings,counts}}
+    counts.projects=list.length;
+    if(list.length>7)warn('(file)','projects',list.length+' projects but only 7 five-minute slots fit between 18:20 and 18:55; the rest need a lightning slot or the peer gallery');
+    const seen=new Set();
+    list.forEach((raw,i)=>{
+      if(!isObj(raw))return err('#'+(i+1),'(entry)','each project must be an object');
+      const id=typeof raw.id==='string'&&raw.id?raw.id:'#'+(i+1),example=raw.example===true;
+      if(typeof raw.id!=='string'||!ID.test(raw.id))err(id,'id','use lowercase letters, digits and dashes (2 to 41 characters)');
+      else if(seen.has(raw.id))err(id,'id','duplicate id');else seen.add(raw.id);
+      for(const k of Object.keys(raw)){
+        if(SECRET_KEYS.test(k))err(id,k,'never put keys, seed phrases or tokens in this file. Remove it and rotate anything that was real');
+        else if(!KNOWN.has(k))warn(id,k,'unknown field, ignored');
+      }
+      const text=(k,min,max)=>{const v=raw[k];if(typeof v!=='string'||v.trim().length<min||v.trim().length>max)err(id,k,'needs text of '+min+' to '+max+' characters')};
+      text('name',3,60);text('summary',20,240);text('limitation',10,240);
+      const lane=raw.lane;
+      if(typeof lane!=='string'||!LANES.includes(lane))err(id,'lane','must be one of '+LANES.join(', '));else counts[lane]++;
+      const team=raw.team;
+      if(!Array.isArray(team)||team.length<1||team.length>4)err(id,'team','list 1 to 4 GitHub handles');
+      else if(!team.every(h=>typeof h==='string'&&HANDLE.test(h)))err(id,'team','handles look like @name (letters, digits, - and _)');
+      const rm=httpsUrl(raw.repo);
+      if(rm)err(id,'repo',rm);else if(!example&&new URL(raw.repo).hostname!=='github.com')err(id,'repo','must be a github.com link so reviewers can clone it');
+      if(raw.demo!==undefined){const m=httpsUrl(raw.demo);if(m)err(id,'demo',m)}
+      if(raw.devnetSignature!==undefined){const s=raw.devnetSignature;if(typeof s!=='string'||s.length<86||s.length>88||!B58.test(s))err(id,'devnetSignature','a transaction signature is 86 to 88 base58 characters')}
+      if(raw.programId!==undefined){const s=raw.programId;if(typeof s!=='string'||s.length<32||s.length>44||!B58.test(s))err(id,'programId','a program address is 32 to 44 base58 characters')}
+      const t=raw.tests;
+      if(t!==undefined){
+        if(!isObj(t)||typeof t.command!=='string'||!t.command.trim())err(id,'tests','needs a command, for example npm test');
+        else if(!Number.isInteger(t.passing)||!Number.isInteger(t.total)||t.total<1||t.passing<0||t.passing>t.total)err(id,'tests','passing and total must be whole numbers with 0 <= passing <= total and total >= 1');
+      }else warn(id,'tests','no test evidence (the rubric scores reproducible tests)');
+      if(raw.devnetSignature===undefined&&raw.programId===undefined)warn(id,'devnetSignature','no devnet evidence (add a transaction signature or a program address)');
+      for(const k of ['summary','limitation','name']){const v=raw[k];if(typeof v==='string'&&RETURNS.test(v))warn(id,k,'mentions returns or profit. Judging ignores simulated returns; describe what the project does and what you tested')}
+      if(raw.example!==undefined&&typeof raw.example!=='boolean')err(id,'example','must be true or false');
+      if(example&&input.template===false)warn(id,'example','an EXAMPLE entry is still in the file');
+    });
+    return {ok:errors.length===0,errors,warnings,counts};
+  }
+  function devnetEvidence(p,check){
+    if(p.devnetSignature){
+      if(!check)return 'signature not checked';
+      if(check.status==='failed')return 'transaction failed on devnet';
+      if(check.status==='not-found')return 'signature not found on devnet';
+      return check.status+' on devnet at slot '+check.slot;
+    }
+    return p.programId?'program address given, not checked':'no devnet evidence';
+  }
+  const testsEvidence=p=>p.tests?p.tests.passing+'/'+p.tests.total+' passing (self-reported)':'none';
+  /* rubric.ts: total(scores) in points out of 100, one decimal */
+  function total(criteria,scale,scores){
+    let pts=0;
+    for(const c of criteria){const s=Math.min(scale.max,Math.max(scale.min,Math.round(scores[c.id]??0)));pts+=c.weight*s/scale.max}
+    return Math.round(pts*10)/10;
+  }
+  function suggestScores(p){
+    const out={utility:2,tests:0,devnet:0,explanation:2,contribution:2};
+    if(p.tests&&p.tests.total>0)out.tests=p.tests.passing===p.tests.total?3:(p.tests.passing/p.tests.total>=0.8?2:1);
+    const d=(p.evidence&&p.evidence.devnet)||'';
+    if(/^(finalized|confirmed|processed) on devnet/.test(d))out.devnet=3;
+    else if(/not found|failed/.test(d))out.devnet=1;
+    else if(p.devnetSignature)out.devnet=2;
+    else if(p.programId)out.devnet=1;
+    return out;
+  }
+  /* weakest criterion: the lowest share of its own maximum; ties go to the heavier weight */
+  function weakest(criteria,scale,scores){
+    let best=null;
+    for(const c of criteria){const s=Math.min(scale.max,Math.max(scale.min,Math.round(scores[c.id]??0))),frac=s/scale.max;
+      if(!best||frac<best.frac||(frac===best.frac&&c.weight>best.c.weight))best={c,frac}}
+    return best.c;
+  }
+  const fmt=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+  /* schedule.ts: n projects, 3+2 minute slots from 18:20; the table has max(n,1) rows up to maxSlots=7 plus overflow count */
+  function schedule(order,maxSlots=7,first='18:20',demoMin=3,qaMin=2){
+    const [h,m]=first.split(':').map(Number),t0=h*60+m,slots=[];
+    for(let i=0;i<maxSlots;i++){const s=t0+i*(demoMin+qaMin);slots.push({slot:i+1,start:fmt(s),demoEnds:fmt(s+demoMin),end:fmt(s+demoMin+qaMin),projectId:order[i]??null})}
+    return {slots,overflow:Math.max(0,order.length-maxSlots),window:first+'-'+slots[slots.length-1].end};
+  }
+  /* ship.ts verdict: ready when every required check passes */
+  function shipVerdict(checks,okById){
+    const req=checks.filter(c=>c.level==='required'),rp=req.filter(c=>okById[c.id]).length;
+    return {ready:rp===req.length,passed:checks.filter(c=>okById[c.id]).length,total:checks.length,requiredPassed:rp,requiredTotal:req.length};
+  }
+  return {LANES,validate,devnetEvidence,testsEvidence,total,suggestScores,weakest,schedule,shipVerdict};
+})();
+if(typeof module!=='undefined')module.exports=CALC;
+</script>
+<script>/* Live mode: read-only public Solana data, straight from the browser. No keys, no wallets, no writes.
+   Browser-safe RPC: solana-rpc.publicnode.com (api.mainnet.solana.com returns 403 for browser Origins). */
+const LIVE=(()=>{
+  const RPC=(typeof HASH!=='undefined'&&HASH.get('rpc'))||'https://solana-rpc.publicnode.com';
+  const POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE',SOL_MINT='So11111111111111111111111111111111111111112',USDC_MINT='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',PYTH_OWNER='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ',PYTH_DISC='22f123639d7ef4cd';
+  const A58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58(b){let n=0n;for(const x of b)n=n*256n+BigInt(x);let s='';while(n>0n){s=A58[Number(n%58n)]+s;n/=58n}for(const x of b){if(x===0)s='1'+s;else break}return s}
+  function fromB64(s){const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+  const hex=(u,a,b)=>Array.from(u.slice(a,b),x=>x.toString(16).padStart(2,'0')).join('');
+  let id=1;
+  async function rpc(method,params,url){
+    const r=await fetch(url||RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:id++,method,params})});
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.error){const e=new Error(j.error.message||'rpc error');e.rate=/429|rate|too many/i.test(JSON.stringify(j.error));throw e}
+    return j.result;
+  }
+  async function account(addr){
+    const r=await rpc('getAccountInfo',[addr,{encoding:'base64',commitment:'confirmed'}]);
+    if(!r||!r.value)throw new Error('account not found');
+    return {slot:r.context.slot,owner:r.value.owner,bytes:fromB64(r.value.data[0])};
+  }
+  /* Pyth SOL/USD PriceUpdateV2 account: price i64@73, conf i64@81, expo i32@89, publish time i64@93, posted slot u64@125 */
+  async function fetchPythPrice(){
+    const a=await account(PYTH_ACCOUNT);
+    if(a.owner!==PYTH_OWNER)throw new Error('unexpected Pyth owner');
+    const u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    if(u.length<133||hex(u,0,8)!==PYTH_DISC)throw new Error('not a Pyth price account');
+    const expo=v.getInt32(89,true);
+    return {price:Number(v.getBigInt64(73,true))*10**expo,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),currentSlot:a.slot};
+  }
+  /* Orca whirlpool: sqrtPrice u128@65 (Q64.64); price = (sqrt/2^64)^2 * 10^(9-6) */
+  async function fetchOrcaPrice(){
+    const a=await account(POOL),u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const sq=(v.getBigUint64(73,true)<<64n)|v.getBigUint64(65,true);
+    const r=Number(sq)/2**64;return {price:r*r*1000,slot:a.slot};
+  }
+  async function fetchJupiterQuote(){
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL_MINT+'&outputMint='+USDC_MINT+'&amount=1000000000&slippageBps=50');
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();return {price:Number(j.outAmount)/1e6};
+  }
+  /* swaps: same rule as code/src/swaps.ts. A swap moves the two pool vaults in opposite directions. */
+  let vaults=null;
+  async function loadVaults(){
+    if(vaults)return vaults;const a=await account(POOL),u=a.bytes;
+    if(u.length<245||b58(u.slice(101,133))!==SOL_MINT||b58(u.slice(181,213))!==USDC_MINT)throw new Error('pool is not SOL/USDC');
+    return vaults={sol:b58(u.slice(133,165)),usdc:b58(u.slice(213,245))};
+  }
+  function swapFromTx(sig,tx,vt){
+    if(!tx||!tx.meta||tx.meta.err||tx.blockTime==null)return null;
+    const keys=tx.transaction.message.accountKeys.map(k=>typeof k==='string'?k:k.pubkey);
+    const d=(vault,mint)=>{const i=keys.indexOf(vault);if(i<0)return null;
+      const f=l=>(l||[]).find(b=>b.accountIndex===i&&b.mint===mint),pre=f(tx.meta.preTokenBalances),post=f(tx.meta.postTokenBalances);
+      return pre&&post?(Number(post.uiTokenAmount.amount)-Number(pre.uiTokenAmount.amount))/10**pre.uiTokenAmount.decimals:null};
+    const ds=d(vt.sol,SOL_MINT),du=d(vt.usdc,USDC_MINT);
+    if(ds===null||du===null||ds===0||du===0||Math.sign(ds)===Math.sign(du))return null;
+    return {t:tx.blockTime,slot:tx.slot,side:ds>0?'sell':'buy',solAmount:Math.abs(ds),usdcAmount:Math.abs(du),price:Math.abs(du)/Math.abs(ds),sig};
+  }
+  /* state={lastSig:null}; returns new swaps oldest first (at most `max`), and the current slot */
+  async function fetchNewSwaps(state,max=10){
+    const vt=await loadVaults();
+    const sigs=await rpc('getSignaturesForAddress',[POOL,Object.assign({limit:25,commitment:'confirmed'},state.lastSig?{until:state.lastSig}:{})]);
+    if(sigs.length)state.lastSig=sigs[0].signature;
+    const take=sigs.filter(s=>!s.err).slice(0,max).reverse(),out=[];
+    for(const s of take){
+      let tx=null;try{tx=await rpc('getTransaction',[s.signature,{encoding:'jsonParsed',maxSupportedTransactionVersion:1,commitment:'confirmed'}])}catch(e){if(e.rate||!out.length&&s===take[take.length-1])throw e}
+      const sw=swapFromTx(s.signature,tx,vt);if(sw)out.push(sw);
+      await new Promise(r=>setTimeout(r,120));
+    }
+    return {swaps:out,slot:sigs.length?sigs[0].slot:null};
+  }
+  /* UI + loop. opts: {el, intervalMs=5000, enter(), exit(), poll(): Promise<{slot?,note?}> (throw on failure)} */
+  function start(opts){
+    const el=opts.el,every=opts.intervalMs||5000;
+    el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end';
+    const grp=document.createElement('div');grp.setAttribute('role','group');grp.setAttribute('aria-label','Data source');grp.style.cssText='display:flex;gap:.4rem';
+    const bR=document.createElement('button'),bL=document.createElement('button');bR.textContent='Recorded';bL.textContent='Live';
+    bR.style.padding=bL.style.padding='.3rem .8rem';bR.style.fontSize=bL.style.fontSize='.95rem';
+    grp.append(bR,bL);const pill=document.createElement('span');pill.className='pill';pill.style.fontSize='.85rem';pill.setAttribute('aria-live','polite');
+    el.append(grp,pill);
+    let on=false,timer=null,busy=false,gen=0,fails=0;
+    const paint=()=>{bR.setAttribute('aria-pressed',on?'false':'true');bL.setAttribute('aria-pressed',on?'true':'false')};
+    const say=(txt,cls)=>{pill.textContent=txt;pill.className='pill '+(cls||'mut');pill.style.fontSize='.85rem'};
+    const hhmmss=()=>new Date(Date.now()+8*3600e3).toISOString().slice(11,19)+' SGT';
+    async function tick(){
+      if(!on||busy||document.hidden)return;busy=true;const g=gen;
+      try{const r=await opts.poll()||{};if(g!==gen)return;fails=0;say('LIVE · '+hhmmss()+(r.slot?' · slot '+r.slot:'')+(r.note?' · '+r.note:''),'mint')}
+      catch(e){if(g===gen){fails++;console.warn('live poll failed ('+fails+'/3):',e&&e.message);if(fails>=3)fallback(e);else say('LIVE · retrying ('+fails+'/3)','warnc')}}
+      finally{busy=false}
+    }
+    function setLive(v){
+      if(v===on)return;on=v;gen++;fails=0;paint();clearInterval(timer);timer=null;
+      if(on){say('LIVE · connecting','warnc');opts.enter();tick();timer=setInterval(tick,every)}
+      else{opts.exit();say('Recorded data','mut')}
+    }
+    function fallback(e){on=false;gen++;paint();clearInterval(timer);timer=null;opts.exit();say((e&&e.rate?'rate limited, back to recorded':'live unavailable, back to recorded'),'badc');console.warn('live mode failed:',e&&e.message)}
+    bR.addEventListener('click',()=>setLive(false));bL.addEventListener('click',()=>setLive(true));
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+    paint();say('Recorded data','mut');
+    if(/[?&#]live=1/.test(location.search+location.hash))setLive(true);
+    return {isLive:()=>on};
+  }
+  /* Demo Day additions (read only): the mainnet slot, and what devnet knows about a transaction signature. */
+  const DEV_RPC=(typeof HASH!=='undefined'&&HASH.get('devrpc'))||'https://api.devnet.solana.com';
+  async function fetchSlot(){return rpc('getSlot',[{commitment:'confirmed'}])}
+  /* returns {sig: {status:'finalized'|'confirmed'|'processed'|'failed'|'not-found', slot, err}} (one batched call) */
+  async function fetchSignatureStatuses(sigs){
+    const out={};if(!sigs.length)return out;
+    const r=await rpc('getSignatureStatuses',[sigs,{searchTransactionHistory:true}],DEV_RPC);
+    sigs.forEach((s,i)=>{const row=r.value[i];out[s]=row?{status:row.err?'failed':(row.confirmationStatus||'processed'),slot:row.slot,err:row.err}:{status:'not-found',slot:null,err:null}});
+    return out;
+  }
+  return {fetchSlot,fetchSignatureStatuses,fetchPythPrice,fetchOrcaPrice,fetchJupiterQuote,fetchNewSwaps,start,rpc};
+})();
+if(typeof module!=='undefined')module.exports=LIVE;
+</script>
+<script>
+const G={"event":"Demo Day, Thu 18 Feb 2027","mode":"recorded","generatedAt":"2026-10-21T21:06:35.956Z","template":true,"network":{"cluster":"mainnet-beta","slot":459749459,"capturedAt":"2026-10-21T19:35:56.392Z","slotsPerSecond":4.63,"source":"getSlot (confirmed) twice, 6.0 s apart, from api.mainnet.solana.com; first read slot 459749431","mode":"recorded"},"projects":[{"id":"example-agent","name":"EXAMPLE: Spread Watch Agent","lane":"agent","team":["@example-handle-a","@example-handle-b"],"summary":"EXAMPLE ENTRY. An agent that checks two price sources and writes down why it did or did not act, using recorded data.","repo":"https://example.com/EXAMPLE-spread-watch-agent","demo":"https://example.com/EXAMPLE-spread-watch-agent/demo","devnetSignature":"2eGnTvKicstuqrVfVpDmmM9HExLGw4yMUEbLaHFCvGaxiVkdiGmrtPjXEfuSBTeb8K4wHyXmoweV39hKkWkrTXY6","tests":{"command":"npm test","passing":14,"total":14},"limitation":"EXAMPLE ENTRY. Only tested on one recorded hour; a stale price once slipped through before the age check.","example":true,"evidence":{"tests":"14/14 passing (self-reported)","devnet":"finalized on devnet at slot 513629343","signatureCheck":{"signature":"2eGnTvKicstuqrVfVpDmmM9HExLGw4yMUEbLaHFCvGaxiVkdiGmrtPjXEfuSBTeb8K4wHyXmoweV39hKkWkrTXY6","cluster":"devnet","status":"finalized","slot":513629343,"err":null,"checkedAt":"2026-10-21T19:35:56.528Z","mode":"recorded"}}},{"id":"example-exchange","name":"EXAMPLE: Order Book Component","lane":"exchange","team":["@example-handle-c"],"summary":"EXAMPLE ENTRY. A small matching component with a test for every rejected order, deployed to devnet.","repo":"https://example.com/EXAMPLE-order-book-component","devnetSignature":"5YiqBdZzRSYKnZh3G6ALiGWiwt9C4qqhdFBj71w7WopTE9ofpAdo5aAHy7sqRJdgtxJ4AjCf7uiSccwg2jUsu1T7","tests":{"command":"npm test","passing":22,"total":24},"limitation":"EXAMPLE ENTRY. Two tests fail on partial fills; they are listed in the README as known failures.","example":true,"evidence":{"tests":"22/24 passing (self-reported)","devnet":"finalized on devnet at slot 513629341","signatureCheck":{"signature":"5YiqBdZzRSYKnZh3G6ALiGWiwt9C4qqhdFBj71w7WopTE9ofpAdo5aAHy7sqRJdgtxJ4AjCf7uiSccwg2jUsu1T7","cluster":"devnet","status":"finalized","slot":513629341,"err":null,"checkedAt":"2026-10-21T19:35:56.528Z","mode":"recorded"}}},{"id":"example-tooling","name":"EXAMPLE: Clean Checkout Checker","lane":"tooling","team":["@example-handle-d","@example-handle-e","@example-handle-f"],"summary":"EXAMPLE ENTRY. A command-line tool that runs a fresh clone of a project and reports which README steps failed.","repo":"https://example.com/EXAMPLE-clean-checkout-checker","demo":"https://example.com/EXAMPLE-clean-checkout-checker/demo","tests":{"command":"npm test","passing":9,"total":9},"limitation":"EXAMPLE ENTRY. Reads files only and does not run Python projects. No devnet transaction: a tool does not need one.","example":true,"evidence":{"tests":"9/9 passing (self-reported)","devnet":"no devnet evidence","signatureCheck":null}}],"byLane":{"agent":1,"exchange":1,"tooling":1}},SH={"checks":[{"id":"run","label":"README says how to run it","level":"required","hint":"Add the exact commands, for example npm install then npm run demo."},{"id":"test-command","label":"A test command exists","level":"required","hint":"Add a test script to package.json (or pytest, cargo test)."},{"id":"test-files","label":"Test files exist","level":"required","hint":"Add at least one test, ideally one for a failure case."},{"id":"secrets","label":"No keys or secrets in the folder","level":"required","hint":"Remove keypair files and .env, add them to .gitignore, and rotate anything real."},{"id":"mainnet-write","label":"No transaction is sent on mainnet","level":"required","hint":"Every write is devnet only. Point sending code at devnet."},{"id":"devnet-evidence","label":"A devnet signature or link is written down","level":"required","hint":"Put the transaction signature or explorer link in README.md or DEVNET.md."},{"id":"recorded-backup","label":"A recorded backup of the demo exists","level":"required","hint":"Add a recorded/ folder or a short screen recording in case the network fails."},{"id":"lockfile","label":"Dependencies are locked","level":"recommended","hint":"Commit package-lock.json (or your tool's lockfile)."},{"id":"gitignore","label":".gitignore covers .env and node_modules","level":"recommended","hint":"Add a .gitignore with .env and node_modules/."},{"id":"limitations","label":"README names a limitation","level":"recommended","hint":"Add a Limitations heading. A clear negative result is valuable."},{"id":"license","label":"A license file is present","level":"recommended","hint":"Add a LICENSE so others know they may reuse it."}],"repos":[{"name":"ready-example","ready":true,"passed":11,"total":11,"requiredPassed":7,"requiredTotal":7,"results":[{"id":"run","ok":true,"detail":"README.md has a run command"},{"id":"test-command","ok":true,"detail":"test command found"},{"id":"test-files","ok":true,"detail":"1 test file(s), for example test/index.test.ts"},{"id":"secrets","ok":true,"detail":"no key files, .env or private key blocks found"},{"id":"mainnet-write","ok":true,"detail":"no file combines sending transactions with mainnet (heuristic)"},{"id":"devnet-evidence","ok":true,"detail":"signature or devnet link in README.md"},{"id":"recorded-backup","ok":true,"detail":"found recorded/README.txt"},{"id":"lockfile","ok":true,"detail":"package-lock.json present"},{"id":"gitignore","ok":true,"detail":".gitignore covers .env and node_modules"},{"id":"limitations","ok":true,"detail":"README has a Limitations section"},{"id":"license","ok":true,"detail":"LICENSE present"}]},{"name":"gaps-example","ready":false,"passed":3,"total":11,"requiredPassed":1,"requiredTotal":7,"results":[{"id":"run","ok":false,"detail":"README.md has no run command"},{"id":"test-command","ok":false,"detail":"no test script in package.json (and no Cargo.toml or pytest config)"},{"id":"test-files","ok":true,"detail":"1 test file(s), for example test/smoke.test.ts"},{"id":"secrets","ok":false,"detail":"found: id.json"},{"id":"mainnet-write","ok":false,"detail":"src/index.ts sends transactions and mentions mainnet"},{"id":"devnet-evidence","ok":false,"detail":"no transaction signature or devnet explorer link in README.md, DEVNET.md or DEMO-PACK.md"},{"id":"recorded-backup","ok":false,"detail":"no recorded/ folder and no screen recording found"},{"id":"lockfile","ok":true,"detail":"package-lock.json present"},{"id":"gitignore","ok":false,"detail":".gitignore is missing .env or node_modules"},{"id":"limitations","ok":false,"detail":"no Limitations heading in README.md"},{"id":"license","ok":true,"detail":"LICENSE present"}]}]};
+const pulse=makePulse($('#pulse'));let LIVE_ON=false,repo=SH.repos.find(r=>r.name===hv('repo',''))||SH.repos[0],state={};
+const B58=/^[1-9A-HJ-NP-Za-km-z]{86,88}$/;
+function load(){state={};repo.results.forEach(r=>state[r.id]=r.ok)}
+function tabs(){const t=$('#tabs');t.innerHTML='';SH.repos.forEach(r=>{const b=H('button',{type:'button','aria-pressed':String(r===repo)},t,r.name);b.addEventListener('click',()=>{repo=r;load();render();tabs()})})}
+function render(){
+  const box=$('#items');box.innerHTML='';
+  SH.checks.forEach(c=>{
+    const r=repo.results.find(x=>x.id===c.id),on=!!state[c.id],changed=on!==r.ok;
+    const b=H('button',{type:'button',class:'box it','aria-pressed':String(on),'aria-label':c.label+': '+(on?'passes':'fails')+(changed?' (changed by you)':'')},box);
+    H('span',{class:'mk '+(on?'mint':'badc')},b,on?'✓':'✗');
+    H('span',{class:'lb'},b,c.label);
+    H('span',{class:'pill '+(c.level==='required'?'lavc':'mut'),style:'font-size:.8rem'},b,c.level);
+    H('span',{class:'dt'},b,changed?'what if: you fixed or broke this one':r.detail);
+    if(!on)H('span',{class:'fx'},b,'Fix: '+c.hint);
+    b.addEventListener('click',()=>{state[c.id]=!state[c.id];render()});
+  });
+  const v=CALC.shipVerdict(SH.checks,state);
+  const vd=$('#verdict');vd.textContent=v.ready?'READY TO SHIP':'NOT READY';vd.className='verdict '+(v.ready?'mint':'badc');$('#vbox').className='box '+(v.ready?'mint':'bad');
+  $('#counts').textContent=v.passed+' of '+v.total+' checks, '+v.requiredPassed+' of '+v.requiredTotal+' required';
+  const miss=SH.checks.filter(c=>c.level==='required'&&!state[c.id]);
+  $('#why').textContent=v.ready?'Every required check passes. A stranger can run it.':'Required and failing: '+miss.map(c=>c.label).join('; ')+'.';
+  footer();
+}
+function footer(){
+  if(LIVE_ON)sourceLine($('#src'),{g:{mode:'live',capturedAt:new Date().toISOString()}},'The checklist reads two example repos. The signature box asks devnet, read only.');
+  else sourceLine($('#src'),{g:{mode:'recorded',capturedAt:G.network.capturedAt}},'The checklist results come from npm run demo on two example repos (no network). Switch Live on to check a signature.');
+}
+function sigUi(){$('#sig').disabled=!LIVE_ON;$('#chk').disabled=!LIVE_ON;$('#sighint').textContent=LIVE_ON?'Reads only. Devnet keeps recent history, so an old signature can show not found.':'Switch Live on to check a signature. Nothing is sent from this page, ever.'}
+async function checkSig(){
+  const s=$('#sig').value.trim(),res=$('#res');
+  if(!B58.test(s)){res.className='badc';res.textContent='A signature is 86 to 88 base58 characters.';return}
+  res.className='mut';res.textContent='checking...';
+  try{const o=(await LIVE.fetchSignatureStatuses([s]))[s];
+    res.className=o.status==='not-found'||o.status==='failed'?'badc':'mint';
+    res.textContent=o.status==='not-found'?'not found on devnet':o.status==='failed'?'transaction failed on devnet':o.status+' on devnet at slot '+o.slot;
+    if(/finalized|confirmed|processed/.test(o.status)&&state['devnet-evidence']===false){state['devnet-evidence']=true;render()}
+  }catch(e){res.className='badc';res.textContent='could not read devnet ('+e.message+')'}
+}
+$('#chk').addEventListener('click',checkSig);$('#sig').addEventListener('keydown',e=>{if(e.key==='Enter')checkSig()});
+$('#reset').addEventListener('click',()=>{load();render()});
+LIVE.start({el:$('#livebar'),
+  enter:()=>{LIVE_ON=true;pulse.waiting();sigUi();footer()},
+  exit:()=>{LIVE_ON=false;pulse.recorded(G.network);sigUi();footer()},
+  poll:async()=>{const slot=await LIVE.fetchSlot();pulse.live(slot);return {slot}}});
+load();tabs();render();pulse.recorded(G.network);sigUi();
+</script></body></html>

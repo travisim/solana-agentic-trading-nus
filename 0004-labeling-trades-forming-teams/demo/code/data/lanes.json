@@ -1,0 +1,161 @@
+{
+  "about": "Starter options for the three project lanes. Each option names a real starter in the repo's research notes, one measurable success test, and what devnet evidence it can produce. These are suggestions to start from, not a menu you must pick from. Facts come from research/experiments (VERDICT.md and each FINDINGS.md, checked 20-21 Oct 2026).",
+  "safety": "Reads use public mainnet data; every write is devnet only; no real funds. Judged on utility, tests, devnet evidence and a clear explanation, never on simulated returns.",
+  "lanes": [
+    {
+      "id": "agent",
+      "title": "Agent",
+      "blurb": "A trading agent or strategy with honest validation.",
+      "options": [
+        {
+          "id": "label-my-strategy",
+          "title": "Label my own strategy",
+          "level": "beginner",
+          "pitch": "Run a strategy's past decisions through the triple-barrier labeler and show how often it really wins, with costs.",
+          "firstTest": "Labels for at least 50 decisions, and the share of wins whose barrier is wider than the round-trip cost.",
+          "devnetEvidence": "A Memo transaction for the first 3 labelled decisions (npm run memo).",
+          "from": "0004 demo-repo/code (labeler) and the strategies in 0002 demo-repo/code/src/strategies",
+          "needs": "Node 24, recorded data. No keys.",
+          "caveat": "A calm 40-minute window; do not generalise."
+        },
+        {
+          "id": "meta-gate",
+          "title": "Build the second-opinion gate",
+          "level": "standard",
+          "pitch": "Add your own features to the gate and measure which blocked trades were right to block, on a purged split.",
+          "firstTest": "Gate hit rate versus no-gate hit rate on the test period, shown with the +/- range, plus the number of purged training trades.",
+          "devnetEvidence": "A Memo transaction per gate decision batch with a hash of the decision file.",
+          "from": "0004 demo-repo/code/src/meta.ts",
+          "needs": "Node 24, recorded data.",
+          "caveat": "Few trades means a wide +/- range: say so in the brief."
+        },
+        {
+          "id": "explanation-checker",
+          "title": "Explanation checker for an LLM agent",
+          "level": "standard",
+          "pitch": "Flag written reasons whose facts contradict the data the agent had; grade reasons against what happened.",
+          "firstTest": "Catches every injected wrong claim in out/agent.json and raises no false alarm on true ones, then runs on 20 reasons from your own agent.",
+          "devnetEvidence": "A Memo transaction with the hash of each flagged reason.",
+          "from": "0004 demo-repo/code/src/explain.ts",
+          "needs": "Node 24. An LLM is optional: the offline pretend agent works without AI credits.",
+          "caveat": "It checks facts, not whether the trade idea is good."
+        },
+        {
+          "id": "agent-with-guard",
+          "title": "Agent with a risk hook and a label log",
+          "level": "advanced",
+          "pitch": "Combine the build night 1 risk hook, the CUSUM wake-up and labels into one agent that logs every decision and its outcome.",
+          "firstTest": "A 1-hour recorded replay where every decision has a label, a guard result and a log row, with tests for the guard.",
+          "devnetEvidence": "A devnet Memo log of the decisions, checked against the local log.",
+          "from": "0002 risk.ts, 0003 cusum.ts, 0004 labels.ts",
+          "needs": "Node 24, a throwaway devnet key funded by a lead.",
+          "caveat": "More moving parts: agree the smallest version first."
+        }
+      ]
+    },
+    {
+      "id": "exchange",
+      "title": "Exchange",
+      "blurb": "A venue component: order book, matching, deposit or custody flow.",
+      "options": [
+        {
+          "id": "deposit-watcher",
+          "title": "Deposit watcher",
+          "level": "beginner",
+          "pitch": "Watch a devnet address and credit users in an append-only ledger when a transfer arrives.",
+          "firstTest": "A real devnet transfer shows up as one ledger row with signature and slot, and a replayed duplicate is ignored.",
+          "devnetEvidence": "The ledger row and the transaction link on the devnet explorer.",
+          "from": "research/experiments/deposit-watcher (proven end to end on devnet: a 0.021 SOL transfer was credited about 1 s after confirmation)",
+          "needs": "A throwaway devnet key; devnet SOL from a lead (the public faucet rate-limits hard).",
+          "caveat": "Uses the older web3.js v1 on purpose (one-line log subscription)."
+        },
+        {
+          "id": "mini-orderbook",
+          "title": "Mini order book",
+          "level": "standard",
+          "pitch": "Write a price-time-priority matching engine and settle its trades as devnet Memo records.",
+          "firstTest": "The 10-order fixture gives exactly the 5 hand-checked trades; add a test for a partial fill and a cancel.",
+          "devnetEvidence": "Settlement Memo transactions (the starter's settle step was blocked only by the devnet faucet when tested).",
+          "from": "research/experiments/orderbook-engines/student-build (about 390 lines of TypeScript)",
+          "needs": "Node 24; devnet SOL from a lead for the settle step.",
+          "caveat": "Matching is the point, not speed."
+        },
+        {
+          "id": "whirlpool-lab",
+          "title": "Orca Whirlpool devnet lab",
+          "level": "advanced",
+          "pitch": "Use the Whirlpools SDK on devnet: find a pool, quote a swap, and write a small tool around it.",
+          "firstTest": "Fetch a devnet SOL/devUSDC pool, decode it and quote one swap; a test checks the quote against the pool's price.",
+          "devnetEvidence": "A devnet pool address and a read-only quote; a swap transaction if funded.",
+          "from": "research/experiments/whirlpools (10,231 devnet whirlpools found; SDK @orca-so/whirlpools 8.0.1)",
+          "needs": "Node 24, devnet SOL from a lead for any write.",
+          "caveat": "Orca's licence allows university courses; it is not a permissive open-source licence. The SDK uses web3.js v2 (@solana/kit)."
+        },
+        {
+          "id": "phoenix-reading",
+          "title": "Read a real on-chain order book (Phoenix)",
+          "level": "advanced",
+          "pitch": "Read the Phoenix devnet ladder and implement one pure module (tick and lot conversion or an event decoder) with tests.",
+          "firstTest": "Your module reproduces the SDK's ladder numbers for one devnet market.",
+          "devnetEvidence": "A read-only devnet ladder capture.",
+          "from": "research/experiments/phoenix-v1 (MIT since May 2026; use the current master only)",
+          "needs": "Node 24; Rust only if you read the program.",
+          "caveat": "The TypeScript SDK is old (marked Phoenix Legacy); expect to read source."
+        }
+      ]
+    },
+    {
+      "id": "tooling",
+      "title": "Tooling",
+      "blurb": "Anything that helps the trading process: data, monitoring, risk, explainability, dashboards.",
+      "options": [
+        {
+          "id": "data-collector",
+          "title": "Data collector for another market",
+          "level": "beginner",
+          "pitch": "Record real prices for a token other than SOL and publish the file with its provenance.",
+          "firstTest": "A recorded file of at least 30 minutes with a SOURCES.md, and a test that loads it.",
+          "devnetEvidence": "A Memo transaction with the file's hash.",
+          "from": "0002 collectors and 0004 src/collect.ts",
+          "needs": "Node 24, public mainnet reads.",
+          "caveat": "Public endpoints rate-limit a shared campus connection: poll slowly."
+        },
+        {
+          "id": "alert-monitor",
+          "title": "Change and staleness monitor",
+          "level": "standard",
+          "pitch": "Watch a price feed and alert when it moves (CUSUM) or goes stale (age and slots behind).",
+          "firstTest": "On the recorded 26-minute Pyth series the monitor flags the same stale spans as build night 2's checker.",
+          "devnetEvidence": "A Memo transaction when an alert fires (devnet only).",
+          "from": "0003 demo-repo/code (cusum.ts, staleness.ts)",
+          "needs": "Node 24, recorded data.",
+          "caveat": "The frozen-feed fault in 0003 is simulated."
+        },
+        {
+          "id": "label-dashboard",
+          "title": "Label and gate dashboard",
+          "level": "standard",
+          "pitch": "A page that shows an agent's decisions, labels, gate result and report card for any recorded file.",
+          "firstTest": "Loads out/labels.json and out/agent.json and shows the same counts as npm run demo.",
+          "devnetEvidence": "Link each shown decision to its Memo transaction when present.",
+          "from": "0004 demo-repo/lab (copy a demo and change it)",
+          "needs": "A browser. No keys.",
+          "caveat": "Keep the Recorded/Live switch honest: label live data as live."
+        },
+        {
+          "id": "leak-checker",
+          "title": "Leak checker for backtests",
+          "level": "advanced",
+          "pitch": "Given labelled events and a train/test split, report how many training labels reach into the test period and purge them.",
+          "firstTest": "Matches the leaking count in out/overlap.json and removes exactly those labels, with tests.",
+          "devnetEvidence": "A Memo transaction with the hash of the purged split.",
+          "from": "0004 demo-repo/code/src/overlap.ts",
+          "needs": "Node 24, recorded data.",
+          "caveat": "Needs a clear definition of an event's start and end; write it down first."
+        }
+      ]
+    }
+  ],
+  "skills": ["TypeScript or JavaScript", "Python", "Solana basics (accounts, transactions)", "Trading or markets", "Testing", "Design or UX", "Writing and docs", "Data and statistics"],
+  "availability": ["Tue evenings", "Weekends", "Mostly async", "Free during the break (mid-Nov to early Jan)"]
+}

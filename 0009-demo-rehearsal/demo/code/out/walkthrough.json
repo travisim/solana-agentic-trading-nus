@@ -1,0 +1,423 @@
+{
+ "mode": "recorded",
+ "capturedAt": "2026-10-21T19:03:24.123Z",
+ "source": "Orca Whirlpool SOL/USDC; getSignaturesForAddress(pool) + getTransaction(jsonParsed) vault token-balance deltas; Pyth reads from recorded/pyth-reads.json",
+ "pair": "SOL/USDC",
+ "params": {
+  "thresholdUsd": 20000,
+  "cusumBps": 8,
+  "usdPerBps": 100,
+  "feeBps": 4,
+  "limits": {
+   "maxNotionalUsd": 1000,
+   "maxOracleGapBps": 50,
+   "maxOracleAgeSec": 60
+  }
+ },
+ "window": {
+  "fromT": 1792606426,
+  "toT": 1792607420,
+  "swaps": 1114,
+  "recordedSwaps": 2900,
+  "dropped": {
+   "duplicates": 2,
+   "dust": 134,
+   "outliers": 5
+  }
+ },
+ "bars": 51,
+ "events": 10,
+ "decisions": [
+  {
+   "n": 1,
+   "t": 1792606461,
+   "direction": "up",
+   "bucketBps": 8.02,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 802,
+    "price": 108.606748
+   },
+   "context": {
+    "oraclePrice": 108.5353731,
+    "oracleAgeSec": 15
+   },
+   "gapBps": 6.6,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 2,
+   "t": 1792606535,
+   "direction": "up",
+   "bucketBps": 9.33,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 933,
+    "price": 108.7081
+   },
+   "context": {
+    "oraclePrice": 108.63706063000001,
+    "oracleAgeSec": 9
+   },
+   "gapBps": 6.5,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 3,
+   "t": 1792606596,
+   "direction": "up",
+   "bucketBps": 9.46,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 946,
+    "price": 108.810931
+   },
+   "context": {
+    "oraclePrice": 108.72523014000001,
+    "oracleAgeSec": 10
+   },
+   "gapBps": 7.9,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 4,
+   "t": 1792606773,
+   "direction": "down",
+   "bucketBps": 9.41,
+   "order": {
+    "side": "sell",
+    "sizeUsd": 941,
+    "price": 108.787583
+   },
+   "context": {
+    "oraclePrice": 108.79517239,
+    "oracleAgeSec": 7
+   },
+   "gapBps": 0.7,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 5,
+   "t": 1792606957,
+   "direction": "up",
+   "bucketBps": 9.08,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 908,
+    "price": 108.808182
+   },
+   "context": {
+    "oraclePrice": 108.7359236,
+    "oracleAgeSec": 11
+   },
+   "gapBps": 6.6,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 6,
+   "t": 1792607002,
+   "direction": "up",
+   "bucketBps": 8.83,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 883,
+    "price": 108.904268
+   },
+   "context": {
+    "oraclePrice": 108.87654806,
+    "oracleAgeSec": 6
+   },
+   "gapBps": 2.5,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 7,
+   "t": 1792607165,
+   "direction": "up",
+   "bucketBps": 8.79,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 879,
+    "price": 109.000059
+   },
+   "context": {
+    "oraclePrice": 108.92735812000001,
+    "oracleAgeSec": 9
+   },
+   "gapBps": 6.7,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 8,
+   "t": 1792607240,
+   "direction": "down",
+   "bucketBps": 10.64,
+   "order": {
+    "side": "sell",
+    "sizeUsd": 1064,
+    "price": 108.929608
+   },
+   "context": {
+    "oraclePrice": 108.94055787,
+    "oracleAgeSec": 14
+   },
+   "gapBps": 1,
+   "decision": {
+    "ok": false,
+    "rule": "max-notional",
+    "reason": "1064 USD exceeds the 1000 USD limit"
+   }
+  },
+  {
+   "n": 9,
+   "t": 1792607347,
+   "direction": "down",
+   "bucketBps": 9.09,
+   "order": {
+    "side": "sell",
+    "sizeUsd": 909,
+    "price": 108.830666
+   },
+   "context": {
+    "oraclePrice": 108.83469381,
+    "oracleAgeSec": 11
+   },
+   "gapBps": 0.4,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  },
+  {
+   "n": 10,
+   "t": 1792607383,
+   "direction": "up",
+   "bucketBps": 8.58,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 858,
+    "price": 108.924068
+   },
+   "context": {
+    "oraclePrice": 108.88509812000001,
+    "oracleAgeSec": 7
+   },
+   "gapBps": 3.6,
+   "decision": {
+    "ok": true,
+    "rule": null,
+    "reason": "within all limits"
+   }
+  }
+ ],
+ "ledger": [
+  {
+   "n": 1,
+   "t": 1792606462,
+   "side": "buy",
+   "sizeUsd": 802,
+   "fillPrice": 108.633197,
+   "solQty": 7.382642,
+   "feeUsd": 0.32,
+   "cashUsd": -802.32,
+   "positionSol": 7.382642,
+   "equityUsd": -0.32
+  },
+  {
+   "n": 2,
+   "t": 1792606536,
+   "side": "buy",
+   "sizeUsd": 933,
+   "fillPrice": 108.713685,
+   "solQty": 8.582176,
+   "feeUsd": 0.37,
+   "cashUsd": -1735.69,
+   "positionSol": 15.964818,
+   "equityUsd": -0.1
+  },
+  {
+   "n": 3,
+   "t": 1792606597,
+   "side": "buy",
+   "sizeUsd": 946,
+   "fillPrice": 108.813363,
+   "solQty": 8.693785,
+   "feeUsd": 0.38,
+   "cashUsd": -2682.07,
+   "positionSol": 24.658603,
+   "equityUsd": 1.11
+  },
+  {
+   "n": 4,
+   "t": 1792606774,
+   "side": "sell",
+   "sizeUsd": 941,
+   "fillPrice": 108.770855,
+   "solQty": 8.651215,
+   "feeUsd": 0.38,
+   "cashUsd": -1741.45,
+   "positionSol": 16.007389,
+   "equityUsd": -0.31
+  },
+  {
+   "n": 5,
+   "t": 1792606958,
+   "side": "buy",
+   "sizeUsd": 908,
+   "fillPrice": 108.830264,
+   "solQty": 8.343267,
+   "feeUsd": 0.36,
+   "cashUsd": -2649.81,
+   "positionSol": 24.350656,
+   "equityUsd": 0.28
+  },
+  {
+   "n": 6,
+   "t": 1792607003,
+   "side": "buy",
+   "sizeUsd": 883,
+   "fillPrice": 108.904325,
+   "solQty": 8.108034,
+   "feeUsd": 0.35,
+   "cashUsd": -3533.17,
+   "positionSol": 32.458691,
+   "equityUsd": 1.73
+  },
+  {
+   "n": 7,
+   "t": 1792607166,
+   "side": "buy",
+   "sizeUsd": 879,
+   "fillPrice": 109.012624,
+   "solQty": 8.063286,
+   "feeUsd": 0.35,
+   "cashUsd": -4412.52,
+   "positionSol": 40.521977,
+   "equityUsd": 4.89
+  },
+  {
+   "n": 9,
+   "t": 1792607351,
+   "side": "sell",
+   "sizeUsd": 909,
+   "fillPrice": 108.823515,
+   "solQty": 8.352974,
+   "feeUsd": 0.36,
+   "cashUsd": -3503.88,
+   "positionSol": 32.169003,
+   "equityUsd": -3.14
+  },
+  {
+   "n": 10,
+   "t": 1792607384,
+   "side": "buy",
+   "sizeUsd": 858,
+   "fillPrice": 108.928768,
+   "solQty": 7.876707,
+   "feeUsd": 0.34,
+   "cashUsd": -4362.22,
+   "positionSol": 40.04571,
+   "equityUsd": -0.09
+  }
+ ],
+ "scorecard": {
+  "label": "Simulated, on recorded data; not advice",
+  "events": 10,
+  "accepted": 9,
+  "rejected": 1,
+  "rejectedByRule": {
+   "max-notional": 1
+  },
+  "fills": 9,
+  "skippedNoLaterSwap": 0,
+  "pnlNetUsd": 3,
+  "hitRate": 0.667,
+  "maxDrawdownUsd": 8.03,
+  "markPrice": 109.006143,
+  "positionSol": 40.04571
+ },
+ "failureTests": [
+  {
+   "label": "oversized order",
+   "injected": true,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 5000,
+    "price": 108.54
+   },
+   "oracleAgeSec": 15,
+   "ok": false,
+   "rule": "max-notional",
+   "reason": "5000 USD exceeds the 1000 USD limit"
+  },
+  {
+   "label": "stale oracle (300 s old)",
+   "injected": true,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 250,
+    "price": 108.54
+   },
+   "oracleAgeSec": 300,
+   "ok": false,
+   "rule": "max-oracle-age",
+   "reason": "oracle is 300 s old, limit is 60 s"
+  },
+  {
+   "label": "price in cents, not dollars",
+   "injected": true,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 250,
+    "price": 10853.54
+   },
+   "oracleAgeSec": 15,
+   "ok": false,
+   "rule": "unit-sanity",
+   "reason": "price 10853.54 is 100.0x the oracle price 108.54; wrong unit?"
+  },
+  {
+   "label": "100 bps above the oracle",
+   "injected": true,
+   "order": {
+    "side": "buy",
+    "sizeUsd": 250,
+    "price": 109.62
+   },
+   "oracleAgeSec": 15,
+   "ok": false,
+   "rule": "max-oracle-gap",
+   "reason": "price is 99.9 bps from the oracle, limit is 50 bps"
+  }
+ ],
+ "note": "Simulated, on recorded data; not advice. No order is sent anywhere. Fill = next swap price after the alert; fee is an assumption."
+}

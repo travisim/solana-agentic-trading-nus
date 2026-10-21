@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    {
+      "id": "example-tooling",
+      "field": "devnetSignature",
+      "message": "no devnet evidence (add a transaction signature or a program address)"
+    }
+  ],
+  "counts": {
+    "projects": 3,
+    "agent": 1,
+    "exchange": 1,
+    "tooling": 1
+  }
+}

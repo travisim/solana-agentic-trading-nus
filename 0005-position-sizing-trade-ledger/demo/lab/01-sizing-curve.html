@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sizing Curve</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.lvwrap{margin-left:auto;padding-top:.5rem}
+
+.stage{display:grid;grid-template-columns:11rem 1fr 9rem;align-items:center;gap:.8rem;font-size:1.05rem;padding:.1rem 0}
+.stage .bar{height:1.15rem;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;background:#000}
+.stage .bar i{display:block;height:100%}
+.tgl{display:flex;gap:.4rem}.tgl button{padding:.3rem .8rem;font-size:.95rem}
+</style></head><body>
+<div class="page">
+<div class="row" style="align-items:flex-start;justify-content:space-between"><h1>Confidence in, capped size out</h1><div id="livebar" class="lvwrap"></div></div>
+<p class="cap">More confidence earns a bigger bet. Then steps, the exposure cap, the price-impact cap and the risk hook each get a say.</p>
+<main id="main" aria-label="Position sizing curve demo">
+<div class="box" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.2rem 1.6rem;align-items:center;padding:.3rem 1.1rem">
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 4.2rem"><label for="p">Confidence</label><input id="p" type="range" aria-label="Confidence that the call is right"><output id="po" for="p"></output></div>
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 5.5rem"><label for="eq">Account</label><input id="eq" type="range" aria-label="Account equity in USD"><output id="eqo" for="eq"></output></div>
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 4.2rem"><label for="cap">Exposure cap</label><input id="cap" type="range" aria-label="Exposure cap as a percent of equity"><output id="capo" for="cap"></output></div>
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 4.2rem"><label for="st">Step</label><input id="st" type="range" aria-label="Size step as a share of the cap"><output id="sto" for="st"></output></div>
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 5.5rem"><label for="hold">Already hold</label><input id="hold" type="range" aria-label="Current position in USD"><output id="holdo" for="hold"></output></div>
+  <div class="ctl" style="grid-template-columns:minmax(6rem,9rem) 1fr 4.8rem"><label for="imp">Impact cap</label><input id="imp" type="range" aria-label="Maximum price impact in basis points"><output id="impo" for="imp"></output></div>
+</div>
+<div class="grid" style="grid-template-columns:1.25fr 1fr;flex:1;min-height:0;gap:.8rem">
+  <div class="grid" style="grid-template-rows:1fr auto;gap:.8rem;min-height:0">
+    <div class="box" style="padding:.3rem .8rem .1rem"><svg id="cv" viewBox="0 0 1000 450" role="img" aria-label="Size as a function of confidence, smooth and in steps"></svg></div>
+    <div class="box" style="padding:.35rem 1.1rem"><div class="row" style="justify-content:space-between"><span class="lab">Pool to size against</span>
+      <div class="tgl" role="group" aria-label="Which pair's price impact to use"><button id="pSol" aria-pressed="true">SOL/USDC (deep)</button><button id="pOrca" aria-pressed="false">ORCA/USDC (thinner)</button></div></div>
+      <div id="pairinfo" class="mut" style="font-size:.95rem;margin-top:.25rem"></div></div>
+  </div>
+  <div class="box" id="pipe" aria-live="polite" style="display:flex;flex-direction:column;gap:.15rem"></div>
+</div>
+<div id="liveinfo" class="mut" style="font-size:.9rem;min-height:1.2rem;flex:none"></div>
+<div id="chk" class="mut" style="font-size:.85rem;flex:none"></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+const sgt=sec=>new Date((sec+8*3600)*1000).toISOString().replace('T',' ').slice(0,16)+' SGT';
+/* footer caption: says whether the data is recorded/live/fixture, its capture date, and what the page shows.
+   opts.sim = extra sentence flagging a simulated element. */
+function sourceLine(el,data,what,ts,opts={}){
+  const vals=Object.values(data);
+  const fx=vals.some(d=>d&&d.fixture);
+  const d0=vals.find(d=>d.capturedAt||d.generatedAt)||vals[0];
+  const mode=d0.mode||'recorded';
+  const iso=(d0.capturedAt||d0.generatedAt||'');
+  const when=iso?sgt(Date.parse(iso)/1000):(ts?sgt(ts):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.append((mode==='live'?'Live data':'Recorded data (not live)')+', captured '+when+'. ');
+  a.append(what+' Public mainnet reads, no keys.');
+  if(opts.sim)H('span',{class:'fx'},a,' '+opts.sim);
+  H('span',{style:'white-space:nowrap'},el,'Build night 3');
+}
+function tlab(t,span){const s=new Date((t+28800)*1000).toISOString();return span<600?s.slice(11,19):s.slice(11,16)}
+/* Build night 3 footer: says which data is on screen, when it was captured, and the not-advice line. */
+function foot(el,live,what){
+  el.innerHTML='';const a=H('span',{},el);
+  a.append((live?'Live data (your browser reads public Solana accounts, read-only)':'Recorded data (not live)')+'. '+what+' Simulated, on recorded data; not advice. Public mainnet reads, no keys.');
+  H('span',{style:'white-space:nowrap'},el,'Build night 3')}
+const usd=(x,d=0)=>{const t=Math.abs(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});return (x<0&&/[1-9]/.test(t)?'-':'')+'$'+t};
+const num2=(x,d=2)=>Number(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const SERIES_DATES='series captured 2026-10-22 01:13 to 01:53 SGT';
+</script>
+<script>/* The same maths as code/src (sizing.ts, impact.ts, risk.ts, signals.ts, concurrency.ts, ledger.ts, simulate.ts), in plain JavaScript.
+   Inlined into every demo; verify.mjs checks it reproduces code/out/*.json exactly (including the ledger's hashes). */
+const CALC=(()=>{
+const round=(x,d=6)=>Math.round(x*10**d)/10**d;
+/* ---- sizing ---- */
+function normCdf(x){const s=x<0?-1:1,a=Math.abs(x)/Math.SQRT2,t=1/(1+0.3275911*a);
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-a*a);return 0.5*(1+s*y)}
+function zOfP(p){return p<=0||p>=1?0:(p-0.5)/Math.sqrt(p*(1-p))}
+function probToSize(p){if(!Number.isFinite(p)||p<=0.5)return 0;if(p>=1)return 1;return 2*normCdf(zOfP(p))-1}
+function discretize(m,step){const r=Math.round(m/step)*step;return Math.max(-1,Math.min(1,Math.round(r*1e9)/1e9))}
+function combineBets(ms,mode){if(!ms.length)return 0;const t=ms.reduce((a,b)=>a+b,0);return (mode||'average')==='average'?t/ms.length:Math.max(-1,Math.min(1,t))}
+const targetUsdOf=(m,eq,maxFraction)=>m*maxFraction*Math.max(0,eq);
+/* ---- price impact (linear between real Jupiter quotes) ---- */
+function impactBpsFor(quotes,side,sizeUsd){
+  const pts=quotes.filter(q=>q.side===side).sort((a,b)=>a.sizeUsd-b.sizeUsd);
+  if(pts.length<2||!(sizeUsd>0))return 0;
+  if(sizeUsd<=pts[0].sizeUsd)return pts[0].impactBps*sizeUsd/pts[0].sizeUsd;
+  for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i];if(sizeUsd<=b.sizeUsd)return a.impactBps+(b.impactBps-a.impactBps)*(sizeUsd-a.sizeUsd)/(b.sizeUsd-a.sizeUsd)}
+  const a=pts[pts.length-2],b=pts[pts.length-1];return Math.max(0,b.impactBps+(b.impactBps-a.impactBps)*(sizeUsd-b.sizeUsd)/(b.sizeUsd-a.sizeUsd))}
+function maxSizeForImpact(quotes,side,maxBps,limitUsd=1e6){
+  if(impactBpsFor(quotes,side,limitUsd)<=maxBps)return limitUsd;
+  let lo=0,hi=limitUsd;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(impactBpsFor(quotes,side,mid)<=maxBps)lo=mid;else hi=mid}return lo}
+function capOrderByImpact(sizeUsd,side,quotes,maxBps){const allowed=maxSizeForImpact(quotes,side,maxBps),size=Math.min(sizeUsd,allowed);return {sizeUsd:size,capped:size<sizeUsd,impactBps:impactBpsFor(quotes,side,size),allowedUsd:allowed}}
+/* ---- the risk hook from build night 1 ---- */
+const DEFAULT_LIMITS={maxNotionalUsd:1000,maxOracleGapBps:50,maxOracleAgeSec:60};
+function checkOrder(order,ctx,limits=DEFAULT_LIMITS){
+  const ok=()=>({ok:true,rule:null,reason:'within all limits'}),no=(rule,reason)=>({ok:false,rule,reason});
+  const {sizeUsd,price}=order;
+  if(order.side!=='buy'&&order.side!=='sell')return no('unit-sanity',`side "${order.side}" is not buy or sell`);
+  if(!Number.isFinite(sizeUsd)||sizeUsd<=0)return no('unit-sanity',`size ${sizeUsd} USD is not a positive number`);
+  if(!Number.isFinite(price)||price<=0)return no('unit-sanity',`price ${price} is not a positive number`);
+  if(!Number.isFinite(ctx.oraclePrice)||ctx.oraclePrice<=0)return no('unit-sanity','oracle price is missing or not positive');
+  const ratio=price/ctx.oraclePrice;
+  if(ratio>5||ratio<0.2)return no('unit-sanity',`price ${price} is ${ratio.toFixed(1)}x the oracle price ${ctx.oraclePrice.toFixed(2)}; wrong unit?`);
+  if(ctx.oracleAgeSec>limits.maxOracleAgeSec)return no('max-oracle-age',`oracle is ${ctx.oracleAgeSec} s old, limit is ${limits.maxOracleAgeSec} s`);
+  if(sizeUsd>limits.maxNotionalUsd)return no('max-notional',`${sizeUsd} USD exceeds the ${limits.maxNotionalUsd} USD limit`);
+  const gap=Math.abs(price-ctx.oraclePrice)/ctx.oraclePrice*10000;
+  if(gap>limits.maxOracleGapBps)return no('max-oracle-gap',`price is ${gap.toFixed(1)} bps from the oracle, limit is ${limits.maxOracleGapBps} bps`);
+  return ok()}
+/* ---- signals ---- */
+const DEFAULT_SIGNAL={lookback:12,volWindow:60,minZ:1.0,cooldownSec:30};
+const confidenceOf=a=>0.5+0.45*(1-Math.exp(-a/2));
+function makeSignals(times,px,sp=DEFAULT_SIGNAL){
+  const out=[];let last=-Infinity;
+  for(let i=Math.max(sp.lookback,10);i<px.length;i++){
+    const t=times[i],from=Math.max(1,i-sp.volWindow+1);let ss=0,n=0;
+    for(let j=from;j<=i;j++){const r=Math.log(px[j]/px[j-1]);ss+=r*r;n++}
+    const sigma=Math.sqrt(ss/Math.max(1,n));if(!(sigma>0))continue;
+    const z=Math.log(px[i]/px[i-sp.lookback])/(sigma*Math.sqrt(sp.lookback));
+    if(Math.abs(z)<sp.minZ||t-last<sp.cooldownSec)continue;
+    last=t;out.push({t,side:z>0?1:-1,z:Math.round(z*1000)/1000,p:Math.round(confidenceOf(Math.abs(z))*10000)/10000})}
+  return out}
+/* ---- overlapping bets ---- */
+const activeAt=(bets,t)=>bets.filter(b=>b.tOpen<=t&&t<b.tClose);
+const concurrentCounts=(bets,times)=>times.map(t=>activeAt(bets,t).length);
+function averageUniqueness(bets,times){const c=concurrentCounts(bets,times),out=new Map();
+  for(const b of bets){let s=0,n=0;times.forEach((t,i)=>{if(b.tOpen<=t&&t<b.tClose&&c[i]>0){s+=1/c[i];n++}});out.set(b.id,n?s/n:1)}return out}
+/* ---- ledger: SHA-256 (sync, so the demo can verify a hash chain without any API) ---- */
+const K=new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]);
+function sha256(str){
+  const msg=new TextEncoder().encode(str),l=msg.length,n=((l+9+63)>>6)<<6,b=new Uint8Array(n);b.set(msg);b[l]=0x80;
+  const dv=new DataView(b.buffer);dv.setUint32(n-8,Math.floor(l*8/4294967296));dv.setUint32(n-4,(l*8)>>>0);
+  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;
+  const w=new Uint32Array(64),rr=(x,k)=>(x>>>k)|(x<<(32-k));
+  for(let o=0;o<n;o+=64){
+    for(let i=0;i<16;i++)w[i]=dv.getUint32(o+i*4);
+    for(let i=16;i<64;i++){const a=w[i-15],c=w[i-2];w[i]=(w[i-16]+(rr(a,7)^rr(a,18)^(a>>>3))+w[i-7]+(rr(c,17)^rr(c,19)^(c>>>10)))>>>0}
+    let a=h0,bb=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;
+    for(let i=0;i<64;i++){const t1=(h+(rr(e,6)^rr(e,11)^rr(e,25))+((e&f)^(~e&g))+K[i]+w[i])>>>0,t2=((rr(a,2)^rr(a,13)^rr(a,22))+((a&bb)^(a&c)^(bb&c)))>>>0;
+      h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=bb;bb=a;a=(t1+t2)>>>0}
+    h0=(h0+a)>>>0;h1=(h1+bb)>>>0;h2=(h2+c)>>>0;h3=(h3+d)>>>0;h4=(h4+e)>>>0;h5=(h5+f)>>>0;h6=(h6+g)>>>0;h7=(h7+h)>>>0}
+  return [h0,h1,h2,h3,h4,h5,h6,h7].map(x=>x.toString(16).padStart(8,'0')).join('')}
+const GENESIS='0'.repeat(64);
+const hashRow=(prev,body)=>sha256(prev+'\n'+JSON.stringify(body));
+/* append-only: returns a NEW row chained to the previous one; nothing is ever edited */
+function appendRow(rows,input){const prevHash=rows.length?rows[rows.length-1].hash:GENESIS,head=Object.assign({seq:rows.length+1},input);
+  return Object.assign({},head,{prevHash,hash:hashRow(prevHash,head)})}
+function replay(rows,startUsd){
+  const errors=[];let cash=startUsd,pos=0,fees=0,fills=0,rejected=0,prev=GENESIS,firstBad=null;
+  rows.forEach((r,i)=>{
+    const bad=m=>{if(firstBad===null)firstBad=r.seq;if(errors.length<10)errors.push(`row ${r.seq}: ${m}`)};
+    if(r.seq!==i+1)bad(`sequence is ${r.seq}, expected ${i+1}`);
+    if(r.prevHash!==prev)bad("prevHash does not match the previous row's hash");
+    const body={};for(const k in r)if(k!=='prevHash'&&k!=='hash')body[k]=r[k];
+    if(hashRow(r.prevHash,body)!==r.hash)bad("hash does not match the row's contents (row was changed)");
+    if(r.fill){const s=r.order.side==='buy'?1:-1;cash-=s*r.fill.qtySol*r.fill.price+r.fill.feeUsd;pos+=s*r.fill.qtySol;fees+=r.fill.feeUsd;fills++}else rejected++;
+    if(Math.abs(cash-r.cashUsd)>1e-6)bad(`cash is ${r.cashUsd} but the fills add up to ${cash.toFixed(6)}`);
+    if(Math.abs(pos-r.posSol)>1e-9)bad(`position is ${r.posSol} SOL but the fills add up to ${pos.toFixed(9)}`);
+    prev=r.hash});
+  return {ok:errors.length===0,errors,firstBad,rows:rows.length,fills,rejected,cashUsd:cash,posSol:pos,feesUsd:fees,headHash:prev}}
+/* ---- the whole loop (mirror of code/src/simulate.ts) ---- */
+function oracleAgeProxy(times,px){const out=[];let last=times[0];times.forEach((t,i)=>{if(i>0&&px[i]!==px[i-1])last=t;out.push(t-last)});return out}
+function simulate(series,quotes,cfg){
+  const pts=series.points,times=pts.map(p=>p.t),ages=oracleAgeProxy(times,pts.map(p=>p.pyth));
+  const signals=makeSignals(times,pts.map(p=>p.pyth),cfg.signal),sigByT=new Map(signals.map(s=>[s.t,s]));
+  const rows=[],bets=[],equity=[],exposure=[],rejectedByRule={};
+  let cash=cfg.sizing.startUsd,pos=0,orders=0,filled=0,rejected=0,capped=0,tooSmall=0,fees=0,impactCost=0,maxConc=0,maxExp=0,injectedCount=0,lastKey='';
+  const injectAt=cfg.injected?new Set([Math.floor(pts.length*0.35),Math.floor(pts.length*0.7)]):new Set();
+  function append(i,trigger,note,active,frac,targetUsd,currentUsd,side,sizeUsd,orderPrice){
+    const p=pts[i];orders++;
+    const verdict=checkOrder({side,sizeUsd,price:orderPrice},{oraclePrice:p.pyth,oracleAgeSec:ages[i]},cfg.limits);
+    let fill=null;
+    if(verdict.ok){const sign=side==='buy'?1:-1,impactBps=cfg.useImpact?impactBpsFor(quotes,side,sizeUsd):0,price=orderPrice*(1+sign*impactBps/1e4),feeUsd=cfg.feeBps/1e4*sizeUsd;
+      fill={price:round(price),qtySol:round(sizeUsd/price,9),impactBps:round(impactBps,4),feeUsd:round(feeUsd)};
+      cash-=sign*fill.qtySol*fill.price+fill.feeUsd;pos+=sign*fill.qtySol;fees+=fill.feeUsd;impactCost+=impactBps/1e4*sizeUsd;filled++}
+    else{rejected++;rejectedByRule[verdict.rule]=(rejectedByRule[verdict.rule]||0)+1}
+    rows.push(appendRow(rows,{t:p.t,trigger,note,activeBets:active,targetFraction:round(frac,4),targetUsd:round(targetUsd,2),currentUsd:round(currentUsd,2),
+      order:{side,sizeUsd:round(sizeUsd,2),price:round(orderPrice)},oraclePrice:p.pyth,oracleAgeSec:ages[i],verdict,fill,cashUsd:round(cash),posSol:round(pos,9),equityUsd:round(cash+pos*p.pyth,4)}))}
+  pts.forEach((p,i)=>{
+    const sig=sigByT.get(p.t);let trigger=null;
+    if(sig){bets.push({id:bets.length+1,tOpen:p.t,tClose:p.t+cfg.horizonSec,side:sig.side,p:sig.p,m:sig.side*probToSize(sig.p)});trigger='signal-open'}
+    const act=activeAt(bets,p.t);maxConc=Math.max(maxConc,act.length);
+    const key=act.map(b=>b.id).join(',');if(!trigger&&key!==lastKey)trigger='signal-expire';lastKey=key;
+    const ms=act.map(b=>b.m);
+    exposure.push({t:p.t,active:act.length,average:round(combineBets(ms,'average'),4),sum:round(combineBets(ms,'sum'),4)});
+    if(trigger){
+      const eqNow=cash+pos*p.pyth,frac=discretize(combineBets(ms,cfg.combine),cfg.sizing.step),targetUsd=targetUsdOf(frac,eqNow,cfg.sizing.maxFraction),currentUsd=pos*p.pyth,delta=targetUsd-currentUsd;
+      if(Math.abs(delta)<cfg.sizing.minOrderUsd)tooSmall++;
+      else{const side=delta>0?'buy':'sell',cap=capOrderByImpact(Math.abs(delta),side,quotes,cfg.sizing.maxImpactBps);if(cap.capped)capped++;
+        append(i,trigger,cap.capped?`${act.length} open; cut to ${round(cap.sizeUsd,0)} USD by the impact cap`:`${act.length} open; target ${frac>=0?'+':''}${frac.toFixed(1)} of the cap`,act.length,frac,targetUsd,currentUsd,side,cap.sizeUsd,p.orca)}}
+    if(injectAt.has(i)){injectedCount++;const bad=injectedCount===1;
+      append(i,'injected',bad?'INJECTED test: oversized order (5000 USD)':'INJECTED test: price typed in cents (wrong unit)',act.length,0,0,pos*p.pyth,'buy',bad?5000:100,bad?p.orca:p.orca*100)}
+    const eq=cash+pos*p.pyth;maxExp=Math.max(maxExp,Math.abs(pos*p.pyth));
+    equity.push({t:p.t,equityUsd:round(eq,4),cashUsd:round(cash),posSol:round(pos,9),exposureUsd:round(pos*p.pyth,2),mark:p.pyth})});
+  let peak=-Infinity,mdd=0;for(const e of equity){peak=Math.max(peak,e.equityUsd);mdd=Math.max(mdd,(peak-e.equityUsd)/peak)}
+  const fin=equity[equity.length-1].equityUsd;
+  return {rows,bets,equity,exposure,stats:{signals:signals.length,orders,filled,rejected,rejectedByRule,cappedByImpact:capped,tooSmall,feesUsd:round(fees,4),impactCostUsd:round(impactCost,4),
+    finalEquityUsd:fin,returnPct:round((fin-cfg.sizing.startUsd)/cfg.sizing.startUsd*100,4),maxDrawdownPct:round(mdd*100,4),maxConcurrent:maxConc,maxAbsExposureUsd:round(maxExp,2)}}}
+return {round,normCdf,zOfP,probToSize,discretize,combineBets,targetUsdOf,impactBpsFor,maxSizeForImpact,capOrderByImpact,DEFAULT_LIMITS,checkOrder,DEFAULT_SIGNAL,confidenceOf,makeSignals,
+  activeAt,concurrentCounts,averageUniqueness,sha256,GENESIS,hashRow,appendRow,replay,oracleAgeProxy,simulate}})();
+if(typeof module!=='undefined')module.exports=CALC;
+</script>
+<script>/* Live mode: read-only public Solana data, straight from the browser. No keys, no wallets, no writes.
+   Browser-safe RPC: solana-rpc.publicnode.com (api.mainnet.solana.com returns 403 for browser Origins). */
+const LIVE=(()=>{
+  const RPC=(typeof HASH!=='undefined'&&HASH.get('rpc'))||'https://solana-rpc.publicnode.com';
+  const POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE',SOL_MINT='So11111111111111111111111111111111111111112',USDC_MINT='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',PYTH_OWNER='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ',PYTH_DISC='22f123639d7ef4cd';
+  const A58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58(b){let n=0n;for(const x of b)n=n*256n+BigInt(x);let s='';while(n>0n){s=A58[Number(n%58n)]+s;n/=58n}for(const x of b){if(x===0)s='1'+s;else break}return s}
+  function fromB64(s){const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+  const hex=(u,a,b)=>Array.from(u.slice(a,b),x=>x.toString(16).padStart(2,'0')).join('');
+  let id=1;
+  async function rpc(method,params){
+    const r=await fetch(RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:id++,method,params})});
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.error){const e=new Error(j.error.message||'rpc error');e.rate=/429|rate|too many/i.test(JSON.stringify(j.error));throw e}
+    return j.result;
+  }
+  async function account(addr){
+    const r=await rpc('getAccountInfo',[addr,{encoding:'base64',commitment:'confirmed'}]);
+    if(!r||!r.value)throw new Error('account not found');
+    return {slot:r.context.slot,owner:r.value.owner,bytes:fromB64(r.value.data[0])};
+  }
+  /* Pyth SOL/USD PriceUpdateV2 account: price i64@73, conf i64@81, expo i32@89, publish time i64@93, posted slot u64@125 */
+  async function fetchPythPrice(){
+    const a=await account(PYTH_ACCOUNT);
+    if(a.owner!==PYTH_OWNER)throw new Error('unexpected Pyth owner');
+    const u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    if(u.length<133||hex(u,0,8)!==PYTH_DISC)throw new Error('not a Pyth price account');
+    const expo=v.getInt32(89,true);
+    return {price:Number(v.getBigInt64(73,true))*10**expo,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),currentSlot:a.slot};
+  }
+  /* Orca whirlpool: sqrtPrice u128@65 (Q64.64); price = (sqrt/2^64)^2 * 10^(9-6) */
+  async function fetchOrcaPrice(){
+    const a=await account(POOL),u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const sq=(v.getBigUint64(73,true)<<64n)|v.getBigUint64(65,true);
+    const r=Number(sq)/2**64;return {price:r*r*1000,slot:a.slot};
+  }
+  async function fetchJupiterQuote(){
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL_MINT+'&outputMint='+USDC_MINT+'&amount=1000000000&slippageBps=50');
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();return {price:Number(j.outAmount)/1e6};
+  }
+  /* swaps: same rule as code/src/swaps.ts. A swap moves the two pool vaults in opposite directions. */
+  let vaults=null;
+  async function loadVaults(){
+    if(vaults)return vaults;const a=await account(POOL),u=a.bytes;
+    if(u.length<245||b58(u.slice(101,133))!==SOL_MINT||b58(u.slice(181,213))!==USDC_MINT)throw new Error('pool is not SOL/USDC');
+    return vaults={sol:b58(u.slice(133,165)),usdc:b58(u.slice(213,245))};
+  }
+  function swapFromTx(sig,tx,vt){
+    if(!tx||!tx.meta||tx.meta.err||tx.blockTime==null)return null;
+    const keys=tx.transaction.message.accountKeys.map(k=>typeof k==='string'?k:k.pubkey);
+    const d=(vault,mint)=>{const i=keys.indexOf(vault);if(i<0)return null;
+      const f=l=>(l||[]).find(b=>b.accountIndex===i&&b.mint===mint),pre=f(tx.meta.preTokenBalances),post=f(tx.meta.postTokenBalances);
+      return pre&&post?(Number(post.uiTokenAmount.amount)-Number(pre.uiTokenAmount.amount))/10**pre.uiTokenAmount.decimals:null};
+    const ds=d(vt.sol,SOL_MINT),du=d(vt.usdc,USDC_MINT);
+    if(ds===null||du===null||ds===0||du===0||Math.sign(ds)===Math.sign(du))return null;
+    return {t:tx.blockTime,slot:tx.slot,side:ds>0?'sell':'buy',solAmount:Math.abs(ds),usdcAmount:Math.abs(du),price:Math.abs(du)/Math.abs(ds),sig};
+  }
+  /* state={lastSig:null}; returns new swaps oldest first (at most `max`), and the current slot */
+  async function fetchNewSwaps(state,max=10){
+    const vt=await loadVaults();
+    const sigs=await rpc('getSignaturesForAddress',[POOL,Object.assign({limit:25,commitment:'confirmed'},state.lastSig?{until:state.lastSig}:{})]);
+    if(sigs.length)state.lastSig=sigs[0].signature;
+    const take=sigs.filter(s=>!s.err).slice(0,max).reverse(),out=[];
+    for(const s of take){
+      let tx=null;try{tx=await rpc('getTransaction',[s.signature,{encoding:'jsonParsed',maxSupportedTransactionVersion:1,commitment:'confirmed'}])}catch(e){if(e.rate||!out.length&&s===take[take.length-1])throw e}
+      const sw=swapFromTx(s.signature,tx,vt);if(sw)out.push(sw);
+      await new Promise(r=>setTimeout(r,120));
+    }
+    return {swaps:out,slot:sigs.length?sigs[0].slot:null};
+  }
+  /* Build night 3: SPL token account (inventory) and Jupiter price impact, both read-only.
+     Token account layout: mint 0..32, owner 32..64, amount u64@64. getTokenAccountBalance is refused by publicnode, so decode the account. */
+  const SOL_VAULT='EUuUbDcafPrmVTD5M6qoJAoyyNbihBhugADAxRMn5he9',USDC_VAULT='2WLWEuKDgkDUccTpbwYp1GToYktiSB1cXvreHUwiSUVP';
+  async function fetchTokenAccount(addr,decimals){
+    const a=await account(addr),u=a.bytes;if(u.length<165)throw new Error('not a token account');
+    const v=new DataView(u.buffer,u.byteOffset,u.byteLength);return {amount:Number(v.getBigUint64(64,true))/10**decimals,slot:a.slot,mint:b58(u.slice(0,32))}}
+  async function fetchPoolInventory(){const [s,u]=await Promise.all([fetchTokenAccount(SOL_VAULT,9),fetchTokenAccount(USDC_VAULT,6)]);return {sol:s.amount,usdc:u.amount,slot:Math.max(s.slot,u.slot)}}
+  /* Jupiter throttles hard in a shared classroom IP: at most one call per 20 s, keep the last good answer. */
+  const jup={at:0,last:null};
+  async function fetchJupiterImpact(mint,sizeUsd){
+    const now=Date.now();if(jup.last&&now-jup.at<20000)return Object.assign({},jup.last,{cached:true});
+    jup.at=now;
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+USDC_MINT+'&outputMint='+mint+'&amount='+Math.round(sizeUsd*1e6)+'&slippageBps=50');
+    if(r.status===429){if(jup.last)return Object.assign({},jup.last,{cached:true,throttled:true});throw Object.assign(new Error('Jupiter throttled (HTTP 429)'),{rate:true})}
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();jup.last={impactBps:Number(j.priceImpactPct)*100,sizeUsd,at:now};return Object.assign({},jup.last)}
+  /* UI + loop. opts: {el, intervalMs=5000, enter(), exit(), poll(): Promise<{slot?,note?}> (throw on failure)} */
+  function start(opts){
+    const el=opts.el,every=opts.intervalMs||5000;
+    el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end';
+    const grp=document.createElement('div');grp.setAttribute('role','group');grp.setAttribute('aria-label','Data source');grp.style.cssText='display:flex;gap:.4rem';
+    const bR=document.createElement('button'),bL=document.createElement('button');bR.textContent='Recorded';bL.textContent='Live';
+    bR.style.padding=bL.style.padding='.3rem .8rem';bR.style.fontSize=bL.style.fontSize='.95rem';
+    grp.append(bR,bL);const pill=document.createElement('span');pill.className='pill';pill.style.fontSize='.85rem';pill.setAttribute('aria-live','polite');
+    el.append(grp,pill);
+    let on=false,timer=null,busy=false,gen=0,fails=0;
+    const paint=()=>{bR.setAttribute('aria-pressed',on?'false':'true');bL.setAttribute('aria-pressed',on?'true':'false')};
+    const say=(txt,cls)=>{pill.textContent=txt;pill.className='pill '+(cls||'mut');pill.style.fontSize='.85rem'};
+    const hhmmss=()=>new Date(Date.now()+8*3600e3).toISOString().slice(11,19)+' SGT';
+    async function tick(){
+      if(!on||busy||document.hidden)return;busy=true;const g=gen;
+      try{const r=await opts.poll()||{};if(g!==gen)return;fails=0;say('LIVE · '+hhmmss()+(r.slot?' · slot '+r.slot:'')+(r.note?' · '+r.note:''),'mint')}
+      catch(e){if(g===gen){fails++;console.warn('live poll failed ('+fails+'/3):',e&&e.message);if(fails>=3)fallback(e);else say('LIVE · retrying ('+fails+'/3)','warnc')}}
+      finally{busy=false}
+    }
+    function setLive(v){
+      if(v===on)return;on=v;gen++;fails=0;paint();clearInterval(timer);timer=null;
+      if(on){say('LIVE · connecting','warnc');opts.enter();tick();timer=setInterval(tick,every)}
+      else{opts.exit();say('Recorded data','mut')}
+    }
+    function fallback(e){on=false;gen++;paint();clearInterval(timer);timer=null;opts.exit();say((e&&e.rate?'rate limited, back to recorded':'live unavailable, back to recorded'),'badc');console.warn('live mode failed:',e&&e.message)}
+    bR.addEventListener('click',()=>setLive(false));bL.addEventListener('click',()=>setLive(true));
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+    paint();say('Recorded data','mut');
+    if(/[?&#]live=1/.test(location.search+location.hash))setLive(true);
+    return {isLive:()=>on};
+  }
+  return {fetchPythPrice,fetchOrcaPrice,fetchJupiterQuote,fetchNewSwaps,fetchPoolInventory,fetchTokenAccount,fetchJupiterImpact,start,rpc,SOL_MINT,USDC_MINT,ORCA_MINT:'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE'};
+})();
+if(typeof module!=='undefined')module.exports=LIVE;
+</script>
+<script>
+const SZ={"note":"Simulated, on recorded data; not advice.","params":{"startUsd":10000,"maxFraction":0.25,"step":0.1,"maxImpactBps":5,"minOrderUsd":25,"horizonSec":300,"combine":"average","feeBps":4,"useImpact":true,"injected":true,"signal":{"lookback":12,"volWindow":60,"minZ":1,"cooldownSec":30}},"limits":{"maxNotionalUsd":1000,"maxOracleGapBps":50,"maxOracleAgeSec":60},"rules":[{"id":"max-notional","description":"Reject any order bigger than the notional limit","limit":1000,"unit":"USD"},{"id":"max-oracle-gap","description":"Reject if the order price is too far from the oracle price","limit":50,"unit":"bps"},{"id":"max-oracle-age","description":"Reject if the oracle price is older than the limit","limit":60,"unit":"seconds"},{"id":"unit-sanity","description":"Reject non-positive, non-numeric or wrong-unit values (e.g. cents, lamports)","limit":null,"unit":null}],"curve":[{"p":0.5,"z":0,"m":0},{"p":0.51,"z":0.02,"m":0.016},{"p":0.52,"z":0.04,"m":0.0319},{"p":0.53,"z":0.0601,"m":0.0479},{"p":0.54,"z":0.0803,"m":0.064},{"p":0.55,"z":0.1005,"m":0.0801},{"p":0.56,"z":0.1209,"m":0.0962},{"p":0.57,"z":0.1414,"m":0.1124},{"p":0.58,"z":0.1621,"m":0.1288},{"p":0.59,"z":0.183,"m":0.1452},{"p":0.6,"z":0.2041,"m":0.1617},{"p":0.61,"z":0.2255,"m":0.1784},{"p":0.62,"z":0.2472,"m":0.1953},{"p":0.63,"z":0.2693,"m":0.2123},{"p":0.64,"z":0.2917,"m":0.2295},{"p":0.65,"z":0.3145,"m":0.2468},{"p":0.66,"z":0.3378,"m":0.2645},{"p":0.67,"z":0.3615,"m":0.2823},{"p":0.68,"z":0.3859,"m":0.3004},{"p":0.69,"z":0.4108,"m":0.3188},{"p":0.7,"z":0.4364,"m":0.3375},{"p":0.71,"z":0.4628,"m":0.3565},{"p":0.72,"z":0.49,"m":0.3759},{"p":0.73,"z":0.5181,"m":0.3956},{"p":0.74,"z":0.5472,"m":0.4157},{"p":0.75,"z":0.5774,"m":0.4363},{"p":0.76,"z":0.6088,"m":0.4573},{"p":0.77,"z":0.6416,"m":0.4789},{"p":0.78,"z":0.6759,"m":0.5009},{"p":0.79,"z":0.712,"m":0.5235},{"p":0.8,"z":0.75,"m":0.5467},{"p":0.81,"z":0.7902,"m":0.5706},{"p":0.82,"z":0.8329,"m":0.5951},{"p":0.83,"z":0.8785,"m":0.6203},{"p":0.84,"z":0.9274,"m":0.6463},{"p":0.85,"z":0.9802,"m":0.673},{"p":0.86,"z":1.0375,"m":0.7005},{"p":0.87,"z":1.1002,"m":0.7288},{"p":0.88,"z":1.1694,"m":0.7577},{"p":0.89,"z":1.2464,"m":0.7874},{"p":0.9,"z":1.3333,"m":0.8176},{"p":0.91,"z":1.4327,"m":0.848},{"p":0.92,"z":1.5481,"m":0.8784},{"p":0.93,"z":1.6853,"m":0.9081},{"p":0.94,"z":1.8527,"m":0.9361},{"p":0.95,"z":2.0647,"m":0.9611},{"p":0.96,"z":2.3474,"m":0.9811},{"p":0.97,"z":2.7552,"m":0.9941},{"p":0.98,"z":3.4286,"m":0.9994},{"p":0.99,"z":4.9247,"m":1}],"checks":{"phi0":0.5000000005,"phi1":0.841345},"impact":{"capturedAt":"2026-10-21T19:36:02.316Z","source":"Jupiter lite-api /swap/v1/quote, slippageBps=50, token\u003c->USDC","pairs":[{"id":"SOL/USDC","note":"the pair this session trades; the deepest market on Solana","quotes":[{"side":"sell","sizeUsd":100,"inAmount":"923726917","outAmount":"99953816","execPrice":108.207106,"impactBps":0.007,"jupiterImpactPct":"0.0000723392266928480051502133","routes":["Kipseli"]},{"side":"sell","sizeUsd":1000,"inAmount":"9237269170","outAmount":"999544432","execPrice":108.207785,"impactBps":0,"jupiterImpactPct":"0","routes":["Kipseli"]},{"side":"sell","sizeUsd":10000,"inAmount":"92372691700","outAmount":"9995250867","execPrice":108.20569,"impactBps":0.002,"jupiterImpactPct":"0.0000244563658375313934054458","routes":["BisonFi","Deriverse","Kipseli","TesseraV"]},{"side":"sell","sizeUsd":50000,"inAmount":"461863458500","outAmount":"49974820752","execPrice":108.202586,"impactBps":0.008,"jupiterImpactPct":"0.0000758691975391674084308675","routes":["Kipseli","Obsidian","TesseraV"]},{"side":"sell","sizeUsd":100000,"inAmount":"923726917000","outAmount":"99945909154","execPrice":108.198546,"impactBps":0,"jupiterImpactPct":"0.0000041819431535192507163083","routes":["Kipseli","Obsidian","TesseraV"]},{"side":"sell","sizeUsd":250000,"inAmount":"2309317292500","outAmount":"249854513692","execPrice":108.194103,"impactBps":0.017,"jupiterImpactPct":"0.0001680268568193419994440899","routes":["BisonFi","Kipseli","TesseraV"]},{"side":"sell","sizeUsd":500000,"inAmount":"4618634585000","outAmount":"499779207023","execPrice":108.209298,"impactBps":0.035,"jupiterImpactPct":"0.0003547025762892465381988093","routes":["Kipseli","BisonFi","TesseraV"]},{"side":"sell","sizeUsd":1000000,"inAmount":"9237269170000","outAmount":"999162480512","execPrice":108.166436,"impactBps":0.061,"jupiterImpactPct":"0.0006081001095985931468811993","routes":["Kipseli","TesseraV","GoonFi V2"]},{"side":"buy","sizeUsd":100,"inAmount":"100000000","outAmount":"923682794","execPrice":108.262274,"impactBps":0.007,"jupiterImpactPct":"0.0000703308529906375458493593","routes":["Kipseli"]},{"side":"buy","sizeUsd":1000,"inAmount":"1000000000","outAmount":"9236973947","execPrice":108.260563,"impactBps":0,"jupiterImpactPct":"0","routes":["Obsidian"]},{"side":"buy","sizeUsd":10000,"inAmount":"10000000000","outAmount":"92376327506","execPrice":108.252842,"impactBps":0.014,"jupiterImpactPct":"0.000142822047977856090311684","routes":["Kipseli"]},{"side":"buy","sizeUsd":50000,"inAmount":"50000000000","outAmount":"461884207950","execPrice":108.25224,"impactBps":0,"jupiterImpactPct":"0","routes":["BisonFi"]},{"side":"buy","sizeUsd":100000,"inAmount":"100000000000","outAmount":"923935684531","execPrice":108.232642,"impactBps":0.005,"jupiterImpactPct":"0.0000516393490223465976964226","routes":["Kipseli","TesseraV","Obsidian"]},{"side":"buy","sizeUsd":250000,"inAmount":"250000000000","outAmount":"2309545345607","execPrice":108.246413,"impactBps":0.021,"jupiterImpactPct":"0.000210325858979081978516073","routes":["BisonFi","Kipseli","TesseraV"]},{"side":"buy","sizeUsd":500000,"inAmount":"500000000000","outAmount":"4617838612085","execPrice":108.275763,"impactBps":0.037,"jupiterImpactPct":"0.0003655386987208850404789211","routes":["Kipseli","TesseraV","BisonFi"]},{"side":"buy","sizeUsd":1000000,"inAmount":"1000000000000","outAmount":"9234584552018","execPrice":108.288575,"impactBps":0.066,"jupiterImpactPct":"0.0006581826800731604611260038","routes":["GoonFi V2","TesseraV","Manifest"]}]},{"id":"ORCA/USDC","note":"a thinner token, captured to show what the cap does when a pool is shallower","quotes":[{"side":"sell","sizeUsd":100,"inAmount":"52753731","outAmount":"99659918","execPrice":1.889154,"impactBps":0,"jupiterImpactPct":"0","routes":["Whirlpool","Obsidian"]},{"side":"sell","sizeUsd":1000,"inAmount":"527537310","outAmount":"996241259","execPrice":1.888475,"impactBps":0,"jupiterImpactPct":"0","routes":["Whirlpool","Kipseli"]},{"side":"sell","sizeUsd":10000,"inAmount":"5275373100","outAmount":"9935878623","execPrice":1.883446,"impactBps":0.244,"jupiterImpactPct":"0.0024353781953497329289976204","routes":["Whirlpool","Orca V2","BisonFi","TesseraV"]},{"side":"sell","sizeUsd":50000,"inAmount":"26376865500","outAmount":"49101240258","execPrice":1.861527,"impactBps":1.404,"jupiterImpactPct":"0.0140447155880873867008157033","routes":["Whirlpool","Orca V2","TesseraV","BisonFi"]},{"side":"sell","sizeUsd":100000,"inAmount":"52753731000","outAmount":"96586047516","execPrice":1.830886,"impactBps":3.027,"jupiterImpactPct":"0.0302737420838909903309723033","routes":["Orca V2","Whirlpool","BisonFi","Kipseli"]},{"side":"sell","sizeUsd":250000,"inAmount":"131884327500","outAmount":"226729559100","execPrice":1.719155,"impactBps":8.945,"jupiterImpactPct":"0.0894518926510980532427721147","routes":["Whirlpool","Orca V2","BisonFi","Kipseli"]},{"side":"sell","sizeUsd":500000,"inAmount":"263768655000","outAmount":"392439598615","execPrice":1.487817,"impactBps":21.198,"jupiterImpactPct":"0.2119793837510906804687589318","routes":["Orca V2","Whirlpool","Kipseli","TesseraV"]},{"side":"sell","sizeUsd":1000000,"inAmount":"527537310000","outAmount":"577981513313","execPrice":1.095622,"impactBps":41.971,"jupiterImpactPct":"0.4197051598401331654206062383","routes":["Orca V2","Whirlpool","TesseraV","Kipseli"]},{"side":"buy","sizeUsd":100,"inAmount":"100000000","outAmount":"52754004","execPrice":1.895591,"impactBps":0.398,"jupiterImpactPct":"0.0039813137025511189329548466","routes":["GoonFi V2","Manifest","Whirlpool"]},{"side":"buy","sizeUsd":1000,"inAmount":"1000000000","outAmount":"527337596","execPrice":1.896318,"impactBps":0.436,"jupiterImpactPct":"0.0043635368356592726595965947","routes":["Obsidian","Whirlpool"]},{"side":"buy","sizeUsd":10000,"inAmount":"10000000000","outAmount":"5259436662","execPrice":1.901344,"impactBps":0.7,"jupiterImpactPct":"0.0069953373112911614908140509","routes":["Kipseli","Whirlpool","Orca V2","Hadron"]},{"side":"buy","sizeUsd":50000,"inAmount":"50000000000","outAmount":"25994325175","execPrice":1.923497,"impactBps":1.843,"jupiterImpactPct":"0.0184315256149200357418681359","routes":["Kipseli","Whirlpool","GoonFi V2","Orca V2"]},{"side":"buy","sizeUsd":100000,"inAmount":"100000000000","outAmount":"51207771425","execPrice":1.952829,"impactBps":3.317,"jupiterImpactPct":"0.0331748615148047935412967267","routes":["Obsidian","Kipseli","Orca V2","Whirlpool"]},{"side":"buy","sizeUsd":250000,"inAmount":"250000000000","outAmount":"122351399696","execPrice":2.043295,"impactBps":7.598,"jupiterImpactPct":"0.0759808078881443282101429985","routes":["BisonFi","Orca V2","TesseraV","Whirlpool"]},{"side":"buy","sizeUsd":500000,"inAmount":"500000000000","outAmount":"228926335737","execPrice":2.184109,"impactBps":13.555,"jupiterImpactPct":"0.1355541157419805935725774991","routes":["TesseraV","Orca V2","GoonFi V2","Whirlpool"]},{"side":"buy","sizeUsd":1000000,"inAmount":"1000000000000","outAmount":"380277146419","execPrice":2.629661,"impactBps":28.202,"jupiterImpactPct":"0.2820201025780052692650581617","routes":["TesseraV","Orca V2","Whirlpool"]}]}]},"inventory":{"mode":"recorded","capturedAt":"2026-10-21T19:36:08.124Z","source":"getAccountInfo on solana-rpc.publicnode.com, SPL token account layout (amount at bytes 64..72)","balances":[{"label":"Orca SOL/USDC pool: SOL vault","address":"EUuUbDcafPrmVTD5M6qoJAoyyNbihBhugADAxRMn5he9","mint":"So11111111111111111111111111111111111111112","owner":"Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE","amountRaw":"178735786627728","decimals":9,"amount":178735.786627728,"slot":459749513},{"label":"Orca SOL/USDC pool: USDC vault","address":"2WLWEuKDgkDUccTpbwYp1GToYktiSB1cXvreHUwiSUVP","mint":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v","owner":"Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE","amountRaw":"10692374792807","decimals":6,"amount":10692374.792807,"slot":459749514}]}};
+const P=SZ.params,LIM=SZ.limits;
+const el=id=>document.getElementById(id);
+const sl={p:el('p'),eq:el('eq'),cap:el('cap'),st:el('st'),hold:el('hold'),imp:el('imp')};
+const set=(s,min,max,step,v)=>{s.min=min;s.max=max;s.step=step;s.value=v};
+set(sl.p,0.5,0.99,0.01,hv('p',0.8));set(sl.eq,1000,100000,500,hv('eq',P.startUsd));set(sl.cap,5,50,1,hv('cap',P.maxFraction*100));
+set(sl.st,0.05,0.5,0.05,hv('st',P.step));set(sl.hold,-3000,3000,50,hv('hold',0));set(sl.imp,0.1,20,0.1,hv('imp',P.maxImpactBps));
+let pairId=hv('pair','SOL/USDC'),LV=false,LIVEINFO=null;
+const PAIRS={'SOL/USDC':{mint:LIVE.SOL_MINT},'ORCA/USDC':{mint:LIVE.ORCA_MINT}};
+const quotesOf=id=>SZ.impact.pairs.find(p=>p.id===id).quotes;
+const GOOD='#3ddc97',LAV='#b3a5ff',WARN='#ffc15a',BAD='#ff7a85';
+const X0=70,W=900,Y0=26,CH=340;
+const xp=p=>X0+W*(p-0.5)/0.5, ym=m=>Y0+CH*(1-m);
+function compute(){
+  const p=+sl.p.value,eq=+sl.eq.value,capF=+sl.cap.value/100,step=+sl.st.value,hold=+sl.hold.value,maxBps=+sl.imp.value;
+  const m=CALC.probToSize(p),side=1,d=CALC.discretize(m*side,step),targetUsd=CALC.targetUsdOf(d,eq,capF),delta=targetUsd-hold;
+  const oside=delta>=0?'buy':'sell',want=Math.abs(delta);
+  const quotes=quotesOf(pairId);let cap=CALC.capOrderByImpact(want,oside,quotes,maxBps),liveUsed=false;
+  if(LV&&LIVEINFO&&oside==='buy'&&LIVEINFO.pair===pairId&&want>0){ /* live: replace the curve's impact by Jupiter's quote for this order size */
+    liveUsed=true;const allowed=LIVEINFO.impactBps<=maxBps?want:want*maxBps/Math.max(LIVEINFO.impactBps,1e-9);
+    cap={sizeUsd:Math.min(want,allowed),capped:allowed<want,impactBps:Math.min(LIVEINFO.impactBps,maxBps),allowedUsd:allowed}}
+  const sent=cap.sizeUsd;
+  const verdict=sent>0?CALC.checkOrder({side:oside,sizeUsd:sent,price:108.6},{oraclePrice:108.6,oracleAgeSec:2},LIM):{ok:true,rule:null,reason:'nothing to trade'};
+  return {p,eq,capF,step,hold,maxBps,m,d,targetUsd,delta,oside,want,cap,sent,verdict,liveUsed,z:CALC.zOfP(p)}}
+function draw(c){
+  const cv=el('cv');cv.innerHTML='';
+  for(let k=0;k<=4;k++){const v=k/4;S('line',{x1:X0,x2:X0+W,y1:ym(v),y2:ym(v),stroke:'#2c2c34'},cv);S('text',{x:X0-10,y:ym(v)+6,'text-anchor':'end','font-size':19,class:'m'},cv,Math.round(v*100)+'%')}
+  for(let k=0;k<=5;k++){const p=0.5+k*0.1;S('text',{x:xp(p),y:Y0+CH+30,'text-anchor':k===0?'start':k===5?'end':'middle','font-size':19,class:'m'},cv,p.toFixed(1))}
+  S('text',{x:X0+W/2,y:Y0+CH+62,'text-anchor':'middle','font-size':19,class:'l'},cv,'Confidence that the call is right');
+  S('text',{x:X0,y:16,'font-size':18,class:'l'},cv,'Size as a share of the exposure cap');
+  /* steps */
+  let d='';const n=200;for(let i=0;i<=n;i++){const p=0.5+0.5*i/n,v=CALC.discretize(CALC.probToSize(Math.min(p,0.9999)),c.step);d+=(i?'L':'M')+xp(p).toFixed(1)+','+ym(v).toFixed(1)}
+  S('path',{d,fill:'none',stroke:LAV,'stroke-width':2.2,'stroke-dasharray':'2 0'},cv);
+  /* smooth */
+  d='';for(let i=0;i<=n;i++){const p=0.5+0.5*i/n;d+=(i?'L':'M')+xp(p).toFixed(1)+','+ym(CALC.probToSize(Math.min(p,0.9999))).toFixed(1)}
+  S('path',{d,fill:'none',stroke:GOOD,'stroke-width':3},cv);
+  S('line',{x1:xp(c.p),x2:xp(c.p),y1:Y0,y2:Y0+CH,stroke:WARN,'stroke-width':1.5,'stroke-dasharray':'6 5'},cv);
+  S('circle',{cx:xp(c.p),cy:ym(c.m),r:8,fill:GOOD,stroke:'#000','stroke-width':2},cv);
+  S('circle',{cx:xp(c.p),cy:ym(Math.abs(c.d)),r:7,fill:'#000',stroke:LAV,'stroke-width':3},cv);
+  S('text',{x:X0+18,y:Y0+26,'font-size':20,style:'fill:'+GOOD},cv,'Smooth: '+num2(c.m*100,0)+'% of the cap');
+  S('text',{x:X0+18,y:Y0+54,'font-size':20,style:'fill:'+LAV},cv,'In steps: '+num2(Math.abs(c.d)*100,0)+'% of the cap');
+  S('text',{x:X0+18,y:Y0+80,'font-size':17,class:'m'},cv,'Dashed line: your confidence');
+}
+function stage(box,label,val,frac,col,note){
+  const r=H_('div',{class:'stage'},box);H_('span',{style:'color:var(--lav)'},r,label);
+  const b=H_('div',{class:'bar'},r);H_('i',{style:`width:${Math.max(0.6,Math.min(100,frac*100))}%;background:${col}`},b);
+  H_('span',{class:'num',style:'text-align:right;color:'+col},r,val);
+  if(note)H_('div',{class:'mut',style:'font-size:.85rem;margin:-.15rem 0 .1rem 11.8rem'},box,note)}
+const H_=(t,a,p,x)=>H(t,a,p,x);
+function render(){
+  const c=compute();
+  el('po').textContent=c.p.toFixed(2);el('eqo').textContent=usd(c.eq);el('capo').textContent=Math.round(c.capF*100)+'%';el('sto').textContent=c.step.toFixed(2);
+  el('holdo').textContent=usd(c.hold);el('impo').textContent=c.maxBps.toFixed(1)+' bps';
+  el('pSol').setAttribute('aria-pressed',pairId==='SOL/USDC');el('pOrca').setAttribute('aria-pressed',pairId==='ORCA/USDC');
+  const pr=SZ.impact.pairs.find(x=>x.id===pairId);
+  el('pairinfo').textContent='Jupiter: a $100,000 buy moves the price '+num2(CALC.impactBpsFor(pr.quotes,'buy',1e5),3)+' bps; $1,000,000 moves it '+num2(CALC.impactBpsFor(pr.quotes,'buy',1e6),3)+' bps.';
+  draw(c);
+  const box=el('pipe');box.innerHTML='';
+  H('div',{class:'lab'},box,'From confidence to order');
+  stage(box,'1. Smooth size',num2(c.m*100,0)+'%',c.m,GOOD,'z = '+num2(c.z,2)+' standard deviations; size = 2 x Phi(z) - 1');
+  stage(box,'2. In steps of '+c.step.toFixed(2),num2(Math.abs(c.d)*100,0)+'%',Math.abs(c.d),LAV,'rounded so tiny changes do not trade');
+  stage(box,'3. Target position',usd(c.targetUsd),Math.abs(c.targetUsd)/Math.max(1,c.capF*c.eq),LAV,num2(Math.abs(c.d)*100,0)+'% of the cap ('+Math.round(c.capF*100)+'% of '+usd(c.eq)+' = '+usd(c.capF*c.eq)+')');
+  stage(box,'4. Order to place',c.oside+' '+usd(c.want),c.want/Math.max(1,c.capF*c.eq*2),LAV,'target '+usd(c.targetUsd)+' minus holding '+usd(c.hold));
+  stage(box,'5. After impact cap',usd(c.cap.sizeUsd),c.want?c.cap.sizeUsd/c.want:1,c.cap.capped?WARN:GOOD,
+    c.cap.capped?'CUT: this pool allows about '+usd(c.cap.allowedUsd)+' at '+c.maxBps.toFixed(1)+' bps'+(c.liveUsed?' (live Jupiter quote)':''):'inside the cap: impact '+num2(c.cap.impactBps,3)+' bps'+(c.liveUsed?' (live quote)':' (recorded)'));
+  stage(box,'6. Risk hook',c.verdict.ok?'OK':'REJECTED',c.verdict.ok?1:0.0,c.verdict.ok?GOOD:BAD,c.verdict.ok?'within every limit ('+usd(LIM.maxNotionalUsd)+' per order, oracle gap, oracle age)':'rule '+c.verdict.rule+': '+c.verdict.reason);
+  const fin=H('div',{class:'box '+(c.verdict.ok?'mint':'bad'),style:'margin-top:.3rem;padding:.35rem .9rem'},box);
+  H('div',{class:'num',style:'font-size:1.7rem'},fin,c.sent<=0?'No order':(c.verdict.ok?'Send '+c.oside+' '+usd(c.sent):'Blocked, nothing sent'));
+  H('div',{class:'mut',style:'font-size:.95rem'},fin,c.sent<=0?'The target is already held.':(c.verdict.ok?'The sizing proposes, the hook can still say no.':'The sizing proposed '+usd(c.sent)+'. The hook is the last line and it said no, and said why.'));
+  const chk=el('chk');
+  chk.textContent=LV?'Live mode: the pool balances and Jupiter price impact below come from your browser reading public Solana data; the sizing maths is the same code as code/src.':
+    'Recorded: curve points and checks computed in your browser with the same maths as code/src (verify.mjs compares it with code/out/sizing.json). Sizes are shown for a long (buy) call.';
+}
+function setFoot(){foot(el('src'),LV,'Price impact: real Jupiter quotes captured '+sgtIso(SZ.impact.capturedAt)+'; pool balances captured '+sgtIso(SZ.inventory.capturedAt)+(LV?'; live values override them while Live is on.':'.'))}
+const sgtIso=iso=>sgt(Date.parse(iso)/1000);
+Object.values(sl).forEach(s=>s.addEventListener('input',render));
+el('pSol').addEventListener('click',()=>{pairId='SOL/USDC';LIVEINFO=null;render()});el('pOrca').addEventListener('click',()=>{pairId='ORCA/USDC';LIVEINFO=null;render()});
+const INV=SZ.inventory.balances;
+function showInv(live){const inv=live||{sol:INV[0].amount,usdc:INV[1].amount};
+  el('liveinfo').textContent=(live?'Live: ':'Recorded pool balances: ')+'Orca SOL/USDC pool holds '+num2(inv.sol,0)+' SOL and '+num2(inv.usdc,0)+' USDC'+(live?' (slot '+live.slot+')':'')+
+   '; a '+usd(LIM.maxNotionalUsd)+' order is '+num2(LIM.maxNotionalUsd/inv.usdc*100,4)+'% of the USDC side.'+(LIVEINFO?' Jupiter impact for '+usd(LIVEINFO.sizeUsd)+' now: '+num2(LIVEINFO.impactBps,4)+' bps'+(LIVEINFO.stale?' (last good quote)':'')+'.':'')}
+LIVE.start({el:el('livebar'),
+  enter:()=>{LV=true;LIVEINFO=null;setFoot();render()},
+  exit:()=>{LV=false;LIVEINFO=null;showInv(null);setFoot();render()},
+  poll:async()=>{
+    const [inv,py]=await Promise.all([LIVE.fetchPoolInventory(),LIVE.fetchPythPrice()]);
+    const c=compute();let note='Pyth $'+num2(py.price,2);
+    try{const q=await LIVE.fetchJupiterImpact(PAIRS[pairId].mint,Math.max(100,c.want||1000));LIVEINFO={pair:pairId,impactBps:q.impactBps,sizeUsd:q.sizeUsd,stale:!!q.cached}}
+    catch(e){note+=' · Jupiter throttled'}
+    showInv({sol:inv.sol,usdc:inv.usdc,slot:inv.slot});render();return {slot:inv.slot,note}}});
+showInv(null);setFoot();render();
+</script></body></html>

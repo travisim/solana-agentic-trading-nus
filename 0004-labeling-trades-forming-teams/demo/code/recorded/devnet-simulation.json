@@ -1,0 +1,44 @@
+{
+ "cluster": "devnet",
+ "mode": "simulateTransaction (not sent)",
+ "capturedAt": "2026-10-21T19:40:16.547Z",
+ "payer": "2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82",
+ "results": [
+  {
+   "memo": "{\"app\":\"labeler\",\"i\":20,\"t\":1792602939,\"side\":\"sell\",\"label\":1,\"h\":\"b77d9610847aaf99\"}",
+   "err": null,
+   "logs": [
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+    "Program log: Signed by 2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82",
+    "Program log: Memo (len 86): \"{\\\"app\\\":\\\"labeler\\\",\\\"i\\\":20,\\\"t\\\":1792602939,\\\"side\\\":\\\"sell\\\",\\\"label\\\":1,\\\"h\\\":\\\"b77d9610847aaf99\\\"}\"",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 45286 of 200000 compute units",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success"
+   ],
+   "unitsConsumed": 45286
+  },
+  {
+   "memo": "{\"app\":\"labeler\",\"i\":26,\"t\":1792602969,\"side\":\"buy\",\"label\":0,\"h\":\"13a9ae3b8efb9091\"}",
+   "err": null,
+   "logs": [
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+    "Program log: Signed by 2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82",
+    "Program log: Memo (len 85): \"{\\\"app\\\":\\\"labeler\\\",\\\"i\\\":26,\\\"t\\\":1792602969,\\\"side\\\":\\\"buy\\\",\\\"label\\\":0,\\\"h\\\":\\\"13a9ae3b8efb9091\\\"}\"",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 44922 of 200000 compute units",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success"
+   ],
+   "unitsConsumed": 44922
+  },
+  {
+   "memo": "{\"app\":\"labeler\",\"i\":28,\"t\":1792602979,\"side\":\"buy\",\"label\":0,\"h\":\"0747d66dc7fb8e8e\"}",
+   "err": null,
+   "logs": [
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+    "Program log: Signed by 2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82",
+    "Program log: Memo (len 85): \"{\\\"app\\\":\\\"labeler\\\",\\\"i\\\":28,\\\"t\\\":1792602979,\\\"side\\\":\\\"buy\\\",\\\"label\\\":0,\\\"h\\\":\\\"0747d66dc7fb8e8e\\\"}\"",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 44922 of 200000 compute units",
+    "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success"
+   ],
+   "unitsConsumed": 44922
+  }
+ ]
+}

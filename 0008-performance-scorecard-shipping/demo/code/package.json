@@ -1,0 +1,24 @@
+{
+  "name": "scorecard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Workshop 4: Performance Scorecard and Shipping. Reads public mainnet data; every write is devnet only; no real funds.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "demo:live": "node src/demo.ts --live",
+    "collect": "node src/collect.ts",
+    "collect:costs": "node src/collectCosts.ts",
+    "ship-check": "node src/shipCli.ts",
+    "smoke": "node src/smoke.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

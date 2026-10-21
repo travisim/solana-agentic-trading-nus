@@ -1,0 +1,28 @@
+{
+  "name": "venue-starters",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Workshop 3: Deploy a Trading Venue Component on Devnet. Reads public mainnet data; every write is devnet only; no real funds.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "demo:live": "node src/demo.ts --live",
+    "ladder": "node src/ladder.ts",
+    "orca": "node src/orca-lab.ts",
+    "watch": "node src/watcher.ts",
+    "exercise": "node src/exercise.ts",
+    "deposit-run": "node src/deposit-run.ts",
+    "collect": "node src/collect.ts",
+    "test": "node --test test/*.test.ts",
+    "test:program": "cd program && cargo test",
+    "build:program": "cd program && cargo build-sbf",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

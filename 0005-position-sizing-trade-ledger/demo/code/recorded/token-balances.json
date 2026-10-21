@@ -1,0 +1,26 @@
+{
+ "capturedAt": "2026-10-21T19:36:08.124Z",
+ "source": "getAccountInfo on solana-rpc.publicnode.com, SPL token account layout (amount at bytes 64..72)",
+ "balances": [
+  {
+   "label": "Orca SOL/USDC pool: SOL vault",
+   "address": "EUuUbDcafPrmVTD5M6qoJAoyyNbihBhugADAxRMn5he9",
+   "mint": "So11111111111111111111111111111111111111112",
+   "owner": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+   "amountRaw": "178735786627728",
+   "decimals": 9,
+   "amount": 178735.786627728,
+   "slot": 459749513
+  },
+  {
+   "label": "Orca SOL/USDC pool: USDC vault",
+   "address": "2WLWEuKDgkDUccTpbwYp1GToYktiSB1cXvreHUwiSUVP",
+   "mint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+   "owner": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+   "amountRaw": "10692374792807",
+   "decimals": 6,
+   "amount": 10692374.792807,
+   "slot": 459749514
+  }
+ ]
+}

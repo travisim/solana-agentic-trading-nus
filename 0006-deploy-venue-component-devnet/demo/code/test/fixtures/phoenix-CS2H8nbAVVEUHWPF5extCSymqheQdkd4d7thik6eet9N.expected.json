@@ -1,0 +1,34 @@
+{
+ "address": "CS2H8nbAVVEUHWPF5extCSymqheQdkd4d7thik6eet9N",
+ "name": "SOL/USDC (devnet test tokens)",
+ "source": "expected values computed by the official @ellipsis-labs/phoenix-sdk 2.0.3 (deserializeMarketData + getUiLadder) on this exact account file, 2026-10-22",
+ "slot": 513633469,
+ "capturedAt": "2026-10-21T19:49:22.727Z",
+ "bids": [],
+ "asks": [
+  {
+   "price": 175.705,
+   "size": 0.01
+  },
+  {
+   "price": 175.71,
+   "size": 0.01
+  },
+  {
+   "price": 185.795,
+   "size": 0.02
+  },
+  {
+   "price": 186.005,
+   "size": 0.01
+  },
+  {
+   "price": 186.015,
+   "size": 0.01
+  }
+ ],
+ "counts": {
+  "bids": 0,
+  "asks": 12
+ }
+}

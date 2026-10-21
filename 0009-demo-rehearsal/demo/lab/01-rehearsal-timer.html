@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rehearsal Timer</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.lvwrap{margin-left:auto;padding-top:.5rem}
+/* build night 5 additions */
+.chk{display:flex;align-items:center;gap:.6rem;text-align:left;width:100%;font-size:1.02rem;padding:.35rem .7rem;border-radius:.7rem;line-height:1.2}
+.chk .mk{flex:none;width:1.2rem;height:1.2rem;border:1.5px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
+.chk[aria-pressed=true]{border-color:var(--mint);color:var(--mint)}
+.chk[aria-pressed=false]{color:var(--fg)}
+.chk small{display:block;color:var(--muted);font-size:.78rem}
+.meter{height:.6rem;border:1.5px solid var(--line);border-radius:9px;overflow:hidden}
+.meter>i{display:block;height:100%}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th{color:var(--lav);font-weight:300;text-align:left;padding:.15rem .4rem;border-bottom:1px solid var(--line-soft)}
+td{padding:.14rem .4rem;border-bottom:1px solid var(--line-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.cur td{background:#1b1a2b}
+
+.clock{font-size:4.2rem;font-weight:300;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.seg{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.55rem .8rem}
+.seg.act{border-color:var(--lav)}
+.seg .t{font-size:1.6rem;font-variant-numeric:tabular-nums}
+.chk{font-size:.92rem!important;padding:.22rem .6rem!important}
+.chk small{display:inline!important;margin-left:.4rem}
+</style></head><body>
+<div class="page">
+<div class="row" style="align-items:flex-start;justify-content:space-between"><h1>Three minutes, four parts</h1><div id="livebar" class="lvwrap"></div></div>
+<p class="cap">Press Start, then Next part when you move on. The space bar does both.</p>
+<main id="main" aria-label="Rehearsal timer">
+<div class="box row" style="padding:.5rem 1.1rem;gap:.8rem;flex-wrap:wrap">
+  <button id="go" aria-pressed="false" style="font-size:1.25rem;padding:.55rem 1.4rem">Start</button>
+  <button id="rst">Reset</button>
+  <button id="scr" title="Runs the sample script at ten times speed so you can see a passing rehearsal">Play the sample script (10x)</button>
+  <span class="mut" id="hint" style="font-size:.95rem"></span>
+  <span style="margin-left:auto" class="mut" id="qa"></span><button id="qab">Start questions (2:00)</button>
+</div>
+<div class="grid" style="grid-template-columns:2.2fr 1fr;flex:1;min-height:0;gap:.8rem;overflow:hidden">
+  <div class="grid" style="grid-template-rows:auto auto 1fr;gap:.8rem;min-height:0">
+    <div class="box row" style="gap:2rem;padding:.7rem 1.4rem">
+      <div><div class="lab">Time used</div><div class="clock" id="clk" aria-live="off">0:00</div></div>
+      <div style="flex:1"><div class="lab" id="nowseg">Ready</div><div class="mut" id="nowgoal" style="font-size:1.1rem">Budget 3:00 in total, then 2:00 of questions.</div></div>
+      <div style="text-align:right"><div class="lab">Left</div><div class="clock" id="left" style="color:var(--mint)">3:00</div></div>
+    </div>
+    <div class="box" style="padding:.3rem .8rem"><svg id="tl" viewBox="0 0 1000 160" role="img" aria-label="Budget for each part against the time used"></svg></div>
+    <div class="grid" id="cards" style="grid-template-columns:repeat(4,1fr);gap:.7rem;align-content:start"></div>
+  </div>
+  <div class="grid" style="grid-template-rows:auto auto;gap:.6rem;min-height:0;align-content:start">
+    <div class="box" style="padding:.5rem .6rem"><div class="lab" style="padding:0 .5rem">Pass / fail check list</div><div id="chkl" style="margin-top:.25rem"></div></div>
+    <div class="box" id="verdict" aria-live="polite" style="text-align:center"></div>
+  </div>
+</div>
+<div class="box" id="liveStrip" style="padding:.35rem 1rem;font-size:.95rem;display:none"></div>
+<div id="chk" class="mut" style="font-size:.85rem"></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+const sgt=sec=>new Date((sec+8*3600)*1000).toISOString().replace('T',' ').slice(0,16)+' SGT';
+/* footer caption: says whether the data is recorded/live/fixture, its capture date, and what the page shows.
+   opts.sim = extra sentence flagging a simulated element. */
+function sourceLine(el,data,what,ts,opts={}){
+  const vals=Object.values(data);
+  const fx=vals.some(d=>d&&d.fixture);
+  const d0=vals.find(d=>d.capturedAt||d.generatedAt)||vals[0];
+  const mode=d0.mode||'recorded';
+  const iso=(d0.capturedAt||d0.generatedAt||'');
+  const when=iso?sgt(Date.parse(iso)/1000):(ts?sgt(ts):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.append((mode==='live'?'Live data':'Recorded data (not live)')+', captured '+when+'. ');
+  a.append(what+' Public mainnet reads, no keys.');
+  if(opts.sim)H('span',{class:'fx'},a,' '+opts.sim);
+  H('span',{style:'white-space:nowrap'},el,'Build night 5');
+}
+function tlab(t,span){const s=new Date((t+28800)*1000).toISOString();return span<600?s.slice(11,19):s.slice(11,16)}
+</script>
+<script>/* Pure calculation functions used by the demos (in the browser) and by verify.mjs (in Node). No dependencies.
+   Mirrors code/src: bars.ts + cusum.ts (build night 2), risk.ts (build night 1), agent.ts, timer.ts, drill.ts, rubric.ts. */
+const CALC=(()=>{
+  const r2=x=>Math.round(x*100)/100, r3=x=>Math.round(x*1000)/1000, r6=x=>Math.round(x*1e6)/1e6;
+  /* Dollar bars: a bar closes on the swap that takes its dollars to the threshold or beyond (that swap stays in the bar). */
+  function dollarBars(swaps,thr){
+    const bars=[];let cur=null;
+    for(const s of swaps){
+      if(!cur){cur={tStart:s.t,tEnd:s.t,open:s.price,high:s.price,low:s.price,close:s.price,volumeUsd:0,count:0};bars.push(cur)}
+      cur.high=Math.max(cur.high,s.price);cur.low=Math.min(cur.low,s.price);cur.close=s.price;cur.volumeUsd+=s.usdcAmount;cur.count++;cur.tEnd=s.t;
+      if(cur.volumeUsd>=thr)cur=null;
+    }
+    return bars;
+  }
+  /* CUSUM: sPos collects up moves, sNeg down moves (bps); past the threshold an event fires and both empty.
+     Rows record the buckets at the moment of the check, rounded to 3 decimals like the code's series. */
+  function cusum(series,thr){
+    let sPos=0,sNeg=0;const rows=[],events=[];
+    for(let i=0;i<series.length;i++){
+      if(i>0){const dp=(series[i].price/series[i-1].price-1)*1e4;sPos=Math.max(0,sPos+dp);sNeg=Math.min(0,sNeg+dp)}
+      let fired=null;
+      if(sPos>thr)fired='up';else if(sNeg<-thr)fired='down';
+      rows.push({t:series[i].t,price:series[i].price,sPos:r3(sPos),sNeg:r3(sNeg),fired});
+      if(fired){events.push({t:series[i].t,direction:fired,price:series[i].price,i});sPos=0;sNeg=0}
+    }
+    return {rows,events};
+  }
+  const LIMITS={maxNotionalUsd:1000,maxOracleGapBps:50,maxOracleAgeSec:60};
+  /* The risk hook: same four rules, same order, same wording as code/src/risk.ts */
+  function checkOrder(o,ctx,L=LIMITS){
+    const no=(rule,reason)=>({ok:false,rule,reason}),{sizeUsd,price}=o;
+    if(o.side!=='buy'&&o.side!=='sell')return no('unit-sanity',`side "${o.side}" is not buy or sell`);
+    if(!Number.isFinite(sizeUsd)||sizeUsd<=0)return no('unit-sanity',`size ${sizeUsd} USD is not a positive number`);
+    if(!Number.isFinite(price)||price<=0)return no('unit-sanity',`price ${price} is not a positive number`);
+    if(!Number.isFinite(ctx.oraclePrice)||ctx.oraclePrice<=0)return no('unit-sanity','oracle price is missing or not positive');
+    const ratio=price/ctx.oraclePrice;
+    if(ratio>5||ratio<0.2)return no('unit-sanity',`price ${price} is ${ratio.toFixed(1)}x the oracle price ${ctx.oraclePrice.toFixed(2)}; wrong unit?`);
+    if(ctx.oracleAgeSec>L.maxOracleAgeSec)return no('max-oracle-age',`oracle is ${ctx.oracleAgeSec} s old, limit is ${L.maxOracleAgeSec} s`);
+    if(sizeUsd>L.maxNotionalUsd)return no('max-notional',`${sizeUsd} USD exceeds the ${L.maxNotionalUsd} USD limit`);
+    const gap=Math.abs(price-ctx.oraclePrice)/ctx.oraclePrice*1e4;
+    if(gap>L.maxOracleGapBps)return no('max-oracle-gap',`price is ${gap.toFixed(1)} bps from the oracle, limit is ${L.maxOracleGapBps} bps`);
+    return {ok:true,rule:null,reason:'within all limits'};
+  }
+  function oracleAt(reads,t){let best=null;for(const r of reads){if(r.t<=t)best=r;else break}return best}
+  /* The sample project. swaps: [{t,price,usdcAmount}], reads: [{t,price,publishTime}] */
+  function runAgent(swaps,reads,P){
+    const bars=dollarBars(swaps,P.thresholdUsd);
+    const cs=cusum(bars.map(b=>({t:b.tEnd,price:b.close})),P.cusumBps);
+    const fired=cs.rows.filter(p=>p.sPos>P.cusumBps||p.sNeg<-P.cusumBps);
+    const decisions=[],ledger=[],fm=[];let cash=0,pos=0,peak=0,dd=0,skipped=0;
+    cs.events.forEach((ev,i)=>{
+      const p=fired[i],bucket=ev.direction==='up'?p.sPos:-p.sNeg,rd=oracleAt(reads,ev.t);
+      const order={side:ev.direction==='up'?'buy':'sell',sizeUsd:Math.round(bucket*P.usdPerBps),price:ev.price};
+      const ctx={oraclePrice:rd.price,oracleAgeSec:Math.max(0,ev.t-rd.publishTime)};
+      const decision=checkOrder(order,ctx,P.limits);
+      const gapBps=Math.round(Math.abs(order.price-ctx.oraclePrice)/ctx.oraclePrice*1e4*10)/10;
+      decisions.push({n:i+1,t:ev.t,direction:ev.direction,bucketBps:Math.round(bucket*100)/100,order,context:ctx,gapBps,decision});
+      if(!decision.ok)return;
+      const nx=swaps.find(s=>s.t>ev.t);if(!nx){skipped++;return}
+      const qty=order.sizeUsd/nx.price,fee=order.sizeUsd*P.feeBps/1e4;
+      if(order.side==='buy'){cash-=order.sizeUsd+fee;pos+=qty}else{cash+=order.sizeUsd-fee;pos-=qty}
+      const eq=cash+pos*nx.price;peak=Math.max(peak,eq);dd=Math.max(dd,peak-eq);
+      fm.push({fill:nx.price,side:order.side,fee,size:order.sizeUsd});
+      ledger.push({n:i+1,t:nx.t,side:order.side,sizeUsd:order.sizeUsd,fillPrice:nx.price,solQty:r6(qty),feeUsd:r2(fee),cashUsd:r2(cash),positionSol:r6(pos),equityUsd:r2(eq)});
+    });
+    const mark=swaps[swaps.length-1].price,byRule={};
+    for(const d of decisions)if(!d.decision.ok)byRule[d.decision.rule]=(byRule[d.decision.rule]||0)+1;
+    const wins=fm.filter(f=>((mark-f.fill)*(f.side==='buy'?1:-1))/f.fill*f.size-f.fee>0).length;
+    return {bars:bars.length,events:cs.events.length,decisions,ledger,rows:cs.rows,barList:bars,
+      scorecard:{events:decisions.length,accepted:decisions.filter(d=>d.decision.ok).length,rejected:decisions.filter(d=>!d.decision.ok).length,rejectedByRule:byRule,
+        fills:ledger.length,skippedNoLaterSwap:skipped,pnlNetUsd:r2(cash+pos*mark),hitRate:fm.length?Math.round(wins/fm.length*1000)/1000:0,maxDrawdownUsd:r2(dd),markPrice:mark,positionSol:r6(pos)}};
+  }
+  /* Timer: status of one part, and the verdict for a rehearsal log {problem,what,proof,next} in seconds */
+  const SEGS=[['problem','Problem',30],['what','What it does',35],['proof','Live proof',75],['next','Limit and next',40]];
+  function segStatus(used,b){if(used==null||!Number.isFinite(used))return'missing';if(used>b+10)return'way-over';if(used>b)return'over';if(used<b/2)return'short';return'ok'}
+  function timingVerdict(log){
+    const segs=SEGS.map(([id,label,b])=>({id,label,budgetSec:b,usedSec:log[id]==null?null:log[id],status:segStatus(log[id],b)}));
+    const total=segs.reduce((a,s)=>a+(s.usedSec||0),0),under=total<=180,noWay=segs.every(s=>s.status!=='way-over');
+    return {segments:segs,totalSec:total,underTotal:under,noWayOver:noWay,pass:under&&noWay&&segs.every(s=>s.status!=='missing')};
+  }
+  /* Drill: one failed call is tried again; the third failure in a row switches to recorded */
+  function nextState(s,ok){
+    if(s.mode==='recorded')return {mode:'recorded',fails:s.fails,action:'none'};
+    if(ok)return {mode:'live',fails:0,action:'continue'};
+    const f=s.fails+1;
+    return f>=3?{mode:'recorded',fails:f,action:'fallback'}:{mode:'live',fails:f,action:'retry'};
+  }
+  return {dollarBars,cusum,checkOrder,oracleAt,runAgent,segStatus,timingVerdict,nextState,LIMITS};
+})();
+if(typeof module!=='undefined')module.exports=CALC;
+</script>
+<script>/* Live mode: read-only public Solana data, straight from the browser. No keys, no wallets, no writes.
+   Browser-safe RPC: solana-rpc.publicnode.com (api.mainnet.solana.com returns 403 for browser Origins). */
+const LIVE=(()=>{
+  const RPC_DEFAULT='https://solana-rpc.publicnode.com';let RPC=(typeof HASH!=='undefined'&&HASH.get('rpc'))||RPC_DEFAULT;
+  /* setRpc(null) restores the default; the drill demo points it at a dead address to break the network on purpose */
+  function setRpc(u){RPC=u||RPC_DEFAULT}
+  const POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE',SOL_MINT='So11111111111111111111111111111111111111112',USDC_MINT='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',PYTH_OWNER='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ',PYTH_DISC='22f123639d7ef4cd';
+  const A58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58(b){let n=0n;for(const x of b)n=n*256n+BigInt(x);let s='';while(n>0n){s=A58[Number(n%58n)]+s;n/=58n}for(const x of b){if(x===0)s='1'+s;else break}return s}
+  function fromB64(s){const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+  const hex=(u,a,b)=>Array.from(u.slice(a,b),x=>x.toString(16).padStart(2,'0')).join('');
+  let id=1;
+  async function rpc(method,params){
+    const r=await fetch(RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:id++,method,params})});
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.error){const e=new Error(j.error.message||'rpc error');e.rate=/429|rate|too many/i.test(JSON.stringify(j.error));throw e}
+    return j.result;
+  }
+  async function account(addr){
+    const r=await rpc('getAccountInfo',[addr,{encoding:'base64',commitment:'confirmed'}]);
+    if(!r||!r.value)throw new Error('account not found');
+    return {slot:r.context.slot,owner:r.value.owner,bytes:fromB64(r.value.data[0])};
+  }
+  /* Pyth SOL/USD PriceUpdateV2 account: price i64@73, conf i64@81, expo i32@89, publish time i64@93, posted slot u64@125 */
+  async function fetchPythPrice(){
+    const a=await account(PYTH_ACCOUNT);
+    if(a.owner!==PYTH_OWNER)throw new Error('unexpected Pyth owner');
+    const u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    if(u.length<133||hex(u,0,8)!==PYTH_DISC)throw new Error('not a Pyth price account');
+    const expo=v.getInt32(89,true);
+    return {price:Number(v.getBigInt64(73,true))*10**expo,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),currentSlot:a.slot};
+  }
+  /* Orca whirlpool: sqrtPrice u128@65 (Q64.64); price = (sqrt/2^64)^2 * 10^(9-6) */
+  async function fetchOrcaPrice(){
+    const a=await account(POOL),u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const sq=(v.getBigUint64(73,true)<<64n)|v.getBigUint64(65,true);
+    const r=Number(sq)/2**64;return {price:r*r*1000,slot:a.slot};
+  }
+  async function fetchJupiterQuote(){
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL_MINT+'&outputMint='+USDC_MINT+'&amount=1000000000&slippageBps=50');
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();return {price:Number(j.outAmount)/1e6};
+  }
+  /* UI + loop. opts: {el, intervalMs=5000, enter(), exit(), poll(): Promise<{slot?,note?}> (throw on failure)} */
+  function start(opts){
+    const el=opts.el,every=opts.intervalMs||5000;
+    el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end';
+    const grp=document.createElement('div');grp.setAttribute('role','group');grp.setAttribute('aria-label','Data source');grp.style.cssText='display:flex;gap:.4rem';
+    const bR=document.createElement('button'),bL=document.createElement('button');bR.textContent='Recorded';bL.textContent='Live';
+    bR.style.padding=bL.style.padding='.3rem .8rem';bR.style.fontSize=bL.style.fontSize='.95rem';
+    grp.append(bR,bL);const pill=document.createElement('span');pill.className='pill';pill.style.fontSize='.85rem';pill.setAttribute('aria-live','polite');
+    el.append(grp,pill);
+    let on=false,timer=null,busy=false,gen=0,fails=0;
+    const paint=()=>{bR.setAttribute('aria-pressed',on?'false':'true');bL.setAttribute('aria-pressed',on?'true':'false')};
+    const say=(txt,cls)=>{pill.textContent=txt;pill.className='pill '+(cls||'mut');pill.style.fontSize='.85rem'};
+    const hhmmss=()=>new Date(Date.now()+8*3600e3).toISOString().slice(11,19)+' SGT';
+    async function tick(){
+      if(!on||busy||document.hidden)return;busy=true;const g=gen;
+      try{const r=await opts.poll()||{};if(g!==gen)return;fails=0;say('LIVE · '+hhmmss()+(r.slot?' · slot '+r.slot:'')+(r.note?' · '+r.note:''),'mint')}
+      catch(e){if(g===gen){fails++;console.warn('live poll failed ('+fails+'/3):',e&&e.message);if(opts.onFail)opts.onFail(fails,e);if(fails>=3)fallback(e);else say('LIVE · retrying ('+fails+'/3)','warnc')}}
+      finally{busy=false}
+    }
+    function setLive(v){
+      if(v===on)return;on=v;gen++;fails=0;paint();clearInterval(timer);timer=null;
+      if(on){say('LIVE · connecting','warnc');opts.enter();tick();timer=setInterval(tick,every)}
+      else{opts.exit();say('Recorded data','mut')}
+    }
+    function fallback(e){on=false;gen++;paint();clearInterval(timer);timer=null;opts.exit();if(opts.onFallback)opts.onFallback(e);say((e&&e.rate?'rate limited, back to recorded':'live unavailable, back to recorded'),'badc');console.warn('live mode failed:',e&&e.message)}
+    bR.addEventListener('click',()=>setLive(false));bL.addEventListener('click',()=>setLive(true));
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+    paint();say('Recorded data','mut');
+    if(/[?&#]live=1/.test(location.search+location.hash))setLive(true);
+    return {isLive:()=>on};
+  }
+  return {fetchPythPrice,fetchOrcaPrice,fetchJupiterQuote,start,rpc,setRpc};
+})();
+if(typeof module!=='undefined')module.exports=LIVE;
+</script>
+<script>
+const P={"segments":[{"id":"problem","label":"Problem","budgetSec":30,"goal":"Who has the problem, in one sentence"},{"id":"what","label":"What it does","budgetSec":35,"goal":"The idea and the parts, no jargon"},{"id":"proof","label":"Live proof","budgetSec":75,"goal":"Live fix, failure test, devnet evidence"},{"id":"next","label":"Limit and next","budgetSec":40,"goal":"One limitation, what is untested, what comes next"}],"totalSec":180,"qaSec":120,"wordsPerMinute":130,"script":[{"id":"problem","label":"Problem","budgetSec":30,"text":"An agent that can place orders will sooner or later send a bad one: too big, based on a stale price, or in the wrong unit. Anyone building an agent on Solana needs a plain check between the idea and the action. Without it, one wrong number moves real money.","words":50,"estSec":23,"fits":true},{"id":"what","label":"What it does","budgetSec":35,"text":"This is a small agent. It reads recorded Orca SOL/USDC swaps, cuts them into 20,000 dollar bars, wakes on an 8 basis point change alert and proposes one order per alert. A risk hook checks each order against the Pyth oracle and answers yes or no, with the rule that decided. Accepted orders go into a ledger.","words":57,"estSec":26,"fits":true},{"id":"proof","label":"Live proof","budgetSec":75,"text":"Here it runs on 1,114 real swaps: 10 change alerts, 9 orders accepted, 1 refused (1 by max-notional). Now the failure test: I feed it 4 bad orders, a 5,000 dollar order, a 300 second old oracle, a price in cents and a price 100 basis points off. All 4 are refused, each with its reason. Reads are public mainnet data; writes are devnet only. On devnet, the node verifies my signed memo transaction, but the faucet was rate limited, so there is no funded transaction link yet.","words":88,"estSec":41,"fits":true},{"id":"next","label":"Limit and next","budgetSec":40,"text":"Limits: this is simulated on recorded data, about seventeen minutes of one afternoon. The order sizes and the fee are assumptions, and no order was sent anywhere. The ledger is not evidence of returns. Next: write one funded devnet memo for every accepted order, and run the same hook on the live feed.","words":53,"estSec":24,"fits":true}],"scriptEstSec":114,"checks":[{"id":"t-total","kind":"timing","text":"Finished within 3:00"},{"id":"t-parts","kind":"timing","text":"No part ran more than 10 s over its budget"},{"id":"c-problem","kind":"content","text":"Said who has the problem in the first 30 seconds"},{"id":"c-live","kind":"content","text":"Showed one live action, not only a slide"},{"id":"c-failure","kind":"content","text":"Ran the failure test and showed the refusal"},{"id":"c-devnet","kind":"content","text":"Opened a devnet link, or said there is none and why"},{"id":"c-limit","kind":"content","text":"Said one limitation out loud"},{"id":"c-returns","kind":"content","text":"Made no return or profit claim"},{"id":"c-restate","kind":"content","text":"A listener can restate the claim in one sentence"}],"sampleTiming":{"segments":[{"id":"problem","label":"Problem","budgetSec":30,"usedSec":23,"status":"ok"},{"id":"what","label":"What it does","budgetSec":35,"usedSec":26,"status":"ok"},{"id":"proof","label":"Live proof","budgetSec":75,"usedSec":41,"status":"ok"},{"id":"next","label":"Limit and next","budgetSec":40,"usedSec":24,"status":"ok"}],"totalSec":114,"underTotal":true,"noWayOver":true,"pass":true}}, W={"mode":"recorded","capturedAt":"2026-10-21T19:03:24.123Z","source":"Orca Whirlpool SOL/USDC; getSignaturesForAddress(pool) + getTransaction(jsonParsed) vault token-balance deltas; Pyth reads from recorded/pyth-reads.json","pair":"SOL/USDC","params":{"thresholdUsd":20000,"cusumBps":8,"usdPerBps":100,"feeBps":4,"limits":{"maxNotionalUsd":1000,"maxOracleGapBps":50,"maxOracleAgeSec":60}},"window":{"fromT":1792606426,"toT":1792607420,"swaps":1114,"recordedSwaps":2900,"dropped":{"duplicates":2,"dust":134,"outliers":5}},"bars":51,"events":10,"decisions":[{"n":1,"t":1792606461,"direction":"up","bucketBps":8.02,"order":{"side":"buy","sizeUsd":802,"price":108.606748},"context":{"oraclePrice":108.5353731,"oracleAgeSec":15},"gapBps":6.6,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":2,"t":1792606535,"direction":"up","bucketBps":9.33,"order":{"side":"buy","sizeUsd":933,"price":108.7081},"context":{"oraclePrice":108.63706063000001,"oracleAgeSec":9},"gapBps":6.5,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":3,"t":1792606596,"direction":"up","bucketBps":9.46,"order":{"side":"buy","sizeUsd":946,"price":108.810931},"context":{"oraclePrice":108.72523014000001,"oracleAgeSec":10},"gapBps":7.9,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":4,"t":1792606773,"direction":"down","bucketBps":9.41,"order":{"side":"sell","sizeUsd":941,"price":108.787583},"context":{"oraclePrice":108.79517239,"oracleAgeSec":7},"gapBps":0.7,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":5,"t":1792606957,"direction":"up","bucketBps":9.08,"order":{"side":"buy","sizeUsd":908,"price":108.808182},"context":{"oraclePrice":108.7359236,"oracleAgeSec":11},"gapBps":6.6,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":6,"t":1792607002,"direction":"up","bucketBps":8.83,"order":{"side":"buy","sizeUsd":883,"price":108.904268},"context":{"oraclePrice":108.87654806,"oracleAgeSec":6},"gapBps":2.5,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":7,"t":1792607165,"direction":"up","bucketBps":8.79,"order":{"side":"buy","sizeUsd":879,"price":109.000059},"context":{"oraclePrice":108.92735812000001,"oracleAgeSec":9},"gapBps":6.7,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":8,"t":1792607240,"direction":"down","bucketBps":10.64,"order":{"side":"sell","sizeUsd":1064,"price":108.929608},"context":{"oraclePrice":108.94055787,"oracleAgeSec":14},"gapBps":1,"decision":{"ok":false,"rule":"max-notional","reason":"1064 USD exceeds the 1000 USD limit"}},{"n":9,"t":1792607347,"direction":"down","bucketBps":9.09,"order":{"side":"sell","sizeUsd":909,"price":108.830666},"context":{"oraclePrice":108.83469381,"oracleAgeSec":11},"gapBps":0.4,"decision":{"ok":true,"rule":null,"reason":"within all limits"}},{"n":10,"t":1792607383,"direction":"up","bucketBps":8.58,"order":{"side":"buy","sizeUsd":858,"price":108.924068},"context":{"oraclePrice":108.88509812000001,"oracleAgeSec":7},"gapBps":3.6,"decision":{"ok":true,"rule":null,"reason":"within all limits"}}],"ledger":[{"n":1,"t":1792606462,"side":"buy","sizeUsd":802,"fillPrice":108.633197,"solQty":7.382642,"feeUsd":0.32,"cashUsd":-802.32,"positionSol":7.382642,"equityUsd":-0.32},{"n":2,"t":1792606536,"side":"buy","sizeUsd":933,"fillPrice":108.713685,"solQty":8.582176,"feeUsd":0.37,"cashUsd":-1735.69,"positionSol":15.964818,"equityUsd":-0.1},{"n":3,"t":1792606597,"side":"buy","sizeUsd":946,"fillPrice":108.813363,"solQty":8.693785,"feeUsd":0.38,"cashUsd":-2682.07,"positionSol":24.658603,"equityUsd":1.11},{"n":4,"t":1792606774,"side":"sell","sizeUsd":941,"fillPrice":108.770855,"solQty":8.651215,"feeUsd":0.38,"cashUsd":-1741.45,"positionSol":16.007389,"equityUsd":-0.31},{"n":5,"t":1792606958,"side":"buy","sizeUsd":908,"fillPrice":108.830264,"solQty":8.343267,"feeUsd":0.36,"cashUsd":-2649.81,"positionSol":24.350656,"equityUsd":0.28},{"n":6,"t":1792607003,"side":"buy","sizeUsd":883,"fillPrice":108.904325,"solQty":8.108034,"feeUsd":0.35,"cashUsd":-3533.17,"positionSol":32.458691,"equityUsd":1.73},{"n":7,"t":1792607166,"side":"buy","sizeUsd":879,"fillPrice":109.012624,"solQty":8.063286,"feeUsd":0.35,"cashUsd":-4412.52,"positionSol":40.521977,"equityUsd":4.89},{"n":9,"t":1792607351,"side":"sell","sizeUsd":909,"fillPrice":108.823515,"solQty":8.352974,"feeUsd":0.36,"cashUsd":-3503.88,"positionSol":32.169003,"equityUsd":-3.14},{"n":10,"t":1792607384,"side":"buy","sizeUsd":858,"fillPrice":108.928768,"solQty":7.876707,"feeUsd":0.34,"cashUsd":-4362.22,"positionSol":40.04571,"equityUsd":-0.09}],"scorecard":{"label":"Simulated, on recorded data; not advice","events":10,"accepted":9,"rejected":1,"rejectedByRule":{"max-notional":1},"fills":9,"skippedNoLaterSwap":0,"pnlNetUsd":3,"hitRate":0.667,"maxDrawdownUsd":8.03,"markPrice":109.006143,"positionSol":40.04571},"failureTests":[{"label":"oversized order","injected":true,"order":{"side":"buy","sizeUsd":5000,"price":108.54},"oracleAgeSec":15,"ok":false,"rule":"max-notional","reason":"5000 USD exceeds the 1000 USD limit"},{"label":"stale oracle (300 s old)","injected":true,"order":{"side":"buy","sizeUsd":250,"price":108.54},"oracleAgeSec":300,"ok":false,"rule":"max-oracle-age","reason":"oracle is 300 s old, limit is 60 s"},{"label":"price in cents, not dollars","injected":true,"order":{"side":"buy","sizeUsd":250,"price":10853.54},"oracleAgeSec":15,"ok":false,"rule":"unit-sanity","reason":"price 10853.54 is 100.0x the oracle price 108.54; wrong unit?"},{"label":"100 bps above the oracle","injected":true,"order":{"side":"buy","sizeUsd":250,"price":109.62},"oracleAgeSec":15,"ok":false,"rule":"max-oracle-gap","reason":"price is 99.9 bps from the oracle, limit is 50 bps"}],"note":"Simulated, on recorded data; not advice. No order is sent anywhere. Fill = next swap price after the alert; fee is an assumption."};
+const SEG=P.segments,TOTAL=P.totalSec,QA=P.qaSec;
+const UP='#3ddc97',DN='#b3a5ff',WARN='#ffc15a',BAD='#ff7a85';
+const COL={ok:UP,short:WARN,over:WARN,'way-over':BAD,missing:'#9a9aa2'};
+const st={idx:-1,el:[0,0,0,0],run:false,mult:1,done:false,last:0,ans:{},scriptMode:false};
+const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+/* optional preset for screenshots and drills: #log=28,38,90,35&yes=c-problem,c-live */
+if(HASH.has('log')){const v=hv('log').split(',').map(Number);v.forEach((x,i)=>{if(i<4)st.el[i]=x});st.idx=4;st.done=true}
+if(HASH.has('yes'))hv('yes').split(',').forEach(k=>st.ans[k]=true);
+if(HASH.has('no'))hv('no').split(',').forEach(k=>st.ans[k]=false);
+const go=$('#go'),clk=$('#clk');
+function logNow(){const o={};SEG.forEach((s,i)=>{if(i<=st.idx&&(st.idx<4||st.done))o[s.id]=Math.round(st.el[i]);else if(i<st.idx)o[s.id]=Math.round(st.el[i])});return o}
+function used(){return st.el.reduce((a,b)=>a+b,0)}
+function start(){if(st.done){reset()}if(st.idx<0){st.idx=0}st.run=true;st.last=performance.now();loop()}
+function next(){if(st.idx<0||st.done){start();return}st.idx++;if(st.idx>=4){st.idx=4;st.run=false;st.done=true}render()}
+function reset(){st.idx=-1;st.el=[0,0,0,0];st.run=false;st.done=false;st.scriptMode=false;st.mult=1;st.ans={};render()}
+let raf=null;
+function loop(){cancelAnimationFrame(raf);const f=now=>{if(!st.run)return;const dt=(now-st.last)/1000*st.mult;st.last=now;
+  if(st.idx>=0&&st.idx<4)st.el[st.idx]+=dt;
+  if(st.scriptMode&&st.idx<4&&st.el[st.idx]>=P.script[st.idx].estSec){st.el[st.idx]=P.script[st.idx].estSec;st.idx++;if(st.idx>=4){st.idx=4;st.run=false;st.done=true}}
+  render();if(st.run)raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)}
+go.addEventListener('click',()=>{if(!st.run||st.idx<0)start();else next()});
+$('#rst').addEventListener('click',reset);
+$('#scr').addEventListener('click',()=>{reset();st.scriptMode=true;st.mult=10;start()});
+addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|TEXTAREA/.test(e.target.tagName)&&e.target.tagName!=='BUTTON'){e.preventDefault();if(!st.run||st.idx<0)start();else next()}
+  if(e.key==='r'||e.key==='R'){if(!e.target.matches('input,textarea'))reset()}});
+/* questions timer */
+let qt=null,qLeft=QA;
+$('#qab').addEventListener('click',()=>{if(qt){clearInterval(qt);qt=null;qLeft=QA;$('#qab').textContent='Start questions (2:00)';$('#qa').textContent='';return}
+  $('#qab').textContent='Stop';qt=setInterval(()=>{qLeft--;$('#qa').textContent='Questions '+mmss(qLeft);$('#qa').style.color=qLeft<=0?BAD:'';if(qLeft<=-30){clearInterval(qt)}},1000);$('#qa').textContent='Questions '+mmss(qLeft)});
+function render(){
+  const log=logNow(),V=CALC.timingVerdict(log),tot=used();
+  clk.textContent=mmss(tot);clk.style.color=tot>TOTAL?BAD:'';
+  const left=TOTAL-tot;$('#left').textContent=left>=0?mmss(left):'-'+mmss(-left);$('#left').style.color=left>=0?UP:BAD;
+  go.textContent=st.done?'Start again':st.idx<0?'Start':st.idx>=3?'Finish':'Next part';
+  go.setAttribute('aria-pressed',st.run?'true':'false');
+  const cur=st.idx>=0&&st.idx<4?SEG[st.idx]:null;
+  $('#nowseg').textContent=st.done?'Finished':cur?'Part '+(st.idx+1)+': '+cur.label+' ('+mmss(cur.budgetSec)+')':'Ready';
+  $('#nowgoal').textContent=st.done?(V.pass?'Timing passed.':'Timing needs another run.'):cur?cur.goal:'Budget 3:00 in total, then 2:00 of questions.';
+  $('#hint').textContent=st.run?(st.scriptMode?'Sample script at 10x speed. Reset to try yourself.':'Space or Next part moves on.'):'';
+  /* timeline */
+  const tl=$('#tl');tl.innerHTML='';const X0=10,SC=980/TOTAL;let x=X0;
+  S('text',{x:X0,y:20,'font-size':17,class:'l'},tl,'Budget (outline) and time used (fill), one block per part');
+  SEG.forEach((s,i)=>{const w=s.budgetSec*SC,u=log[s.id]!==undefined?log[s.id]:(i===st.idx?st.el[i]:0),status=i===st.idx&&!st.done?CALC.segStatus(Math.round(st.el[i]),s.budgetSec):V.segments[i].status;
+    const col=COL[status==='missing'&&u===0?'missing':status];
+    S('rect',{x,y:34,width:w-4,height:46,rx:10,fill:'#07070b',stroke:i===st.idx&&!st.done?DN:'#4a4670','stroke-width':i===st.idx&&!st.done?2.5:1.5},tl);
+    if(u>0)S('rect',{x:x+3,y:37,width:Math.max(2,Math.min(u,s.budgetSec)*SC-10),height:40,rx:8,fill:col,'fill-opacity':.8},tl);
+    S('text',{x:x+12,y:64,'font-size':20,style:'fill:#000;font-weight:400'},tl,u>0?mmss(u):'');
+    S('text',{x:x+w/2-2,y:104,'text-anchor':'middle','font-size':19},tl,s.label);
+    S('text',{x:x+w/2-2,y:128,'text-anchor':'middle','font-size':17,class:'m'},tl,'budget '+mmss(s.budgetSec));
+    if(u>s.budgetSec)S('text',{x:x+w/2-2,y:150,'text-anchor':'middle','font-size':17,style:'fill:'+BAD},tl,'+'+Math.round(u-s.budgetSec)+' s over');
+    x+=w});
+  /* cards */
+  const cards=$('#cards');cards.innerHTML='';
+  SEG.forEach((s,i)=>{const r=V.segments[i],started=i<=st.idx||st.done,live=i===st.idx&&!st.done,u=live?Math.round(st.el[i]):r.usedSec,status=live?CALC.segStatus(u,s.budgetSec):r.status;
+    const c=H('div',{class:'seg'+(live?' act':'')},cards);
+    H('div',{class:'lab'},c,(i+1)+'. '+s.label);
+    H('div',{class:'t',style:'color:'+(started?COL[status]:'#9a9aa2')},c,started&&u!==null?mmss(u)+' / '+mmss(s.budgetSec):'0:00 / '+mmss(s.budgetSec));
+    H('div',{class:'mut',style:'font-size:.85rem;margin-top:.15rem'},c,s.goal);
+    const pillTxt=!started?'waiting':status==='ok'?'on budget':status==='short'?'rushed':status==='over'?'a little over':status==='way-over'?'way over':'-';
+    H('span',{class:'pill',style:'margin-top:.35rem;font-size:.8rem;color:'+(started?COL[status]:'#9a9aa2')},c,pillTxt)});
+  /* checks */
+  const E=(function(){const o={};for(const c of P.checks){o[c.id]=st.ans[c.id]}return o})();
+  const timing=st.done?V:null;
+  const res=P.checks.map(c=>{let pass=null;if(c.id==='t-total')pass=timing?timing.underTotal:null;else if(c.id==='t-parts')pass=timing?timing.noWayOver:null;else pass=E[c.id]===undefined?null:E[c.id];return {...c,pass}});
+  const cl=$('#chkl');cl.innerHTML='';
+  res.forEach(r=>{const auto=r.kind==='timing';
+    const b=H('button',{class:'chk',type:'button','aria-pressed':String(r.pass===true),'aria-label':r.text+(auto?' (from the timer)':'')},cl);
+    if(auto)b.disabled=true;
+    const mk=H('span',{class:'mk',style:'color:'+(r.pass===true?UP:r.pass===false?BAD:'#9a9aa2')},b,r.pass===true?'✓':r.pass===false?'✕':'');
+    const tx=H('span',{style:'flex:1'},b,r.text);if(auto)H('small',{},tx,'(timer)');
+    if(!auto)b.addEventListener('click',()=>{st.ans[r.id]=r.pass===true?false:true;render()})});
+  const failed=res.filter(r=>r.pass===false).length,open=res.filter(r=>r.pass===null).length,pass=res.filter(r=>r.pass===true).length;
+  const vd=$('#verdict');vd.innerHTML='';
+  const verdict=failed?'fix and rerun':open?'not finished':'ready';
+  vd.style.borderColor=failed?BAD:open?'#4a4670':UP;
+  H('div',{class:'lab'},vd,'Verdict');H('div',{class:'big',style:'color:'+(failed?BAD:open?'#f4f4f6':UP)},vd,verdict);
+  H('div',{class:'mut num',style:'font-size:.95rem'},vd,pass+' passed, '+failed+' failed, '+open+' open of '+res.length);
+  const chk=$('#chk');
+  chk.textContent=st.done?'Same rule as code/src/timer.ts: a part is on budget up to its budget, a little over up to 10 s past it, way over after that; the total must be 3:00 or less. Sample script estimate: '+P.scriptEstSec+' s ('+P.wordsPerMinute+' words a minute).':'Budgets from code/out/pitch.json: '+SEG.map(s=>s.label+' '+s.budgetSec+' s').join(', ')+'. Nothing here is recorded from a real rehearsal; the times are yours.';
+}
+/* live strip: current Pyth price and slot, to show during the live-proof part; not part of the timer */
+const strip=$('#liveStrip');let LV=false;
+function footer(){sourceLine($('#src'),{p:{capturedAt:W.capturedAt,mode:LV?'live':'recorded'}},'Budgets and checks from the sample pitch plan; the timer measures your own rehearsal.',0)}
+LIVE.start({el:$('#livebar'),
+  enter:()=>{LV=true;footer();strip.style.display='block';strip.textContent='Live strip (not part of the timer): waiting for the first read...'},
+  exit:()=>{LV=false;footer();strip.style.display='none'},
+  poll:async()=>{const p=await LIVE.fetchPythPrice();const age=Math.max(0,Math.floor(Date.now()/1000)-p.publishTime);
+    strip.innerHTML='';H('span',{class:'mint'},strip,'LIVE ');strip.append('Pyth SOL/USD '+f2(p.price,2)+' · oracle age '+age+' s · slot '+p.currentSlot+'. Use this during the live-proof part: a number that changes while you talk. Not part of the timer.');
+    return {slot:p.currentSlot}}});
+render();footer();
+if(HASH.has('log'))render();
+</script></body></html>

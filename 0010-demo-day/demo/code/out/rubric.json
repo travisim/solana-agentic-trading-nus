@@ -1,0 +1,79 @@
+{
+  "criteria": [
+    {
+      "id": "utility",
+      "label": "Utility",
+      "weight": 30,
+      "question": "Would someone else use this, or learn from it?",
+      "anchors": [
+        "0 Nothing runs",
+        "1 Runs, no clear user",
+        "2 Useful to the builders",
+        "3 A stranger could use it",
+        "4 A stranger would choose it"
+      ]
+    },
+    {
+      "id": "tests",
+      "label": "Reproducible tests",
+      "weight": 25,
+      "question": "Can a stranger run the tests from a clean clone and get the same result?",
+      "anchors": [
+        "0 No tests",
+        "1 Tests exist, do not run",
+        "2 Run on the builder's laptop",
+        "3 Pass from a clean clone",
+        "4 Clean clone, and a test for a failure"
+      ]
+    },
+    {
+      "id": "devnet",
+      "label": "Devnet evidence",
+      "weight": 25,
+      "question": "Is there a devnet transaction or program anyone can check?",
+      "anchors": [
+        "0 None",
+        "1 Claimed, not shown",
+        "2 Signature shown",
+        "3 Signature checks out on devnet",
+        "4 Checks out, and the code that sent it is in the repo"
+      ]
+    },
+    {
+      "id": "explanation",
+      "label": "Clear explanation",
+      "weight": 10,
+      "question": "Problem, failed attempt, useful change, test, limitation: was the story clear?",
+      "anchors": [
+        "0 Could not follow",
+        "1 Parts were clear",
+        "2 Clear problem and result",
+        "3 Clear, with the failed attempt",
+        "4 Clear, and a limitation named"
+      ]
+    },
+    {
+      "id": "contribution",
+      "label": "Sustained contribution",
+      "weight": 10,
+      "question": "Did the work grow over the semester, with commits from the whole team?",
+      "anchors": [
+        "0 One late commit",
+        "1 A few commits",
+        "2 Steady commits",
+        "3 Steady, shared by the team",
+        "4 Steady, shared, and helped others"
+      ]
+    }
+  ],
+  "scale": {
+    "min": 0,
+    "max": 4
+  },
+  "notScored": [
+    "simulated returns",
+    "profit claims",
+    "a backtest return chart"
+  ],
+  "total": 100
+}

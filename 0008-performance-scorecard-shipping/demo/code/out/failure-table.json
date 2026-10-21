@@ -1,0 +1,27 @@
+{
+ "hitRate": 0.45,
+ "payoffRatio": 1,
+ "breakEvenHitRate": 0.5,
+ "rows": [
+  {
+   "trades": 10,
+   "probFailure": 0.6247
+  },
+  {
+   "trades": 30,
+   "probFailure": 0.709
+  },
+  {
+   "trades": 100,
+   "probFailure": 0.8426
+  },
+  {
+   "trades": 200,
+   "probFailure": 0.9224
+  },
+  {
+   "trades": 500,
+   "probFailure": 0.9877
+  }
+ ]
+}

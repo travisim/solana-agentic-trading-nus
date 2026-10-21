@@ -1,0 +1,546 @@
+{
+ "checks": [
+  {
+   "id": "readme-exists",
+   "label": "README at the top of the project",
+   "severity": "fail"
+  },
+  {
+   "id": "readme-run",
+   "label": "README says how to install and run",
+   "severity": "fail"
+  },
+  {
+   "id": "readme-limits",
+   "label": "README names one known limitation",
+   "severity": "warn"
+  },
+  {
+   "id": "readme-safety",
+   "label": "README says devnet only, no real funds",
+   "severity": "warn"
+  },
+  {
+   "id": "tests-exist",
+   "label": "Tests exist",
+   "severity": "fail"
+  },
+  {
+   "id": "test-script",
+   "label": "One command runs the tests",
+   "severity": "warn"
+  },
+  {
+   "id": "secret-files",
+   "label": "No .env or keypair files in the project",
+   "severity": "fail"
+  },
+  {
+   "id": "secret-content",
+   "label": "No keys or secrets inside files",
+   "severity": "fail"
+  },
+  {
+   "id": "gitignore",
+   "label": ".gitignore covers .env and node_modules",
+   "severity": "warn"
+  },
+  {
+   "id": "license",
+   "label": "Licence file",
+   "severity": "warn"
+  },
+  {
+   "id": "demo-script",
+   "label": "Demo script or pitch notes",
+   "severity": "warn"
+  },
+  {
+   "id": "devnet-evidence",
+   "label": "Devnet evidence (explorer link or signature)",
+   "severity": "warn"
+  },
+  {
+   "id": "recorded-backup",
+   "label": "Recorded backup for the demo",
+   "severity": "warn"
+  },
+  {
+   "id": "hygiene",
+   "label": "No junk or oversized files",
+   "severity": "warn"
+  }
+ ],
+ "samples": [
+  {
+   "id": "tidy",
+   "label": "tidy-project",
+   "blurb": "README with run steps, tests, licence, evidence, recorded data",
+   "files": [
+    {
+     "path": "README.md",
+     "size": 419,
+     "text": "# sol-scorecard\n\nScores a trade ledger: hit rate, drawdown, costs. Simulated, on recorded data; not advice.\nReads use public mainnet data; every write is devnet only; no real funds.\n\n## Run\n\n```\nnpm install\nnpm test\nnpm run demo -- --recorded\n```\n\n## Devnet evidence\n\nSee EVIDENCE.md for a transaction on devnet.\n\n## Known limitation\n\nOnly 40 minutes of recorded data, so the numbers are a demonstration, not a result.\n"
+    },
+    {
+     "path": "LICENSE",
+     "size": 12,
+     "text": "MIT License\n"
+    },
+    {
+     "path": ".gitignore",
+     "size": 24,
+     "text": "node_modules/\n.env\nout/\n"
+    },
+    {
+     "path": "package.json",
+     "size": 98,
+     "text": "{\"name\":\"sol-scorecard\",\"scripts\":{\"test\":\"node --test test/*.test.ts\",\"demo\":\"node src/demo.ts\"}}"
+    },
+    {
+     "path": "src/demo.ts",
+     "size": 19,
+     "text": "console.log('hi');\n"
+    },
+    {
+     "path": "test/score.test.ts",
+     "size": 9,
+     "text": "// tests\n"
+    },
+    {
+     "path": "recorded/series.json",
+     "size": 40000,
+     "text": "{}"
+    },
+    {
+     "path": "EVIDENCE.md",
+     "size": 147,
+     "text": "Devnet swap: https://explorer.solana.com/tx/5EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEAB?cluster=devnet\n"
+    },
+    {
+     "path": "DEMO-SCRIPT.md",
+     "size": 43,
+     "text": "1. Problem. 2. Run. 3. Evidence. 4. Limit.\n"
+    }
+   ],
+   "skippedDirs": [
+    "node_modules"
+   ],
+   "report": {
+    "verdict": "ready to ship",
+    "passed": 14,
+    "applicable": 14,
+    "fails": 0,
+    "warns": 0,
+    "results": [
+     {
+      "id": "readme-exists",
+      "label": "README at the top of the project",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "found README.md"
+     },
+     {
+      "id": "readme-run",
+      "label": "README says how to install and run",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "README has run commands"
+     },
+     {
+      "id": "readme-limits",
+      "label": "README names one known limitation",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "README mentions a limitation"
+     },
+     {
+      "id": "readme-safety",
+      "label": "README says devnet only, no real funds",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "README states the safety line"
+     },
+     {
+      "id": "tests-exist",
+      "label": "Tests exist",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "1 test file"
+     },
+     {
+      "id": "test-script",
+      "label": "One command runs the tests",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "npm test runs: node --test test/*.test.ts"
+     },
+     {
+      "id": "secret-files",
+      "label": "No .env or keypair files in the project",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "none found"
+     },
+     {
+      "id": "secret-content",
+      "label": "No keys or secrets inside files",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "no key-shaped text found"
+     },
+     {
+      "id": "gitignore",
+      "label": ".gitignore covers .env and node_modules",
+      "severity": "warn",
+      "status": "pass",
+      "detail": ".gitignore lists .env and node_modules"
+     },
+     {
+      "id": "license",
+      "label": "Licence file",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "licence file found"
+     },
+     {
+      "id": "demo-script",
+      "label": "Demo script or pitch notes",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "found DEMO-SCRIPT.md"
+     },
+     {
+      "id": "devnet-evidence",
+      "label": "Devnet evidence (explorer link or signature)",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "devnet explorer link with a transaction signature found"
+     },
+     {
+      "id": "recorded-backup",
+      "label": "Recorded backup for the demo",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "recorded data or backup mentioned"
+     },
+     {
+      "id": "hygiene",
+      "label": "No junk or oversized files",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "clean"
+     }
+    ]
+   }
+  },
+  {
+   "id": "messy",
+   "label": "messy-project",
+   "blurb": "no tests, thin README, no licence, no evidence",
+   "files": [
+    {
+     "path": "README.md",
+     "size": 36,
+     "text": "# my bot\n\nit trades sol. very good.\n"
+    },
+    {
+     "path": "package.json",
+     "size": 79,
+     "text": "{\"name\":\"bot\",\"scripts\":{\"test\":\"echo \\\"Error: no test specified\\\" && exit 1\"}}"
+    },
+    {
+     "path": "index.js",
+     "size": 25,
+     "text": "// everything is in here\n"
+    },
+    {
+     "path": ".DS_Store",
+     "size": 6148
+    },
+    {
+     "path": "run.log",
+     "size": 8,
+     "text": "started\n"
+    }
+   ],
+   "skippedDirs": [],
+   "report": {
+    "verdict": "not ready",
+    "passed": 3,
+    "applicable": 14,
+    "fails": 2,
+    "warns": 9,
+    "results": [
+     {
+      "id": "readme-exists",
+      "label": "README at the top of the project",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "found README.md"
+     },
+     {
+      "id": "readme-run",
+      "label": "README says how to install and run",
+      "severity": "fail",
+      "status": "fail",
+      "detail": "README has no install or run commands (add a code block with the exact commands)"
+     },
+     {
+      "id": "readme-limits",
+      "label": "README names one known limitation",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no limitation named; a first-time user should see the benefit AND the limit"
+     },
+     {
+      "id": "readme-safety",
+      "label": "README says devnet only, no real funds",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no mention of devnet or no real funds"
+     },
+     {
+      "id": "tests-exist",
+      "label": "Tests exist",
+      "severity": "fail",
+      "status": "fail",
+      "detail": "no test files found (a test/ folder or *.test.ts)"
+     },
+     {
+      "id": "test-script",
+      "label": "One command runs the tests",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "package.json has no real \"test\" script"
+     },
+     {
+      "id": "secret-files",
+      "label": "No .env or keypair files in the project",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "none found"
+     },
+     {
+      "id": "secret-content",
+      "label": "No keys or secrets inside files",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "no key-shaped text found"
+     },
+     {
+      "id": "gitignore",
+      "label": ".gitignore covers .env and node_modules",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no .gitignore"
+     },
+     {
+      "id": "license",
+      "label": "Licence file",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no LICENSE file (MIT is a fine default)"
+     },
+     {
+      "id": "demo-script",
+      "label": "Demo script or pitch notes",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no demo script (write the 2 or 3 minute story: problem, run, evidence, limit)"
+     },
+     {
+      "id": "devnet-evidence",
+      "label": "Devnet evidence (explorer link or signature)",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no devnet explorer link (.../tx/<signature>?cluster=devnet) in any .md file (templates do not count)"
+     },
+     {
+      "id": "recorded-backup",
+      "label": "Recorded backup for the demo",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no recorded data or backup demo (the network WILL fail at the worst moment)"
+     },
+     {
+      "id": "hygiene",
+      "label": "No junk or oversized files",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "2 junk or oversized files",
+      "files": [
+       ".DS_Store",
+       "run.log"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "leaky",
+   "label": "leaky-project",
+   "blurb": "works, but a .env and a keypair file are in the folder",
+   "files": [
+    {
+     "path": "README.md",
+     "size": 419,
+     "text": "# sol-scorecard\n\nScores a trade ledger: hit rate, drawdown, costs. Simulated, on recorded data; not advice.\nReads use public mainnet data; every write is devnet only; no real funds.\n\n## Run\n\n```\nnpm install\nnpm test\nnpm run demo -- --recorded\n```\n\n## Devnet evidence\n\nSee EVIDENCE.md for a transaction on devnet.\n\n## Known limitation\n\nOnly 40 minutes of recorded data, so the numbers are a demonstration, not a result.\n"
+    },
+    {
+     "path": "LICENSE",
+     "size": 12,
+     "text": "MIT License\n"
+    },
+    {
+     "path": "package.json",
+     "size": 49,
+     "text": "{\"name\":\"leaky\",\"scripts\":{\"test\":\"node --test\"}}"
+    },
+    {
+     "path": "test/a.test.ts",
+     "size": 9,
+     "text": "// tests\n"
+    },
+    {
+     "path": "src/main.ts",
+     "size": 37,
+     "text": "const key = process.env.PRIVATE_KEY;\n"
+    },
+    {
+     "path": ".env",
+     "size": 114,
+     "text": "PRIVATE_KEY=EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLE\nRPC_URL=https://api.devnet.solana.com\n"
+    },
+    {
+     "path": "wallet/id.json",
+     "size": 183,
+     "text": "[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]"
+    },
+    {
+     "path": "EVIDENCE.md",
+     "size": 137,
+     "text": "tx: https://explorer.solana.com/tx/EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEAB?cluster=devnet\n"
+    }
+   ],
+   "skippedDirs": [
+    "node_modules"
+   ],
+   "report": {
+    "verdict": "not ready",
+    "passed": 9,
+    "applicable": 14,
+    "fails": 2,
+    "warns": 3,
+    "results": [
+     {
+      "id": "readme-exists",
+      "label": "README at the top of the project",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "found README.md"
+     },
+     {
+      "id": "readme-run",
+      "label": "README says how to install and run",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "README has run commands"
+     },
+     {
+      "id": "readme-limits",
+      "label": "README names one known limitation",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "README mentions a limitation"
+     },
+     {
+      "id": "readme-safety",
+      "label": "README says devnet only, no real funds",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "README states the safety line"
+     },
+     {
+      "id": "tests-exist",
+      "label": "Tests exist",
+      "severity": "fail",
+      "status": "pass",
+      "detail": "1 test file"
+     },
+     {
+      "id": "test-script",
+      "label": "One command runs the tests",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "npm test runs: node --test"
+     },
+     {
+      "id": "secret-files",
+      "label": "No .env or keypair files in the project",
+      "severity": "fail",
+      "status": "fail",
+      "detail": "2 files that look like secrets: remove them and rotate anything real",
+      "files": [
+       ".env",
+       "wallet/id.json"
+      ]
+     },
+     {
+      "id": "secret-content",
+      "label": "No keys or secrets inside files",
+      "severity": "fail",
+      "status": "fail",
+      "detail": "key-shaped text in 2 files (values are not printed)",
+      "files": [
+       ".env",
+       "wallet/id.json"
+      ]
+     },
+     {
+      "id": "gitignore",
+      "label": ".gitignore covers .env and node_modules",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no .gitignore"
+     },
+     {
+      "id": "license",
+      "label": "Licence file",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "licence file found"
+     },
+     {
+      "id": "demo-script",
+      "label": "Demo script or pitch notes",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "no demo script (write the 2 or 3 minute story: problem, run, evidence, limit)"
+     },
+     {
+      "id": "devnet-evidence",
+      "label": "Devnet evidence (explorer link or signature)",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "devnet explorer link with a transaction signature found"
+     },
+     {
+      "id": "recorded-backup",
+      "label": "Recorded backup for the demo",
+      "severity": "warn",
+      "status": "pass",
+      "detail": "recorded data or backup mentioned"
+     },
+     {
+      "id": "hygiene",
+      "label": "No junk or oversized files",
+      "severity": "warn",
+      "status": "warn",
+      "detail": "0 junk or oversized files; node_modules would be committed"
+     }
+    ]
+   }
+  }
+ ]
+}

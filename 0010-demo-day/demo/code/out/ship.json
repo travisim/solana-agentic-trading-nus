@@ -1,0 +1,202 @@
+{
+  "checks": [
+    {
+      "id": "run",
+      "label": "README says how to run it",
+      "level": "required",
+      "hint": "Add the exact commands, for example npm install then npm run demo."
+    },
+    {
+      "id": "test-command",
+      "label": "A test command exists",
+      "level": "required",
+      "hint": "Add a test script to package.json (or pytest, cargo test)."
+    },
+    {
+      "id": "test-files",
+      "label": "Test files exist",
+      "level": "required",
+      "hint": "Add at least one test, ideally one for a failure case."
+    },
+    {
+      "id": "secrets",
+      "label": "No keys or secrets in the folder",
+      "level": "required",
+      "hint": "Remove keypair files and .env, add them to .gitignore, and rotate anything real."
+    },
+    {
+      "id": "mainnet-write",
+      "label": "No transaction is sent on mainnet",
+      "level": "required",
+      "hint": "Every write is devnet only. Point sending code at devnet."
+    },
+    {
+      "id": "devnet-evidence",
+      "label": "A devnet signature or link is written down",
+      "level": "required",
+      "hint": "Put the transaction signature or explorer link in README.md or DEVNET.md."
+    },
+    {
+      "id": "recorded-backup",
+      "label": "A recorded backup of the demo exists",
+      "level": "required",
+      "hint": "Add a recorded/ folder or a short screen recording in case the network fails."
+    },
+    {
+      "id": "lockfile",
+      "label": "Dependencies are locked",
+      "level": "recommended",
+      "hint": "Commit package-lock.json (or your tool's lockfile)."
+    },
+    {
+      "id": "gitignore",
+      "label": ".gitignore covers .env and node_modules",
+      "level": "recommended",
+      "hint": "Add a .gitignore with .env and node_modules/."
+    },
+    {
+      "id": "limitations",
+      "label": "README names a limitation",
+      "level": "recommended",
+      "hint": "Add a Limitations heading. A clear negative result is valuable."
+    },
+    {
+      "id": "license",
+      "label": "A license file is present",
+      "level": "recommended",
+      "hint": "Add a LICENSE so others know they may reuse it."
+    }
+  ],
+  "repos": [
+    {
+      "name": "ready-example",
+      "ready": true,
+      "passed": 11,
+      "total": 11,
+      "requiredPassed": 7,
+      "requiredTotal": 7,
+      "results": [
+        {
+          "id": "run",
+          "ok": true,
+          "detail": "README.md has a run command"
+        },
+        {
+          "id": "test-command",
+          "ok": true,
+          "detail": "test command found"
+        },
+        {
+          "id": "test-files",
+          "ok": true,
+          "detail": "1 test file(s), for example test/index.test.ts"
+        },
+        {
+          "id": "secrets",
+          "ok": true,
+          "detail": "no key files, .env or private key blocks found"
+        },
+        {
+          "id": "mainnet-write",
+          "ok": true,
+          "detail": "no file combines sending transactions with mainnet (heuristic)"
+        },
+        {
+          "id": "devnet-evidence",
+          "ok": true,
+          "detail": "signature or devnet link in README.md"
+        },
+        {
+          "id": "recorded-backup",
+          "ok": true,
+          "detail": "found recorded/README.txt"
+        },
+        {
+          "id": "lockfile",
+          "ok": true,
+          "detail": "package-lock.json present"
+        },
+        {
+          "id": "gitignore",
+          "ok": true,
+          "detail": ".gitignore covers .env and node_modules"
+        },
+        {
+          "id": "limitations",
+          "ok": true,
+          "detail": "README has a Limitations section"
+        },
+        {
+          "id": "license",
+          "ok": true,
+          "detail": "LICENSE present"
+        }
+      ]
+    },
+    {
+      "name": "gaps-example",
+      "ready": false,
+      "passed": 3,
+      "total": 11,
+      "requiredPassed": 1,
+      "requiredTotal": 7,
+      "results": [
+        {
+          "id": "run",
+          "ok": false,
+          "detail": "README.md has no run command"
+        },
+        {
+          "id": "test-command",
+          "ok": false,
+          "detail": "no test script in package.json (and no Cargo.toml or pytest config)"
+        },
+        {
+          "id": "test-files",
+          "ok": true,
+          "detail": "1 test file(s), for example test/smoke.test.ts"
+        },
+        {
+          "id": "secrets",
+          "ok": false,
+          "detail": "found: id.json"
+        },
+        {
+          "id": "mainnet-write",
+          "ok": false,
+          "detail": "src/index.ts sends transactions and mentions mainnet"
+        },
+        {
+          "id": "devnet-evidence",
+          "ok": false,
+          "detail": "no transaction signature or devnet explorer link in README.md, DEVNET.md or DEMO-PACK.md"
+        },
+        {
+          "id": "recorded-backup",
+          "ok": false,
+          "detail": "no recorded/ folder and no screen recording found"
+        },
+        {
+          "id": "lockfile",
+          "ok": true,
+          "detail": "package-lock.json present"
+        },
+        {
+          "id": "gitignore",
+          "ok": false,
+          "detail": ".gitignore is missing .env or node_modules"
+        },
+        {
+          "id": "limitations",
+          "ok": false,
+          "detail": "no Limitations heading in README.md"
+        },
+        {
+          "id": "license",
+          "ok": true,
+          "detail": "LICENSE present"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+TAP version 13
+# Subtest: overlapWindow keeps only swaps between the first and last oracle read
+ok 1 - overlapWindow keeps only swaps between the first and last oracle read
+  ---
+  duration_ms: 1.554125
+  type: 'test'
+  ...
+# Subtest: oracleAt returns the latest read at or before t
+ok 2 - oracleAt returns the latest read at or before t
+  ---
+  duration_ms: 0.101
+  type: 'test'
+  ...
+# Subtest: every change alert gets exactly one decision, in order
+ok 3 - every change alert gets exactly one decision, in order
+  ---
+  duration_ms: 0.913625
+  type: 'test'
+  ...
+# Subtest: an up alert proposes a buy, a down alert proposes a sell
+ok 4 - an up alert proposes a buy, a down alert proposes a sell
+  ---
+  duration_ms: 0.285292
+  type: 'test'
+  ...
+# Subtest: order size is the bucket size in bps times usdPerBps
+ok 5 - order size is the bucket size in bps times usdPerBps
+  ---
+  duration_ms: 0.240584
+  type: 'test'
+  ...
+# Subtest: a small max-notional refuses orders and names the rule
+ok 6 - a small max-notional refuses orders and names the rule
+  ---
+  duration_ms: 0.185416
+  type: 'test'
+  ...
+# Subtest: a stale oracle refuses every order with max-oracle-age
+ok 7 - a stale oracle refuses every order with max-oracle-age
+  ---
+  duration_ms: 0.191542
+  type: 'test'
+  ...
+# Subtest: ledger reconciles: cash + position at the last price equals the scorecard P&L
+ok 8 - ledger reconciles: cash + position at the last price equals the scorecard P&L
+  ---
+  duration_ms: 0.247167
+  type: 'test'
+  ...
+# Subtest: fills use the next swap price, never the alert's own price or an earlier one
+ok 9 - fills use the next swap price, never the alert's own price or an earlier one
+  ---
+  duration_ms: 0.234041
+  type: 'test'
+  ...
+# Subtest: no accepted order means an empty scorecard, not NaN
+ok 10 - no accepted order means an empty scorecard, not NaN
+  ---
+  duration_ms: 0.21
+  type: 'test'
+  ...
+# Subtest: the scorecard carries the simulated label
+ok 11 - the scorecard carries the simulated label
+  ---
+  duration_ms: 0.63775
+  type: 'test'
+  ...
+# Subtest: too few swaps in the oracle window is a clear error
+ok 12 - too few swaps in the oracle window is a clear error
+  ---
+  duration_ms: 0.228667
+  type: 'test'
+  ...
+# Subtest: failure test: every injected bad order is refused, each by the rule it should hit
+ok 13 - failure test: every injected bad order is refused, each by the rule it should hit
+  ---
+  duration_ms: 0.160833
+  type: 'test'
+  ...
+# Subtest: dollar bars conserve volume and close on the swap that crosses the threshold
+ok 14 - dollar bars conserve volume and close on the swap that crosses the threshold
+  ---
+  duration_ms: 0.790041
+  type: 'test'
+  ...
+# Subtest: CUSUM fires when a bucket passes the threshold (smoke test of the piece reused from build night 2)
+ok 15 - CUSUM fires when a bucket passes the threshold (smoke test of the piece reused from build night 2)
+  ---
+  duration_ms: 0.136209
+  type: 'test'
+  ...
+# Subtest: drops duplicate signatures, dust and a price outlier; keeps the rest in order
+ok 16 - drops duplicate signatures, dust and a price outlier; keeps the rest in order
+  ---
+  duration_ms: 0.705083
+  type: 'test'
+  ...
+# Subtest: base58 round trip, including leading zero bytes
+ok 17 - base58 round trip, including leading zero bytes
+  ---
+  duration_ms: 1.071417
+  type: 'test'
+  ...
+# Subtest: the memo transaction is one signature plus a message, and the signature verifies against the signer
+ok 18 - the memo transaction is one signature plus a message, and the signature verifies against the signer
+  ---
+  duration_ms: 1.849583
+  type: 'test'
+  ...
+# Subtest: a changed message no longer verifies (this is what the devnet node rejects as SignatureFailure)
+ok 19 - a changed message no longer verifies (this is what the devnet node rejects as SignatureFailure)
+  ---
+  duration_ms: 0.406042
+  type: 'test'
+  ...
+# Subtest: an over-long memo is refused before anything is built
+ok 20 - an over-long memo is refused before anything is built
+  ---
+  duration_ms: 0.163791
+  type: 'test'
+  ...
+# Subtest: a good call keeps live and clears the failure count
+ok 21 - a good call keeps live and clears the failure count
+  ---
+  duration_ms: 0.714125
+  type: 'test'
+  ...
+# Subtest: first and second failures retry; the third failure in a row falls back to recorded
+ok 22 - first and second failures retry; the third failure in a row falls back to recorded
+  ---
+  duration_ms: 0.106125
+  type: 'test'
+  ...
+# Subtest: failures must be in a row: a good call in between resets the count
+ok 23 - failures must be in a row: a good call in between resets the count
+  ---
+  duration_ms: 0.096167
+  type: 'test'
+  ...
+# Subtest: once recorded, later calls do nothing (no flip-flopping on screen)
+ok 24 - once recorded, later calls do nothing (no flip-flopping on screen)
+  ---
+  duration_ms: 0.078667
+  type: 'test'
+  ...
+# Subtest: the drill has five steps; steps 1 to 4 fit in the 30 second drill budget; the switch line names the recorded date
+ok 25 - the drill has five steps; steps 1 to 4 fit in the 30 second drill budget; the switch line names the recorded date
+  ---
+  duration_ms: 0.134958
+  type: 'test'
+  ...
+# Subtest: recorded/devnet-reads.json: a real devnet read and a signature check, nothing sent
+ok 26 - recorded/devnet-reads.json: a real devnet read and a signature check, nothing sent
+  ---
+  duration_ms: 0.78375
+  type: 'test'
+  ...
+# Subtest: out/walkthrough.json: window, decisions and ledger agree with each other
+ok 27 - out/walkthrough.json: window, decisions and ledger agree with each other
+  ---
+  duration_ms: 0.264209
+  type: 'test'
+  ...
+# Subtest: out/*.json contain no NaN, undefined or Infinity text
+ok 28 - out/*.json contain no NaN, undefined or Infinity text
+  ---
+  duration_ms: 0.278458
+  type: 'test'
+  ...
+# Subtest: out/rubric.json: 12 checks, three criteria, the score adds up
+ok 29 - out/rubric.json: 12 checks, three criteria, the score adds up
+  ---
+  duration_ms: 0.13875
+  type: 'test'
+  ...
+# Subtest: out/drill.json and out/pitch.json have the structure the demos read
+ok 30 - out/drill.json and out/pitch.json have the structure the demos read
+  ---
+  duration_ms: 0.159167
+  type: 'test'
+  ...
+# Subtest: wordCount ignores extra spaces and newlines
+ok 31 - wordCount ignores extra spaces and newlines
+  ---
+  duration_ms: 0.497792
+  type: 'test'
+  ...
+# Subtest: the sample script has one text per part, in order, every number from the run
+ok 32 - the sample script has one text per part, in order, every number from the run
+  ---
+  duration_ms: 10.841583
+  type: 'test'
+  ...
+# Subtest: estimated seconds are words at 130 a minute and the sample fits its budgets
+ok 33 - estimated seconds are words at 130 a minute and the sample fits its budgets
+  ---
+  duration_ms: 0.143958
+  type: 'test'
+  ...
+# Subtest: the script never claims a return, a profit or a funded devnet transaction it does not have
+ok 34 - the script never claims a return, a profit or a funded devnet transaction it does not have
+  ---
+  duration_ms: 0.196875
+  type: 'test'
+  ...
+# Subtest: the shipped sample script (out/pitch.json) keeps the same promise
+ok 35 - the shipped sample script (out/pitch.json) keeps the same promise
+  ---
+  duration_ms: 0.280208
+  type: 'test'
+  ...
+# Subtest: a normal order is accepted
+ok 36 - a normal order is accepted
+  ---
+  duration_ms: 0.449708
+  type: 'test'
+  ...
+# Subtest: each rule fires with its own name
+ok 37 - each rule fires with its own name
+  ---
+  duration_ms: 0.094709
+  type: 'test'
+  ...
+# Subtest: exactly at the limits is accepted
+ok 38 - exactly at the limits is accepted
+  ---
+  duration_ms: 0.062042
+  type: 'test'
+  ...
+# Subtest: three criteria, four checks each
+ok 39 - three criteria, four checks each
+  ---
+  duration_ms: 0.785458
+  type: 'test'
+  ...
+# Subtest: a complete pack scores 12 of 12 with nothing missing
+ok 40 - a complete pack scores 12 of 12 with nothing missing
+  ---
+  duration_ms: 0.127916
+  type: 'test'
+  ...
+# Subtest: an empty pack scores 0
+ok 41 - an empty pack scores 0
+  ---
+  duration_ms: 0.082375
+  type: 'test'
+  ...
+# Subtest: failing tests do not count as a passing report
+ok 42 - failing tests do not count as a passing report
+  ---
+  duration_ms: 0.076333
+  type: 'test'
+  ...
+# Subtest: a blank problem statement does not count
+ok 43 - a blank problem statement does not count
+  ---
+  duration_ms: 0.070334
+  type: 'test'
+  ...
+# Subtest: a simulated return claim never changes the score; it only adds a note
+ok 44 - a simulated return claim never changes the score; it only adds a note
+  ---
+  duration_ms: 0.110125
+  type: 'test'
+  ...
+# Subtest: the four parts add up to exactly 3 minutes; questions are 2 minutes
+ok 45 - the four parts add up to exactly 3 minutes; questions are 2 minutes
+  ---
+  duration_ms: 0.71925
+  type: 'test'
+  ...
+# Subtest: segStatus: ok, short, over (up to 10 s), way-over, missing
+ok 46 - segStatus: ok, short, over (up to 10 s), way-over, missing
+  ---
+  duration_ms: 0.086042
+  type: 'test'
+  ...
+# Subtest: a rehearsal exactly on budget passes
+ok 47 - a rehearsal exactly on budget passes
+  ---
+  duration_ms: 0.115542
+  type: 'test'
+  ...
+# Subtest: one part way over fails even if the total is fine
+ok 48 - one part way over fails even if the total is fine
+  ---
+  duration_ms: 0.061292
+  type: 'test'
+  ...
+# Subtest: going over 3:00 fails; missing parts do not pass
+ok 49 - going over 3:00 fails; missing parts do not pass
+  ---
+  duration_ms: 0.074958
+  type: 'test'
+  ...
+# Subtest: evaluateChecks: timing checks come from the timer, content checks from listeners
+ok 50 - evaluateChecks: timing checks come from the timer, content checks from listeners
+  ---
+  duration_ms: 0.150416
+  type: 'test'
+  ...
+# Subtest: the check list includes no-return-claim and a limitation
+ok 51 - the check list includes no-return-claim and a limitation
+  ---
+  duration_ms: 0.071375
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 128.426792

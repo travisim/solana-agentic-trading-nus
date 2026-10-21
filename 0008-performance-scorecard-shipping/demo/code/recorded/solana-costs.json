@@ -1,0 +1,70 @@
+{
+  "capturedAt": "2026-10-21T19:53:40.810Z",
+  "source": "api.mainnet.solana.com getBlock x5 (slots 459754249..459754409, transactionDetails=accounts) and getRecentPrioritizationFees",
+  "slots": [
+    459754409,
+    459754369,
+    459754329,
+    459754289,
+    459754249
+  ],
+  "perBlock": [
+    {
+      "slot": 459754409,
+      "userTransactions": 387,
+      "failedRate": 0.2997
+    },
+    {
+      "slot": 459754369,
+      "userTransactions": 407,
+      "failedRate": 0.2776
+    },
+    {
+      "slot": 459754329,
+      "userTransactions": 619,
+      "failedRate": 0.3764
+    },
+    {
+      "slot": 459754289,
+      "userTransactions": 528,
+      "failedRate": 0.3049
+    },
+    {
+      "slot": 459754249,
+      "userTransactions": 739,
+      "failedRate": 0.4357
+    }
+  ],
+  "blockTime": 1792612411,
+  "blockTransactions": 2680,
+  "userTransactions": 2680,
+  "failedUserTransactions": 945,
+  "failedRate": 0.3526,
+  "baseFeeLamportsPerSignature": 5000,
+  "feeLamports": {
+    "median": 5222,
+    "p90": 15000,
+    "max": 5005000
+  },
+  "priorityFeeLamports": {
+    "median": 127,
+    "p90": 10000,
+    "max": 5000000,
+    "shareWithPriorityFee": 0.6552
+  },
+  "recentPrioritization": {
+    "note": "getRecentPrioritizationFees with no addresses: the lowest fee that landed in each slot; 0 means the slot had spare room",
+    "slots": 150,
+    "slotsWithNonZeroFee": 0,
+    "medianNonZeroMicroLamportsPerCu": 0,
+    "maxMicroLamportsPerCu": 0
+  },
+  "solUsdFromRecordedPyth": 108.60542862,
+  "medianFeeUsd": 0.000567,
+  "p90FeeUsd": 0.001629,
+  "medianFeeBpsOf1000UsdTrade": 0.0057,
+  "p90FeeBpsOf1000UsdTrade": 0.0163,
+  "notCaptured": [
+    "Jito tips (they are ordinary transfers to tip accounts; not decoded here)"
+  ]
+}

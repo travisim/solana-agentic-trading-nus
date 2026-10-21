@@ -1,0 +1,110 @@
+{
+  "event": "Demo Day, Thu 18 Feb 2027",
+  "mode": "recorded",
+  "generatedAt": "2026-10-21T21:06:35.956Z",
+  "template": true,
+  "network": {
+    "cluster": "mainnet-beta",
+    "slot": 459749459,
+    "capturedAt": "2026-10-21T19:35:56.392Z",
+    "slotsPerSecond": 4.63,
+    "source": "getSlot (confirmed) twice, 6.0 s apart, from api.mainnet.solana.com; first read slot 459749431",
+    "mode": "recorded"
+  },
+  "projects": [
+    {
+      "id": "example-agent",
+      "name": "EXAMPLE: Spread Watch Agent",
+      "lane": "agent",
+      "team": [
+        "@example-handle-a",
+        "@example-handle-b"
+      ],
+      "summary": "EXAMPLE ENTRY. An agent that checks two price sources and writes down why it did or did not act, using recorded data.",
+      "repo": "https://example.com/EXAMPLE-spread-watch-agent",
+      "demo": "https://example.com/EXAMPLE-spread-watch-agent/demo",
+      "devnetSignature": "2eGnTvKicstuqrVfVpDmmM9HExLGw4yMUEbLaHFCvGaxiVkdiGmrtPjXEfuSBTeb8K4wHyXmoweV39hKkWkrTXY6",
+      "tests": {
+        "command": "npm test",
+        "passing": 14,
+        "total": 14
+      },
+      "limitation": "EXAMPLE ENTRY. Only tested on one recorded hour; a stale price once slipped through before the age check.",
+      "example": true,
+      "evidence": {
+        "tests": "14/14 passing (self-reported)",
+        "devnet": "finalized on devnet at slot 513629343",
+        "signatureCheck": {
+          "signature": "2eGnTvKicstuqrVfVpDmmM9HExLGw4yMUEbLaHFCvGaxiVkdiGmrtPjXEfuSBTeb8K4wHyXmoweV39hKkWkrTXY6",
+          "cluster": "devnet",
+          "status": "finalized",
+          "slot": 513629343,
+          "err": null,
+          "checkedAt": "2026-10-21T19:35:56.528Z",
+          "mode": "recorded"
+        }
+      }
+    },
+    {
+      "id": "example-exchange",
+      "name": "EXAMPLE: Order Book Component",
+      "lane": "exchange",
+      "team": [
+        "@example-handle-c"
+      ],
+      "summary": "EXAMPLE ENTRY. A small matching component with a test for every rejected order, deployed to devnet.",
+      "repo": "https://example.com/EXAMPLE-order-book-component",
+      "devnetSignature": "5YiqBdZzRSYKnZh3G6ALiGWiwt9C4qqhdFBj71w7WopTE9ofpAdo5aAHy7sqRJdgtxJ4AjCf7uiSccwg2jUsu1T7",
+      "tests": {
+        "command": "npm test",
+        "passing": 22,
+        "total": 24
+      },
+      "limitation": "EXAMPLE ENTRY. Two tests fail on partial fills; they are listed in the README as known failures.",
+      "example": true,
+      "evidence": {
+        "tests": "22/24 passing (self-reported)",
+        "devnet": "finalized on devnet at slot 513629341",
+        "signatureCheck": {
+          "signature": "5YiqBdZzRSYKnZh3G6ALiGWiwt9C4qqhdFBj71w7WopTE9ofpAdo5aAHy7sqRJdgtxJ4AjCf7uiSccwg2jUsu1T7",
+          "cluster": "devnet",
+          "status": "finalized",
+          "slot": 513629341,
+          "err": null,
+          "checkedAt": "2026-10-21T19:35:56.528Z",
+          "mode": "recorded"
+        }
+      }
+    },
+    {
+      "id": "example-tooling",
+      "name": "EXAMPLE: Clean Checkout Checker",
+      "lane": "tooling",
+      "team": [
+        "@example-handle-d",
+        "@example-handle-e",
+        "@example-handle-f"
+      ],
+      "summary": "EXAMPLE ENTRY. A command-line tool that runs a fresh clone of a project and reports which README steps failed.",
+      "repo": "https://example.com/EXAMPLE-clean-checkout-checker",
+      "demo": "https://example.com/EXAMPLE-clean-checkout-checker/demo",
+      "tests": {
+        "command": "npm test",
+        "passing": 9,
+        "total": 9
+      },
+      "limitation": "EXAMPLE ENTRY. Reads files only and does not run Python projects. No devnet transaction: a tool does not need one.",
+      "example": true,
+      "evidence": {
+        "tests": "9/9 passing (self-reported)",
+        "devnet": "no devnet evidence",
+        "signatureCheck": null
+      }
+    }
+  ],
+  "byLane": {
+    "agent": 1,
+    "exchange": 1,
+    "tooling": 1
+  }
+}

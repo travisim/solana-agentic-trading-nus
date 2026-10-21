@@ -1,0 +1,22 @@
+[package]
+name = "mini_book"
+version = "0.1.0"
+edition = "2021"
+description = "Workshop 3: a tiny on-chain limit order book (price-time priority). Devnet only. No dependencies."
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+overflow-checks = false
+strip = true
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(target_os, values(\"solana\"))"] }

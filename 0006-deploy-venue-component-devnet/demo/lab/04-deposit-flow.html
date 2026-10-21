@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deposit Flow</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.lvwrap{margin-left:auto;padding-top:.5rem}
+/* workshop 3 additions */
+.tabs{display:flex;gap:.5rem;flex-wrap:wrap}
+.tabs button{padding:.3rem .8rem;font-size:.95rem}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.15rem .9rem;font-size:1.05rem}
+.kv .k{color:var(--muted)} .kv .v{text-align:right;font-variant-numeric:tabular-nums}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.85rem}
+a.ex{color:var(--lav);text-decoration:none;border-bottom:1px solid var(--line)} a.ex:hover,a.ex:focus-visible{color:var(--mint);border-color:var(--mint)}
+.step{cursor:pointer}
+
+.kv .v{white-space:nowrap}
+table{border-collapse:collapse;width:100%;font-size:1rem}
+th{color:var(--lav);font-weight:300;text-align:left;padding:.25rem .5rem;border-bottom:1.5px solid var(--line)}
+td{padding:.35rem .5rem;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+tr.trw{cursor:pointer} tr.trw:hover td,tr.trw[aria-selected=true] td{background:#0d0d16}
+.okc{color:var(--mint)} .nc{color:var(--bad)}
+</style></head><body>
+<div class="page">
+<div class="row" style="align-items:flex-start;justify-content:space-between"><h1>A deposit, from sent to credited</h1><div id="livebar" class="lvwrap"></div></div>
+<p class="cap">A watcher listens to one address at three commitment levels and keeps a ledger. Credit too early, or ignore errors, and the ledger stops matching the chain.</p>
+<main id="main" aria-label="Deposit flow demo">
+<div class="box" style="padding:.5rem .8rem"><svg id="flow" viewBox="0 0 1500 250" role="img" aria-label="Deposit flowing from wallet through the network to the ledger"></svg></div>
+<div class="grid" style="grid-template-columns:1.15fr 1fr;flex:1;min-height:0;gap:.8rem">
+  <div class="grid" style="grid-template-rows:auto 1fr;gap:.8rem;min-height:0">
+    <div class="box" style="padding:.4rem .6rem"><table id="tbl"><thead><tr><th>Deposit</th><th>Signature</th><th>Result</th><th>Moved</th><th>Processed</th><th>Confirmed</th><th>Finalized</th></tr></thead><tbody></tbody></table></div>
+    <div class="box" id="ctl" style="display:flex;flex-direction:column;gap:.6rem;min-height:0"></div>
+  </div>
+  <div class="box" id="ledger" aria-live="polite" style="min-height:0;overflow:auto"></div>
+</div>
+<div id="note" class="mut" style="font-size:.9rem;min-height:1.3em"></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+const sgt=sec=>new Date((sec+8*3600)*1000).toISOString().replace('T',' ').slice(0,16)+' SGT';
+/* footer caption: says whether the data is recorded/live/fixture, its capture date, and what the page shows.
+   opts.sim = extra sentence flagging a simulated element. */
+function sourceLine(el,data,what,ts,opts={}){
+  const vals=Object.values(data);
+  const fx=vals.some(d=>d&&d.fixture);
+  const d0=vals.find(d=>d.capturedAt||d.generatedAt)||vals[0];
+  const mode=d0.mode||'recorded';
+  const iso=(d0.capturedAt||d0.generatedAt||'');
+  const when=iso?sgt(Date.parse(iso)/1000):(ts?sgt(ts):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.append((mode==='live'?'Live data':'Recorded data (not live)')+', captured '+when+'. ');
+  a.append(what+' Public mainnet reads, no keys.');
+  if(opts.sim)H('span',{class:'fx'},a,' '+opts.sim);
+  H('span',{style:'white-space:nowrap'},el,'Workshop 3');
+}
+function tlab(t,span){const s=new Date((t+28800)*1000).toISOString();return span<600?s.slice(11,19):s.slice(11,16)}
+</script>
+<script>/* Demo maths for Workshop 3. The SAME file is inlined into the demos and run by verify.mjs against ../code/out/*.json.
+   Mirrors code/src/microstructure.ts, code/src/book.ts and code/src/analysis.ts. Levels are [price,size] pairs, best first. */
+const CALC=(()=>{
+  const BANDS=[25,50,100,200,500,1000];
+  function topOfBook(bids,asks){
+    const b=bids[0],a=asks[0],both=b&&a;
+    const mid=both?(b[0]+a[0])/2:null,spread=both?a[0]-b[0]:null;
+    return {bestBid:b?b[0]:null,bestAsk:a?a[0]:null,bidSize:b?b[1]:0,askSize:a?a[1]:0,mid,spread,spreadBps:spread!==null&&mid?spread/mid*1e4:null,crossed:both?b[0]>=a[0]:false};
+  }
+  function depthWithin(levels,side,ref,bps){
+    const lim=ref*(bps/1e4);let s=0;
+    for(const l of levels){if(side==='bid'?l[0]>=ref-lim:l[0]<=ref+lim)s+=l[1]}
+    return s;
+  }
+  const imbalance=(b,a)=>b+a>0?(b-a)/(b+a):null;
+  function microprice(t){if(t.bestBid===null||t.bestAsk===null||t.bidSize+t.askSize===0)return null;return (t.bestBid*t.askSize+t.bestAsk*t.bidSize)/(t.bidSize+t.askSize)}
+  function ofiStep(p,c){
+    if(p.bestBid===null||p.bestAsk===null||c.bestBid===null||c.bestAsk===null)return null;
+    const bp=(c.bestBid>=p.bestBid?c.bidSize:0)-(c.bestBid<=p.bestBid?p.bidSize:0);
+    const ap=(c.bestAsk<=p.bestAsk?c.askSize:0)-(c.bestAsk>=p.bestAsk?p.askSize:0);
+    return bp-ap;
+  }
+  function walk(levels,qty,side){
+    let left=qty,cost=0,used=0;
+    for(const l of levels){if(left<=0)break;const take=Math.min(left,l[1]);cost+=take*l[0];left-=take;used++}
+    const filled=qty-left,vwap=filled>0?cost/filled:null,best=levels[0]?levels[0][0]:null;
+    const slip=vwap!==null&&best?(side==='buy'?vwap/best-1:1-vwap/best)*1e4:null;
+    return {filled,cost,vwap,slippageBps:slip,levelsUsed:used,complete:left<=1e-12};
+  }
+  /* the numbers analysis.ts stores per snapshot (sizes 1, 10, 100) */
+  function features(s,ref){
+    const top=topOfBook(s.bids,s.asks),centre=top.mid!==null?top.mid:(ref!=null?ref:(top.bestBid!==null?top.bestBid:top.bestAsk));
+    const depth=BANDS.map(bps=>({bps,bid:centre?depthWithin(s.bids,'bid',centre,bps):0,ask:centre?depthWithin(s.asks,'ask',centre,bps):0}));
+    const d5=depth.find(d=>d.bps===500);
+    return {top,microprice:microprice(top),depth,imbalance500:imbalance(d5.bid,d5.ask),midVsRefBps:top.mid&&ref?(top.mid/ref-1)*1e4:null};
+  }
+  /* ---- the mini_book program, in JavaScript: same 272-byte layout as program/src/lib.rs and code/src/book.ts ---- */
+  const BOOK_LEN=272,SLOTS=16,HEADER=16,SLOT_LEN=16,BID=1,ASK=2;
+  const ERRORS={1:'InvalidInstruction',2:'BadAccount',3:'NotInitialized',4:'InvalidSide',5:'ZeroPriceOrQty',6:'BookFull',7:'OrderNotFound',8:'AlreadyInitialized'};
+  const dv=b=>new DataView(b.buffer,b.byteOffset,b.byteLength);
+  const r32=(b,o)=>dv(b).getUint32(o,true),w32=(b,o,v)=>dv(b).setUint32(o,v>>>0,true);
+  const pe=code=>Object.assign(new Error('custom program error '+code+' ('+(ERRORS[code]||'unknown')+')'),{code});
+  const isInit=b=>b.length>=BOOK_LEN&&b[0]===0x4d&&b[1]===0x42&&b[2]===0x4b&&b[3]===0x31;
+  function newBook(){const b=new Uint8Array(BOOK_LEN);b.set([0x4d,0x42,0x4b,0x31],0);w32(b,4,1);return b}
+  function decodeBook(b){
+    if(!isInit(b))throw new Error('not a mini_book account (magic MBK1 missing)');
+    const orders=[];
+    for(let i=0;i<SLOTS;i++){const o=HEADER+i*SLOT_LEN,s=b[o+4];if(s===BID||s===ASK)orders.push({id:r32(b,o),side:s===BID?'bid':'ask',price:r32(b,o+8),qty:r32(b,o+12)})}
+    return {nextId:r32(b,4),fills:r32(b,8),lastFillPrice:r32(b,12),
+      bids:orders.filter(x=>x.side==='bid').sort((a,c)=>c.price-a.price||a.id-c.id),
+      asks:orders.filter(x=>x.side==='ask').sort((a,c)=>a.price-c.price||a.id-c.id)};
+  }
+  function place(b,side,price,qty){
+    const w=b.slice(),logs=[];
+    if(!isInit(w))throw pe(3);
+    if(side!==BID&&side!==ASK)throw pe(4);
+    if(!Number.isInteger(price)||!Number.isInteger(qty)||price<0||qty<=0||price>0xffffffff||qty>0xffffffff||(side===BID&&price===0))throw pe(5);
+    const id=r32(w,4);w32(w,4,id+1);
+    logs.push('ORDER id='+id+(side===BID?' BID':' ASK')+' px='+price+' qty='+qty);
+    const opp=side===BID?ASK:BID;let left=qty;
+    while(left>0){
+      let best=-1;
+      for(let i=0;i<SLOTS;i++){
+        const o=HEADER+i*SLOT_LEN;if(w[o+4]!==opp)continue;
+        const p=r32(w,o+8);if(side===BID?p>price:p<price)continue;
+        if(best<0){best=i;continue}
+        const bo=HEADER+best*SLOT_LEN,bp=r32(w,bo+8),better=side===BID?p<bp:p>bp;
+        if(better||(p===bp&&r32(w,o)<r32(w,bo)))best=i;
+      }
+      if(best<0)break;
+      const mo=HEADER+best*SLOT_LEN,mq=r32(w,mo+12),mp=r32(w,mo+8),mid=r32(w,mo),fill=Math.min(left,mq);
+      logs.push('FILL taker='+id+' maker='+mid+' px='+mp+' qty='+fill);
+      left-=fill;
+      if(fill===mq)w.fill(0,mo,mo+SLOT_LEN);else w32(w,mo+12,mq-fill);
+      w32(w,8,r32(w,8)+1);w32(w,12,mp);
+    }
+    if(left>0){
+      let free=-1;for(let i=0;i<SLOTS;i++){if(w[HEADER+i*SLOT_LEN+4]===0){free=i;break}}
+      if(free<0)throw pe(6);
+      const o=HEADER+free*SLOT_LEN;w32(w,o,id);w[o+4]=side;w32(w,o+8,price);w32(w,o+12,left);logs.push('REST id='+id+' qty='+left);
+    }
+    b.set(w);return {id,logs};
+  }
+  function cancel(b,id){
+    if(!isInit(b))throw pe(3);
+    for(let i=0;i<SLOTS;i++){const o=HEADER+i*SLOT_LEN;if(b[o+4]!==0&&r32(b,o)===id){b.fill(0,o,o+SLOT_LEN);return ['CANCEL id='+id]}}
+    throw pe(7);
+  }
+  /* run one recorded step: returns {logs,error} and mutates b (a failed step leaves b unchanged) */
+  function step(b,st){
+    try{
+      if(st.kind==='init')return {logs:[],error:null};
+      if(st.kind==='place')return {logs:place(b,st.order.side==='bid'?BID:ASK,st.order.price,st.order.qty).logs,error:null};
+      return {logs:cancel(b,Number(/order (\d+)/.exec(st.label)[1])),error:null};
+    }catch(e){return {logs:[],error:e.code||-1}}
+  }
+  /* ---- trade flow ---- */
+  function tickRule(prices){const out=[];let last=0;for(let i=0;i<prices.length;i++){if(i>0){if(prices[i]>prices[i-1])last=1;else if(prices[i]<prices[i-1])last=-1}out.push(last)}return out}
+  function tickAccuracy(swaps){ /* swaps: [{price,side}] */
+    const sg=tickRule(swaps.map(s=>s.price));let agree=0,total=0;
+    swaps.forEach((s,i)=>{if(!s.side||sg[i]===0)return;total++;if((s.side==='buy'?1:-1)===sg[i])agree++});
+    return {agree,total,share:total?agree/total:0};
+  }
+  function windows(swaps,windowSec){ /* swaps: [{t,price,usdc,side}] oldest first */
+    const t0=swaps[0].t,m=new Map();
+    for(const s of swaps){const k=Math.floor((s.t-t0)/windowSec);if(!m.has(k))m.set(k,[]);m.get(k).push(s)}
+    return [...m.entries()].sort((a,b)=>a[0]-b[0]).map(([k,ss])=>{
+      let buy=0,sell=0;for(const s of ss){if(s.side==='buy')buy+=s.usdc;else sell+=s.usdc}
+      return {tStart:t0+k*windowSec,trades:ss.length,buyUsd:buy,sellUsd:sell,imbalance:buy+sell>0?(buy-sell)/(buy+sell):null,open:ss[0].price,close:ss[ss.length-1].price,retBps:(ss[ss.length-1].price/ss[0].price-1)*1e4};
+    });
+  }
+  function rollSpread(prices){
+    const d=[];for(let i=1;i<prices.length;i++)d.push(prices[i]-prices[i-1]);
+    if(d.length<3)return null;
+    const a=d.slice(1),b=d.slice(0,-1),ma=a.reduce((s,x)=>s+x,0)/a.length,mb=b.reduce((s,x)=>s+x,0)/b.length;
+    let cov=0;for(let i=0;i<a.length;i++)cov+=(a[i]-ma)*(b[i]-mb);cov/=a.length;
+    return cov<0?2*Math.sqrt(-cov):null;
+  }
+  const centreOf=(top,ref)=>top.mid!==null?top.mid:(ref!=null?ref:(top.bestBid!==null?top.bestBid:top.bestAsk));
+  return {centreOf,BANDS,topOfBook,depthWithin,imbalance,microprice,ofiStep,walk,features,BOOK_LEN,BID,ASK,ERRORS,newBook,decodeBook,place,cancel,step,isInit,tickRule,tickAccuracy,windows,rollSpread};
+})();
+if(typeof module!=='undefined')module.exports=CALC;
+</script>
+<script>/* Live mode: read-only public Solana data, straight from the browser. No keys, no wallets, no writes.
+   Browser-safe RPC: solana-rpc.publicnode.com (api.mainnet.solana.com returns 403 for browser Origins). */
+const LIVE=(()=>{
+  const DEVNET=(typeof HASH!=='undefined'&&HASH.get('devrpc'))||'https://api.devnet.solana.com';
+  const RPC=(typeof HASH!=='undefined'&&HASH.get('rpc'))||'https://solana-rpc.publicnode.com';
+  const POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE',SOL_MINT='So11111111111111111111111111111111111111112',USDC_MINT='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',PYTH_OWNER='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ',PYTH_DISC='22f123639d7ef4cd';
+  const A58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58(b){let n=0n;for(const x of b)n=n*256n+BigInt(x);let s='';while(n>0n){s=A58[Number(n%58n)]+s;n/=58n}for(const x of b){if(x===0)s='1'+s;else break}return s}
+  function fromB64(s){const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+  const hex=(u,a,b)=>Array.from(u.slice(a,b),x=>x.toString(16).padStart(2,'0')).join('');
+  let id=1;
+  async function rpc(method,params,url){
+    const r=await fetch(url||RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:id++,method,params})});
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.error){const e=new Error(j.error.message||'rpc error');e.rate=/429|rate|too many/i.test(JSON.stringify(j.error));throw e}
+    return j.result;
+  }
+  async function account(addr,url,commitment){
+    const r=await rpc('getAccountInfo',[addr,{encoding:'base64',commitment:commitment||'confirmed'}],url);
+    if(!r||!r.value)throw new Error('account not found');
+    return {slot:r.context.slot,owner:r.value.owner,lamports:r.value.lamports,bytes:fromB64(r.value.data[0])};
+  }
+  /* Pyth SOL/USD PriceUpdateV2 account: price i64@73, conf i64@81, expo i32@89, publish time i64@93, posted slot u64@125 */
+  async function fetchPythPrice(){
+    const a=await account(PYTH_ACCOUNT);
+    if(a.owner!==PYTH_OWNER)throw new Error('unexpected Pyth owner');
+    const u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    if(u.length<133||hex(u,0,8)!==PYTH_DISC)throw new Error('not a Pyth price account');
+    const expo=v.getInt32(89,true);
+    return {price:Number(v.getBigInt64(73,true))*10**expo,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),currentSlot:a.slot};
+  }
+  /* Orca whirlpool: sqrtPrice u128@65 (Q64.64); price = (sqrt/2^64)^2 * 10^(9-6) */
+  async function fetchOrcaPrice(){
+    const a=await account(POOL),u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const sq=(v.getBigUint64(73,true)<<64n)|v.getBigUint64(65,true);
+    const r=Number(sq)/2**64;return {price:r*r*1000,slot:a.slot};
+  }
+  async function fetchJupiterQuote(){
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL_MINT+'&outputMint='+USDC_MINT+'&amount=1000000000&slippageBps=50');
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();return {price:Number(j.outAmount)/1e6};
+  }
+  /* swaps: same rule as code/src/swaps.ts. A swap moves the two pool vaults in opposite directions. */
+  let vaults=null;
+  async function loadVaults(){
+    if(vaults)return vaults;const a=await account(POOL),u=a.bytes;
+    if(u.length<245||b58(u.slice(101,133))!==SOL_MINT||b58(u.slice(181,213))!==USDC_MINT)throw new Error('pool is not SOL/USDC');
+    return vaults={sol:b58(u.slice(133,165)),usdc:b58(u.slice(213,245))};
+  }
+  function swapFromTx(sig,tx,vt){
+    if(!tx||!tx.meta||tx.meta.err||tx.blockTime==null)return null;
+    const keys=tx.transaction.message.accountKeys.map(k=>typeof k==='string'?k:k.pubkey);
+    const d=(vault,mint)=>{const i=keys.indexOf(vault);if(i<0)return null;
+      const f=l=>(l||[]).find(b=>b.accountIndex===i&&b.mint===mint),pre=f(tx.meta.preTokenBalances),post=f(tx.meta.postTokenBalances);
+      return pre&&post?(Number(post.uiTokenAmount.amount)-Number(pre.uiTokenAmount.amount))/10**pre.uiTokenAmount.decimals:null};
+    const ds=d(vt.sol,SOL_MINT),du=d(vt.usdc,USDC_MINT);
+    if(ds===null||du===null||ds===0||du===0||Math.sign(ds)===Math.sign(du))return null;
+    return {t:tx.blockTime,slot:tx.slot,side:ds>0?'sell':'buy',solAmount:Math.abs(ds),usdcAmount:Math.abs(du),price:Math.abs(du)/Math.abs(ds),sig};
+  }
+  /* state={lastSig:null}; returns new swaps oldest first (at most `max`), and the current slot */
+  async function fetchNewSwaps(state,max=10){
+    const vt=await loadVaults();
+    const sigs=await rpc('getSignaturesForAddress',[POOL,Object.assign({limit:25,commitment:'confirmed'},state.lastSig?{until:state.lastSig}:{})]);
+    if(sigs.length)state.lastSig=sigs[0].signature;
+    const take=sigs.filter(s=>!s.err).slice(0,max).reverse(),out=[];
+    for(const s of take){
+      let tx=null;try{tx=await rpc('getTransaction',[s.signature,{encoding:'jsonParsed',maxSupportedTransactionVersion:1,commitment:'confirmed'}])}catch(e){if(e.rate||!out.length&&s===take[take.length-1])throw e}
+      const sw=swapFromTx(s.signature,tx,vt);if(sw)out.push(sw);
+      await new Promise(r=>setTimeout(r,120));
+    }
+    return {swaps:out,slot:sigs.length?sigs[0].slot:null};
+  }
+
+  /* ---- Workshop 3: Phoenix order books, devnet reads ---- */
+  const PHOENIX_PROGRAM='PhoeNiXZ8ByJGLkxNfZRnkUfjvmuYqLR89jjFHGqdXY';
+  const u64=(v,o)=>v.getBigUint64(o,true);
+  /* layout: see code/src/phoenix.ts. Returns {bids,asks} as arrays of {price,size,seq,slot,ts} best first, plus metadata. */
+  function decodePhoenix(u){
+    if(u.length<576+256+48)throw new Error('Phoenix market account too short');
+    const v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const bidsSize=Number(u64(v,16)),asksSize=Number(u64(v,24));
+    const baseDec=v.getUint32(40,true),quoteDec=v.getUint32(120,true),baseLot=Number(u64(v,112)),quoteLot=Number(u64(v,192)),raw=v.getUint32(312,true);
+    let o=576+256;const quoteLotsPerTick=Number(u64(v,o+8)),fee=Number(u64(v,o+24));o+=48;
+    const treeLen=n=>32+64*n;
+    const price=t=>Number(t)*quoteLotsPerTick*quoteLot/(10**quoteDec*raw),size=l=>Number(l)*baseLot/10**baseDec;
+    const tree=(off,cap)=>{
+      const bump=v.getInt32(off+24,true),head0=v.getInt32(off+28,true),nodes=[];
+      for(let i=0;32+(i+1)*64<=treeLen(cap)&&i<bump-1&&i<cap;i++){const p=off+32+i*64;
+        nodes.push({next:v.getInt32(p,true),ticks:u64(v,p+16),seq:u64(v,p+24),lots:u64(v,p+40),slot:Number(u64(v,p+48)),ts:Number(u64(v,p+56))})}
+      const free=new Set();let head=head0,g=0;
+      while(head<bump){const n=nodes[head-1];if(!n)break;free.add(head-1);head=n.next;if(++g>bump+2)throw new Error('corrupt free list')}
+      return nodes.filter((_,i)=>!free.has(i));
+    };
+    const uiSeq=s=>{const sg=s>=(1n<<63n)?s-(1n<<64n):s;return sg<0n?-sg-1n:sg};
+    const mk=n=>({ticks:n.ticks,price:price(n.ticks),size:size(n.lots),seq:uiSeq(n.seq),slot:n.slot,ts:n.ts});
+    const bids=tree(o,bidsSize).map(mk).sort((a,b)=>a.ticks===b.ticks?Number(a.seq-b.seq):(a.ticks>b.ticks?-1:1));
+    const asks=tree(o+treeLen(bidsSize),asksSize).map(mk).sort((a,b)=>a.ticks===b.ticks?Number(a.seq-b.seq):(a.ticks<b.ticks?-1:1));
+    return {bids,asks,takerFeeBps:fee,capacity:bidsSize};
+  }
+  function ladderOf(orders,slot,unix,levels){
+    const out=[];
+    for(const x of orders){
+      if((x.slot!==0&&x.slot<slot)||(x.ts!==0&&x.ts<unix))continue;
+      const last=out[out.length-1];
+      if(last&&last[0]===x.price)last[1]+=x.size;else if(out.length<levels)out.push([x.price,x.size]);else break;
+    }
+    return out;
+  }
+  /* market: {address,cluster:'mainnet'|'devnet'} -> same shape as a recorded snapshot */
+  async function fetchPhoenix(m,levels){
+    const a=await account(m.address,m.cluster==='devnet'?DEVNET:undefined);
+    if(a.owner!==PHOENIX_PROGRAM)throw new Error('not a Phoenix market');
+    const d=decodePhoenix(a.bytes),unix=Math.floor(Date.now()/1000);
+    return {slot:a.slot,t:unix,bids:ladderOf(d.bids,a.slot,unix,levels||100),asks:ladderOf(d.asks,a.slot,unix,levels||100),
+      orders:{bids:d.bids.length,asks:d.asks.length}};
+  }
+  /* devnet: the three commitment levels, and the mini_book program's account and recent transactions */
+  async function fetchCommitmentSlots(){
+    const g=c=>rpc('getSlot',[{commitment:c}],DEVNET);
+    const [p,c,f]=await Promise.all([g('processed'),g('confirmed'),g('finalized')]);
+    return {processed:p,confirmed:c,finalized:f};
+  }
+  async function fetchDevnetAccount(addr){return account(addr,DEVNET,'confirmed')}
+  async function fetchDevnetSignatures(addr,limit){
+    return rpc('getSignaturesForAddress',[addr,{limit:limit||10,commitment:'confirmed'}],DEVNET);
+  }
+  /* UI + loop. opts: {el, intervalMs=5000, enter(), exit(), poll(): Promise<{slot?,note?}> (throw on failure)} */
+  function start(opts){
+    const el=opts.el,every=opts.intervalMs||5000;
+    el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end';
+    const grp=document.createElement('div');grp.setAttribute('role','group');grp.setAttribute('aria-label','Data source');grp.style.cssText='display:flex;gap:.4rem';
+    const bR=document.createElement('button'),bL=document.createElement('button');bR.textContent='Recorded';bL.textContent='Live';
+    bR.style.padding=bL.style.padding='.3rem .8rem';bR.style.fontSize=bL.style.fontSize='.95rem';
+    grp.append(bR,bL);const pill=document.createElement('span');pill.className='pill';pill.style.fontSize='.85rem';pill.setAttribute('aria-live','polite');
+    el.append(grp,pill);
+    let on=false,timer=null,busy=false,gen=0,fails=0;
+    const paint=()=>{bR.setAttribute('aria-pressed',on?'false':'true');bL.setAttribute('aria-pressed',on?'true':'false')};
+    const say=(txt,cls)=>{pill.textContent=txt;pill.className='pill '+(cls||'mut');pill.style.fontSize='.85rem'};
+    const hhmmss=()=>new Date(Date.now()+8*3600e3).toISOString().slice(11,19)+' SGT';
+    async function tick(){
+      if(!on||busy||document.hidden)return;busy=true;const g=gen;
+      try{const r=await opts.poll()||{};if(g!==gen)return;fails=0;say('LIVE · '+hhmmss()+(r.slot?' · slot '+r.slot:'')+(r.note?' · '+r.note:''),'mint')}
+      catch(e){if(g===gen){fails++;console.warn('live poll failed ('+fails+'/3):',e&&e.message);if(fails>=3)fallback(e);else say('LIVE · retrying ('+fails+'/3)','warnc')}}
+      finally{busy=false}
+    }
+    function setLive(v){
+      if(v===on)return;on=v;gen++;fails=0;paint();clearInterval(timer);timer=null;
+      if(on){say('LIVE · connecting','warnc');opts.enter();tick();timer=setInterval(tick,every)}
+      else{opts.exit();say('Recorded data','mut')}
+    }
+    function fallback(e){on=false;gen++;paint();clearInterval(timer);timer=null;opts.exit();say((e&&e.rate?'rate limited, back to recorded':'live unavailable, back to recorded'),'badc');console.warn('live mode failed:',e&&e.message)}
+    bR.addEventListener('click',()=>setLive(false));bL.addEventListener('click',()=>setLive(true));
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+    paint();say('Recorded data','mut');
+    if(/[?&#]live=1/.test(location.search+location.hash))setLive(true);
+    return {isLive:()=>on};
+  }
+  return {fetchPythPrice,fetchOrcaPrice,fetchJupiterQuote,fetchNewSwaps,start,rpc,account,decodePhoenix,ladderOf,fetchPhoenix,fetchCommitmentSlots,fetchDevnetAccount,fetchDevnetSignatures,b58,DEVNET};
+})();
+if(typeof module!=='undefined')module.exports=LIVE;
+</script>
+<script>
+const DV={"cluster":"devnet","rpcHost":"api.devnet.solana.com","capturedAt":"2026-10-21T20:10:50.082Z","programId":"UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL","bookAccount":"51oS5WH5st6nhUKBHRqB92w494BkhgJ7h5C8tdtJ4FdA","payer":"2iGcpoF9xx5GFEXDJNpoY2VqB3B5kzimeufvriJCokYV","programExplorer":"https://explorer.solana.com/address/UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL?cluster=devnet","bookExplorer":"https://explorer.solana.com/address/51oS5WH5st6nhUKBHRqB92w494BkhgJ7h5C8tdtJ4FdA?cluster=devnet","txCount":9,"failedCount":1,"totalFeeLamports":50000,"rentLamports":2032000,"medianMs":{"processed":319,"confirmed":712,"finalized":712},"computeUnits":{"min":266,"max":3018},"txs":[{"step":1,"label":"init: create the book account and initialize it","kind":"init","signature":"5rm3EFXHtiS5mA7ZjB7CP2HC3UwTtmuT3UZgUKUG3m3fb2Svyjq8ahSGuXYiRoxgbhuTT4hNvJnuCD92GQMjwLGe","slot":513638819,"blockTime":1792613436,"ok":true,"err":null,"fee":10000,"computeUnits":266,"processedAfterMs":239,"confirmedAfterMs":678,"finalizedAfterMs":678,"explorer":"https://explorer.solana.com/tx/5rm3EFXHtiS5mA7ZjB7CP2HC3UwTtmuT3UZgUKUG3m3fb2Svyjq8ahSGuXYiRoxgbhuTT4hNvJnuCD92GQMjwLGe?cluster=devnet","logs":[]},{"step":2,"label":"ask 5 @ 101 rests","kind":"place","signature":"4WJ3Q2UYSfQnHRbXRniwYAH45TQXw34zmHCLPt71QbGF5748ezbsfdNvPed579tZsD89urx8rvPmKcoXMnt4irZr","slot":513638825,"blockTime":1792613438,"ok":true,"err":null,"fee":5000,"computeUnits":1237,"processedAfterMs":319,"confirmedAfterMs":711,"finalizedAfterMs":711,"explorer":"https://explorer.solana.com/tx/4WJ3Q2UYSfQnHRbXRniwYAH45TQXw34zmHCLPt71QbGF5748ezbsfdNvPed579tZsD89urx8rvPmKcoXMnt4irZr?cluster=devnet","logs":["ORDER id=1 ASK px=101 qty=5","REST id=1 qty=5"]},{"step":3,"label":"ask 4 @ 102 rests","kind":"place","signature":"4DxXEcyqL1LksYDjbh5AiAjgZCwZmR981SezJRghpyqofdXp2ZRAfep4Ng17ACzwMq9nvbGrs8jVt6nAYsvoAVMm","slot":513638830,"blockTime":1792613439,"ok":true,"err":null,"fee":5000,"computeUnits":1244,"processedAfterMs":212,"confirmedAfterMs":712,"finalizedAfterMs":712,"explorer":"https://explorer.solana.com/tx/4DxXEcyqL1LksYDjbh5AiAjgZCwZmR981SezJRghpyqofdXp2ZRAfep4Ng17ACzwMq9nvbGrs8jVt6nAYsvoAVMm?cluster=devnet","logs":["ORDER id=2 ASK px=102 qty=4","REST id=2 qty=4"]},{"step":4,"label":"bid 6 @ 99 rests","kind":"place","signature":"3FcCzUJoZnhYy4Pk56qjZjC5zLeGVJixrh4ZypNqvTooawRp8m8hU2xnK514Ui2Kb714KwGzmMCzQFpTwZJWrgQy","slot":513638837,"blockTime":1792613441,"ok":true,"err":null,"fee":5000,"computeUnits":1248,"processedAfterMs":391,"confirmedAfterMs":788,"finalizedAfterMs":788,"explorer":"https://explorer.solana.com/tx/3FcCzUJoZnhYy4Pk56qjZjC5zLeGVJixrh4ZypNqvTooawRp8m8hU2xnK514Ui2Kb714KwGzmMCzQFpTwZJWrgQy?cluster=devnet","logs":["ORDER id=3 BID px=99 qty=6","REST id=3 qty=6"]},{"step":5,"label":"bid 3 @ 98 rests","kind":"place","signature":"36ed5hpQQLHimBxPrMxmLRyCSHvbnBoJxDU7NE6gVtD6QGc6P3oqCbySPXfpWidBjkwfBqgLQhWtUaiPfJmonCDV","slot":513638843,"blockTime":1792613442,"ok":true,"err":null,"fee":5000,"computeUnits":1255,"processedAfterMs":268,"confirmedAfterMs":605,"finalizedAfterMs":605,"explorer":"https://explorer.solana.com/tx/36ed5hpQQLHimBxPrMxmLRyCSHvbnBoJxDU7NE6gVtD6QGc6P3oqCbySPXfpWidBjkwfBqgLQhWtUaiPfJmonCDV?cluster=devnet","logs":["ORDER id=4 BID px=98 qty=3","REST id=4 qty=3"]},{"step":6,"label":"bid 7 @ 101 crosses: fills 5 @ 101, rests 2","kind":"place","signature":"4n8dHBs2GmRt5VyKFRtK2duQv25Ukz15gPFNSEKYi64W5A3uHyz1nckiaLEfq1vY8VFtifdQBPNNdBiaXpcDke8Z","slot":513638849,"blockTime":1792613444,"ok":true,"err":null,"fee":5000,"computeUnits":2156,"processedAfterMs":338,"confirmedAfterMs":739,"finalizedAfterMs":739,"explorer":"https://explorer.solana.com/tx/4n8dHBs2GmRt5VyKFRtK2duQv25Ukz15gPFNSEKYi64W5A3uHyz1nckiaLEfq1vY8VFtifdQBPNNdBiaXpcDke8Z?cluster=devnet","logs":["ORDER id=5 BID px=101 qty=7","FILL taker=5 maker=1 px=101 qty=5","REST id=5 qty=2"]},{"step":7,"label":"ask 9 @ 99 crosses: price priority, then rests 1","kind":"place","signature":"4Zb1G4nqDdnX524sedHdTVvteC277X2Efo8WGTvFcWsigyJWtaU57HFxkCUf3n7YbpCsLDgpH6DvgczPu21GmHyD","slot":513638856,"blockTime":1792613445,"ok":true,"err":null,"fee":5000,"computeUnits":3018,"processedAfterMs":504,"confirmedAfterMs":898,"finalizedAfterMs":899,"explorer":"https://explorer.solana.com/tx/4Zb1G4nqDdnX524sedHdTVvteC277X2Efo8WGTvFcWsigyJWtaU57HFxkCUf3n7YbpCsLDgpH6DvgczPu21GmHyD?cluster=devnet","logs":["ORDER id=6 ASK px=99 qty=9","FILL taker=6 maker=5 px=101 qty=2","FILL taker=6 maker=3 px=99 qty=6","REST id=6 qty=1"]},{"step":8,"label":"bid with quantity 0 is rejected (fee still paid)","kind":"place","signature":"2QFwDfQBMKymgtjVSQH5ThcDqSpDgEhPYQ8H3ZrSzamADM5ybk34CVsKBesnHVfXKvanAgBPLDCCoe6brmZ32zre","slot":513638863,"blockTime":1792613447,"ok":false,"err":{"InstructionError":[0,{"Custom":5}]},"fee":5000,"computeUnits":141,"processedAfterMs":352,"confirmedAfterMs":696,"finalizedAfterMs":696,"explorer":"https://explorer.solana.com/tx/2QFwDfQBMKymgtjVSQH5ThcDqSpDgEhPYQ8H3ZrSzamADM5ybk34CVsKBesnHVfXKvanAgBPLDCCoe6brmZ32zre?cluster=devnet","logs":[]},{"step":9,"label":"cancel order 4","kind":"cancel","signature":"3gRwfYsaNevDy9gN1tpmF3vXnsEgmDpCNYnWZFPrUMchoDd6iNacrUcF9qsL3hgnxDuBd7cvXzdwu3gvdopDAqhn","slot":513638869,"blockTime":1792613448,"ok":true,"err":null,"fee":5000,"computeUnits":468,"processedAfterMs":318,"confirmedAfterMs":715,"finalizedAfterMs":715,"explorer":"https://explorer.solana.com/tx/3gRwfYsaNevDy9gN1tpmF3vXnsEgmDpCNYnWZFPrUMchoDd6iNacrUcF9qsL3hgnxDuBd7cvXzdwu3gvdopDAqhn?cluster=devnet","logs":["CANCEL id=4"]}],"finalBook":{"slot":513638872,"base64":"TUJLMQcAAAADAAAAYwAAAAYAAAACAAAAYwAAAAEAAAACAAAAAgAAAGYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=","sha256":"e728c48eddaa483fed44a131e8f65ccfe20a14d7e1b2ee1d1cb02b520b87c264","view":{"nextId":7,"fills":3,"lastFillPrice":99,"orders":[{"id":6,"side":"ask","price":99,"qty":1},{"id":2,"side":"ask","price":102,"qty":4}],"bids":[],"asks":[{"id":6,"side":"ask","price":99,"qty":1},{"id":2,"side":"ask","price":102,"qty":4}]}},"mirrorEqual":true,"deploy":{"cluster":"devnet","rpcHost":"api.devnet.solana.com","programId":"UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL","programDataAddress":"258HRjh1VC7WU7GNGbcNnsK4fJsskY8pZaiuA1RLuwBd","loader":"BPFLoaderUpgradeab1e11111111111111111111111","upgradeAuthority":"2iGcpoF9xx5GFEXDJNpoY2VqB3B5kzimeufvriJCokYV","deploySignature":"3vaz8GiD3DWejpUqorSYe51gBgnWonHdu8WTCFz8fNw44xJNzBoHVqHPemjnWchgd1RdYSE5GaZCH4ZxjBPgCChC","deploySlot":513637896,"deployBlockTime":1792613217,"elfBytes":5528,"elfSha256":"866aef368c82ff3e47bb74ffa1098b4c3e218fb0f3bf6723922c1b01c131bcb2","onChainBytesEqualBuild":true,"verifiedWith":"solana program dump UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL out.so -u devnet; sha256 of out.so equals sha256 of program/prebuilt/mini_book.so","toolchain":"solana-cli 3.1.10 (Agave), cargo-build-sbf 3.1.10, platform-tools v1.52 (rustc 1.89.0-sbpf-solana-v1.52), host rustc 1.99.1","deployerFundedBy":"a transfer of 63,444,000 lamports from a leftover devnet test wallet of an earlier experiment (research/experiments/deposit-watcher), because the public devnet faucet answered HTTP 429 (daily limit) for every request this session. The deployer key was generated locally and is kept outside the repository.","explorer":{"program":"https://explorer.solana.com/address/UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL?cluster=devnet","deployTx":"https://explorer.solana.com/tx/3vaz8GiD3DWejpUqorSYe51gBgnWonHdu8WTCFz8fNw44xJNzBoHVqHPemjnWchgd1RdYSE5GaZCH4ZxjBPgCChC?cluster=devnet"},"fundingSignature":"2A5fTLzPSFk8Gf9vdyNnLxbcuyr7GVyPiwENpayxcbSPcZmc6Nwrg2q4yCvv5V6Hc4BcuHb1Tp5jHBEAJa8pngVc","capturedAt":"2026-10-21T20:10:00Z"},"local":{"cluster":"local","medianMs":{"processed":300,"confirmed":331,"finalized":16981}},"deposits":{"cluster":"devnet","capturedAt":"2026-10-21T20:01:14.201Z","sender":"2gQiXtsX2wPGkeiurkPUiGfuTiNdGRCrwBD5J7WCWN82","vault":"ARznxNAnQWFh47vFH72hv3Eo1mfwP23VuaDnew9hhxeP","vaultExplorer":"https://explorer.solana.com/address/ARznxNAnQWFh47vFH72hv3Eo1mfwP23VuaDnew9hhxeP?cluster=devnet","rule":"credit at confirmed, only if the transaction did not fail; mark final at finalized","rows":[{"label":"deposit 1","signature":"A9a4U7NNomqzSrdGmp56SeXU5PjoyP6kQtFWa9QBVwPG8FW4gHcxdAjjy8ZJs9Wh36kdYydBe429CZ5RgWEs3Kf","explorer":"https://explorer.solana.com/tx/A9a4U7NNomqzSrdGmp56SeXU5PjoyP6kQtFWa9QBVwPG8FW4gHcxdAjjy8ZJs9Wh36kdYydBe429CZ5RgWEs3Kf?cluster=devnet","sentLamports":1000000,"attemptedLamports":1000000,"slot":513636427,"ok":true,"err":null,"amountLamports":1000000,"credited":true,"processedAfterMs":410,"confirmedAfterMs":932,"finalizedAfterMs":931},{"label":"deposit 2","signature":"gUBmDtq2iuS1ogrt8o4A5QJWVdy2HxhMeQkkTjB6cAKzFw9fgSqmy9bXACxgdgWrXTkUzYKaP7Dde9Bmnt2X29y","explorer":"https://explorer.solana.com/tx/gUBmDtq2iuS1ogrt8o4A5QJWVdy2HxhMeQkkTjB6cAKzFw9fgSqmy9bXACxgdgWrXTkUzYKaP7Dde9Bmnt2X29y?cluster=devnet","sentLamports":1500000,"attemptedLamports":1500000,"slot":513636437,"ok":true,"err":null,"amountLamports":1500000,"credited":true,"processedAfterMs":231,"confirmedAfterMs":534,"finalizedAfterMs":533},{"label":"failing deposit (more than the sender holds)","signature":"qM1DbvYj8bxJ5crHTMXHbNPwV1KZByF8kcfJC6woszgJxKUQL5iU9F2sGtSuaAKTTQkeb1qeeGGtUsRG6Wze3oY","explorer":"https://explorer.solana.com/tx/qM1DbvYj8bxJ5crHTMXHbNPwV1KZByF8kcfJC6woszgJxKUQL5iU9F2sGtSuaAKTTQkeb1qeeGGtUsRG6Wze3oY?cluster=devnet","sentLamports":null,"attemptedLamports":1065964000,"slot":513636447,"ok":false,"err":{"InstructionError":[0,{"Custom":1}]},"amountLamports":0,"credited":false,"processedAfterMs":317,"confirmedAfterMs":654,"finalizedAfterMs":652}]}},DP=DV.deposits;
+const ROWS=DP.rows,CL=DP.cluster||DV.cluster;
+const short=(s,a=5,b=5)=>s.slice(0,a)+'...'+s.slice(-b);
+const fmt=(x,d=0)=>(x===null||x===undefined||!isFinite(x))?'—':Number(x).toLocaleString('en-US',{maximumFractionDigits:d});
+const sol=l=>(l/1e9).toFixed(6)+' SOL';
+const amt=l=>l>=1e7?(l/1e9).toFixed(3)+' SOL':fmt(l)+' lamports';
+let cur=Math.min(ROWS.length,Math.max(1,+hv('d',1)))-1,tms=+hv('t',-1),rule=hv('rule','confirmed'),checkErr=hv('err','1')!=='0',LV=false,LROWS=[],LWS=null,LSLOTS=null;
+const ex=(href,text,parent)=>href?H('a',{class:'ex',href,target:'_blank',rel:'noopener'},parent,text):H('span',{},parent,text);
+function data(){return LV?LROWS:ROWS}
+/* ledger rule: which commitment level credits, and whether the transaction error is checked */
+function credited(r){
+  const t=rule==='processed'?r.processedAfterMs:rule==='confirmed'?r.confirmedAfterMs:r.finalizedAfterMs;
+  if(t===null||t===undefined)return false;
+  if(checkErr&&r.ok===false)return false;
+  return true;
+}
+function creditAmount(r){return r.ok===false?(r.attemptedLamports||0):(r.amountLamports||0)}
+function table(){
+  const tb=$('#tbl tbody');tb.innerHTML='';const rows=data();
+  if(!rows.length){const tr=H('tr',{},tb);H('td',{colspan:7,class:'mut'},tr,'Waiting for a deposit to the watched address...')}
+  rows.forEach((r,i)=>{const tr=H('tr',{class:'trw','aria-selected':i===cur?'true':'false',tabindex:'0'},tb);
+    H('td',{},tr,r.label);const sg=H('td',{class:'mono'},tr);ex(r.explorer,short(r.signature),sg);
+    H('td',{class:r.ok===false?'nc':'okc'},tr,r.ok===false?'Failed':r.ok?'Success':'—');
+    H('td',{class:'num'},tr,r.amountLamports===null||r.amountLamports===undefined?'—':fmt(r.amountLamports)+' lamports');
+    ['processedAfterMs','confirmedAfterMs','finalizedAfterMs'].forEach(k=>H('td',{class:'num'},tr,r[k]===null||r[k]===undefined?'—':fmt(r[k])+' ms'));
+    const pick=()=>{cur=i;tms=-1;render()};tr.addEventListener('click',e=>{if(e.target.tagName!=='A')pick()});tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+}
+function flow(){
+  const svg=$('#flow');svg.innerHTML='';const rows=data();const r=rows[Math.min(cur,rows.length-1)];
+  const box=(x,w,title,sub,col)=>{S('rect',{x,y:30,width:w,height:170,rx:16,fill:'none',stroke:col,'stroke-width':1.8},svg);S('text',{x:x+w/2,y:66,'text-anchor':'middle','font-size':26,style:'fill:'+col},svg,title);if(sub)S('text',{x:x+w/2,y:98,'text-anchor':'middle','font-size':18,class:'m'},svg,sub)};
+  box(20,260,'Sender wallet',r?short(DP.sender||DV.payer,4,4):'devnet wallet','#b3a5ff');
+  box(1220,260,'Watcher ledger','credits per your rule','#3ddc97');
+  S('text',{x:150,y:130,'text-anchor':'middle','font-size':18,class:'m'},svg,r&&r.ok===false?'sends more than it holds':'sends a transfer');
+  S('text',{x:150,y:160,'text-anchor':'middle','font-size':18,style:'fill:#ffc15a'},svg,'sent');
+  /* network stages */
+  const st=[['processed',r&&r.processedAfterMs],['confirmed',r&&r.confirmedAfterMs],['finalized',r&&r.finalizedAfterMs]];
+  const max=Math.max(1,...st.map(s=>s[1]||0),1);if(tms<0)tms=max;const t=Math.min(tms,max);
+  S('rect',{x:320,y:30,width:860,height:170,rx:16,fill:'none',stroke:'#4a4670','stroke-width':1.8},svg);
+  S('text',{x:750,y:62,'text-anchor':'middle','font-size':20,class:'l'},svg,'Solana network: '+(CL==='devnet'?'devnet':'local validator'));
+  st.forEach((s,i)=>{const cx=420+i*330,ok=s[1]!==null&&s[1]!==undefined&&t>=s[1];
+    S('circle',{cx,cy:125,r:34,fill:ok?'#3ddc97':'#000','fill-opacity':ok?.22:1,stroke:ok?'#3ddc97':'#4a4670','stroke-width':2.4},svg);
+    S('text',{x:cx,y:132,'text-anchor':'middle','font-size':19,style:'fill:'+(ok?'#3ddc97':'#9a9aa2')},svg,s[0]==='processed'?'1':s[0]==='confirmed'?'2':'3');
+    S('text',{x:cx,y:186,'text-anchor':'middle','font-size':17,style:'fill:'+(ok?'#f4f4f6':'#9a9aa2')},svg,s[0]+(s[1]!==null&&s[1]!==undefined?'  '+fmt(s[1])+' ms':'  not seen'));
+    if(i<2)S('line',{x1:cx+40,x2:cx+290,y1:125,y2:125,stroke:ok?'#3ddc97':'#4a4670','stroke-width':2.4,'stroke-dasharray':'8 6'},svg)});
+  [[280,320],[1180,1220]].forEach(a=>S('line',{x1:a[0],x2:a[1],y1:125,y2:125,stroke:'#b3a5ff','stroke-width':2.4},svg));
+  if(r){const cr=credited(r)&&(rule==='processed'?t>=(r.processedAfterMs||1e18):rule==='confirmed'?t>=(r.confirmedAfterMs||1e18):t>=(r.finalizedAfterMs||1e18));
+    S('text',{x:1350,y:132,'text-anchor':'middle','font-size':21,style:'fill:'+(cr?'#3ddc97':'#9a9aa2')},svg,cr?'+ '+amt(creditAmount(r)):(r.ok===false&&checkErr?'rejected: error':'not credited yet'));
+    S('text',{x:1350,y:166,'text-anchor':'middle','font-size':17,class:'m'},svg,'rule: '+rule+(checkErr?' + no error':' (error ignored)'))}
+}
+function controls(){
+  const c=$('#ctl');c.innerHTML='';const rows=data();const r=rows[Math.min(cur,rows.length-1)];
+  H('div',{class:'lab'},c,'Choose the ledger’s rule');
+  const g=H('div',{class:'row',style:'gap:.5rem;flex-wrap:wrap'},c);
+  ['processed','confirmed','finalized'].forEach(k=>{const b=H('button',{'aria-pressed':rule===k?'true':'false'},g,'Credit at '+k);b.addEventListener('click',()=>{rule=k;render()})});
+  const e=H('button',{'aria-pressed':checkErr?'true':'false'},g,checkErr?'Checking the error: ON':'Checking the error: OFF');e.addEventListener('click',()=>{checkErr=!checkErr;render()});
+  if(r){const max=Math.max(1,r.processedAfterMs||0,r.confirmedAfterMs||0,r.finalizedAfterMs||0);if(tms<0)tms=max;
+    const rr=H('div',{class:'ctl',style:'grid-template-columns:auto 1fr 6rem'},c);H('label',{for:'rp'},rr,'Replay');
+    const inp=H('input',{id:'rp',type:'range',min:0,max:max,step:1,value:Math.min(tms,max),'aria-label':'Replay clock in milliseconds since send'},rr);H('output',{for:'rp'},rr,Math.round(Math.min(tms,max))+' ms');
+    inp.addEventListener('input',()=>{tms=+inp.value;flow();controls()})}
+  const w=H('div',{class:'mut',style:'font-size:.95rem'},c);
+  w.textContent=rule==='processed'?'Processed means a validator ran the transaction. It can still be dropped, so crediting here can credit money that never settles.':rule==='confirmed'?'Confirmed means a supermajority of stake voted on it. Most services credit here, after checking the error.':'Finalized means it can no longer be rolled back. The safest rule; on some clusters it takes noticeably longer than confirmed.';
+}
+function ledger(){
+  const el=$('#ledger');el.innerHTML='';el.className='box '+(true?'mint':'');
+  H('div',{class:'lab'},el,'Ledger under this rule (all '+data().length+' deposits)');
+  const rows=data();let ledgerSum=0,chainSum=0;
+  const g=H('div',{class:'kv',style:'margin-top:.4rem'},el);
+  rows.forEach(r=>{const cr=credited(r);if(cr)ledgerSum+=creditAmount(r);if(r.ok!==false)chainSum+=(r.amountLamports||0);
+    H('div',{class:'k'},g,r.label.replace(/ \(.*\)/,''));H('div',{class:'v '+(cr?'mint':'mut')},g,cr?'credited '+amt(creditAmount(r)):(r.ok===false?'rejected (failed on chain)':'not credited'))});
+  H('div',{style:'border-top:1.5px solid var(--line);margin:.6rem 0 .4rem'},el);
+  const solf=l=>(l/1e9).toFixed(4)+' SOL';
+  const line=(k,v,cls)=>{const d=H('div',{style:'display:flex;justify-content:space-between;gap:1rem;font-size:1.05rem'},el);H('span',{class:'mut'},d,k);H('span',{class:cls||'num'},d,v)};
+  line('Ledger says',solf(ledgerSum));line('Vault actually received',solf(chainSum));
+  const diff=ledgerSum-chainSum;
+  line('Difference',diff===0?'0: the ledger matches the chain':solf(diff)+' too much','badc');
+  if(diff!==0)H('div',{class:'badc',style:'font-size:1rem;margin-top:.2rem'},el,'THE LEDGER IS WRONG: it credited a deposit that failed.');
+  H('div',{class:'mut',style:'font-size:.9rem;margin-top:.5rem'},el,'The failing deposit moved nothing but still shows up in the logs. Turn the error check back on and the ledger matches.');
+}
+function render(){table();flow();controls();ledger();
+  if(LV)$('#note').textContent=LSLOTS?'LIVE devnet slots  processed '+fmt(LSLOTS.processed)+'   confirmed '+fmt(LSLOTS.confirmed)+'   finalized '+fmt(LSLOTS.finalized)+'   watching '+short(watchAddr(),6,6)+(LROWS.length?'':'  (no deposit has arrived yet)'):''}
+const watchAddr=()=>(HASH.get('watch')||DP.vault);
+function footer(){sourceLine($('#src'),{devnet:{mode:'recorded',capturedAt:DP.capturedAt||DV.capturedAt}},'Deposits recorded on '+(CL==='devnet'?'Solana devnet':'a local validator')+' by src/deposit-run.ts: a watcher on '+short(DP.vault,5,5)+' using logsSubscribe at three commitment levels.',0,CL==='devnet'?{}:{sim:'Cluster: local validator, not devnet.'})}
+/* live: websocket logsSubscribe on a devnet address (default: the recorded vault) + commitment slots */
+function wsOpen(){
+  try{LWS=new WebSocket('wss://api.devnet.solana.com')}catch(e){return}
+  const lv=['processed','confirmed','finalized'],map={},t0=Date.now();
+  LWS.onopen=()=>lv.forEach((l,i)=>LWS.send(JSON.stringify({jsonrpc:'2.0',id:i+1,method:'logsSubscribe',params:[{mentions:[watchAddr()]},{commitment:l}]})));
+  LWS.onmessage=ev=>{const m=JSON.parse(ev.data);
+    if(m.id&&typeof m.result==='number')map[m.result]=lv[m.id-1];
+    if(m.method==='logsNotification'){const l=map[m.params.subscription],v=m.params.result.value,sig=v.signature;
+      let r=LROWS.find(x=>x.signature===sig);
+      if(!r){r={label:'live deposit '+(LROWS.length+1),signature:sig,explorer:'https://explorer.solana.com/tx/'+sig+'?cluster=devnet',ok:!v.err,amountLamports:null,attemptedLamports:0,processedAfterMs:null,confirmedAfterMs:null,finalizedAfterMs:null,_t0:Date.now()};LROWS.push(r)}
+      r[l+'AfterMs']=r[l+'AfterMs']===null?Date.now()-r._t0:r[l+'AfterMs'];
+      if(l==='confirmed'&&r.amountLamports===null)LIVE.rpc('getTransaction',[sig,{encoding:'json',commitment:'confirmed',maxSupportedTransactionVersion:0}],LIVE.DEVNET).then(t=>{if(t){const k=t.transaction.message.accountKeys.indexOf(watchAddr());r.amountLamports=k<0?0:t.meta.postBalances[k]-t.meta.preBalances[k]}render()}).catch(()=>{});
+      cur=LROWS.length-1;tms=-1;render()}};
+}
+LIVE.start({el:$('#livebar'),intervalMs:5000,enter:()=>{LV=true;LROWS=[];cur=0;tms=-1;LSLOTS=null;wsOpen();render()},exit:()=>{LV=false;if(LWS){try{LWS.close()}catch(e){}LWS=null}cur=Math.min(cur,ROWS.length-1);tms=-1;$('#note').textContent='';render()},
+  poll:async()=>{LSLOTS=await LIVE.fetchCommitmentSlots();render();return {slot:LSLOTS.processed,note:'devnet'}}});
+render();footer();
+</script></body></html>

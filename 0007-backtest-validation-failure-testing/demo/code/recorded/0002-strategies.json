@@ -1,0 +1,85 @@
+{
+  "feeBps": 5,
+  "slippageBps": 2,
+  "note": "simulated on recorded data; not advice",
+  "strategies": [
+    {
+      "id": "cross-venue-arb",
+      "name": "Cross-venue arbitrage",
+      "family": "Cross-venue arbitrage",
+      "dataNeeds": [
+        "venue"
+      ],
+      "trades": 0,
+      "pnlGrossUsd": 0,
+      "pnlNetUsd": 0,
+      "hitRate": 0,
+      "notionalUsd": 1000,
+      "legsPerTrade": 2,
+      "paysSlippage": true
+    },
+    {
+      "id": "basis",
+      "name": "Pool vs oracle basis",
+      "family": "Oracle/venue basis",
+      "dataNeeds": [
+        "venue",
+        "oracle"
+      ],
+      "trades": 19,
+      "pnlGrossUsd": 1.31,
+      "pnlNetUsd": -25.29,
+      "hitRate": 0,
+      "notionalUsd": 1000,
+      "legsPerTrade": 2,
+      "paysSlippage": true
+    },
+    {
+      "id": "trend",
+      "name": "Moving-average trend",
+      "family": "Trend / momentum",
+      "dataNeeds": [
+        "venue"
+      ],
+      "trades": 10,
+      "pnlGrossUsd": 0.61,
+      "pnlNetUsd": -13.39,
+      "hitRate": 0.2,
+      "notionalUsd": 1000,
+      "legsPerTrade": 2,
+      "paysSlippage": true
+    },
+    {
+      "id": "mean-reversion",
+      "name": "Mean reversion (z-score)",
+      "family": "Mean reversion / stat arb",
+      "dataNeeds": [
+        "venue"
+      ],
+      "trades": 9,
+      "pnlGrossUsd": 1.03,
+      "pnlNetUsd": -11.57,
+      "hitRate": 0,
+      "notionalUsd": 1000,
+      "legsPerTrade": 2,
+      "paysSlippage": true
+    },
+    {
+      "id": "market-maker",
+      "name": "Market maker around Pyth",
+      "family": "Market making",
+      "dataNeeds": [
+        "oracle",
+        "venue",
+        "inventory"
+      ],
+      "trades": 7,
+      "pnlGrossUsd": 0.05,
+      "pnlNetUsd": -3.45,
+      "hitRate": 0.429,
+      "notionalUsd": 1000,
+      "legsPerTrade": 1,
+      "paysSlippage": false
+    }
+  ]
+}

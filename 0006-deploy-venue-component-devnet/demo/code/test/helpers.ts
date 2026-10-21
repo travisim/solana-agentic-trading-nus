@@ -1,0 +1,11 @@
+import fs from "node:fs";
+import zlib from "node:zlib";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const here = path.dirname(fileURLToPath(import.meta.url));
+export const root = path.join(here, "..");
+export const readJson = <T>(p: string): T => JSON.parse(fs.readFileSync(path.join(root, p), "utf8")) as T;
+export const exists = (p: string) => fs.existsSync(path.join(root, p));
+export const fixture = (name: string) => path.join(here, "fixtures", name);
+export const readAccountFixture = (address: string): Uint8Array => new Uint8Array(zlib.gunzipSync(fs.readFileSync(fixture(`phoenix-${address}.account.gz`))));
+export const readExpected = (address: string) => JSON.parse(fs.readFileSync(fixture(`phoenix-${address}.expected.json`), "utf8")) as { bids: Array<{ price: number; size: number }>; asks: Array<{ price: number; size: number }>; counts: { bids: number; asks: number } };

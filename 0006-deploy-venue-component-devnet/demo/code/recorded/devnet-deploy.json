@@ -1,0 +1,23 @@
+{
+ "cluster": "devnet",
+ "rpcHost": "api.devnet.solana.com",
+ "programId": "UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL",
+ "programDataAddress": "258HRjh1VC7WU7GNGbcNnsK4fJsskY8pZaiuA1RLuwBd",
+ "loader": "BPFLoaderUpgradeab1e11111111111111111111111",
+ "upgradeAuthority": "2iGcpoF9xx5GFEXDJNpoY2VqB3B5kzimeufvriJCokYV",
+ "deploySignature": "3vaz8GiD3DWejpUqorSYe51gBgnWonHdu8WTCFz8fNw44xJNzBoHVqHPemjnWchgd1RdYSE5GaZCH4ZxjBPgCChC",
+ "deploySlot": 513637896,
+ "deployBlockTime": 1792613217,
+ "elfBytes": 5528,
+ "elfSha256": "866aef368c82ff3e47bb74ffa1098b4c3e218fb0f3bf6723922c1b01c131bcb2",
+ "onChainBytesEqualBuild": true,
+ "verifiedWith": "solana program dump UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL out.so -u devnet; sha256 of out.so equals sha256 of program/prebuilt/mini_book.so",
+ "toolchain": "solana-cli 3.1.10 (Agave), cargo-build-sbf 3.1.10, platform-tools v1.52 (rustc 1.89.0-sbpf-solana-v1.52), host rustc 1.99.1",
+ "deployerFundedBy": "a transfer of 63,444,000 lamports from a leftover devnet test wallet of an earlier experiment (research/experiments/deposit-watcher), because the public devnet faucet answered HTTP 429 (daily limit) for every request this session. The deployer key was generated locally and is kept outside the repository.",
+ "explorer": {
+  "program": "https://explorer.solana.com/address/UQLHxoX7P4RV4sPV9mS4DFmXD1a6pi1qSkh2vjEWwrL?cluster=devnet",
+  "deployTx": "https://explorer.solana.com/tx/3vaz8GiD3DWejpUqorSYe51gBgnWonHdu8WTCFz8fNw44xJNzBoHVqHPemjnWchgd1RdYSE5GaZCH4ZxjBPgCChC?cluster=devnet"
+ },
+ "fundingSignature": "2A5fTLzPSFk8Gf9vdyNnLxbcuyr7GVyPiwENpayxcbSPcZmc6Nwrg2q4yCvv5V6Hc4BcuHb1Tp5jHBEAJa8pngVc",
+ "capturedAt": "2026-10-21T20:10:00Z"
+}

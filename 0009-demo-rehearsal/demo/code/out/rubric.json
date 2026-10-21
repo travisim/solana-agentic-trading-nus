@@ -1,0 +1,257 @@
+{
+ "criteria": [
+  {
+   "id": "utility",
+   "label": "Utility",
+   "question": "Is there a real user, a real problem and a decision I can follow?"
+  },
+  {
+   "id": "tests",
+   "label": "Tests",
+   "question": "Do tests pass, including the failure case, from the frozen commit?"
+  },
+  {
+   "id": "devnet",
+   "label": "Devnet evidence",
+   "question": "Can I open a transaction or address and see what the slide says?"
+  }
+ ],
+ "checks": [
+  {
+   "id": "u1",
+   "criterion": "utility",
+   "text": "Names a user and a problem in one sentence",
+   "evidence": "first slide and first 30 seconds",
+   "pass": true
+  },
+  {
+   "id": "u2",
+   "criterion": "utility",
+   "text": "Runs from a clean checkout using only the README",
+   "evidence": "a fresh clone, the README commands",
+   "pass": true
+  },
+  {
+   "id": "u3",
+   "criterion": "utility",
+   "text": "Shows one decision end to end: input, rule, result",
+   "evidence": "the live proof part",
+   "pass": true
+  },
+  {
+   "id": "u4",
+   "criterion": "utility",
+   "text": "States what it does not do",
+   "evidence": "limitations in the README and said aloud",
+   "pass": true
+  },
+  {
+   "id": "t1",
+   "criterion": "tests",
+   "text": "npm test passes and the report is attached",
+   "evidence": "test report file in the demo pack",
+   "pass": true
+  },
+  {
+   "id": "t2",
+   "criterion": "tests",
+   "text": "A test covers the failure case (a bad input is refused)",
+   "evidence": "a named test for the bad input",
+   "pass": true
+  },
+  {
+   "id": "t3",
+   "criterion": "tests",
+   "text": "Tests run offline on recorded data",
+   "evidence": "run with Wi-Fi off",
+   "pass": true
+  },
+  {
+   "id": "t4",
+   "criterion": "tests",
+   "text": "The test report is from the frozen commit",
+   "evidence": "commit hash in the report matches the pack",
+   "pass": false
+  },
+  {
+   "id": "d1",
+   "criterion": "devnet",
+   "text": "Shows a devnet address, or says there is none and why",
+   "evidence": "address on the slide or a stated reason",
+   "pass": true
+  },
+  {
+   "id": "d2",
+   "criterion": "devnet",
+   "text": "At least one devnet transaction link opens",
+   "evidence": "explorer link with cluster=devnet",
+   "pass": false
+  },
+  {
+   "id": "d3",
+   "criterion": "devnet",
+   "text": "What the slide claims matches what the link shows",
+   "evidence": "the transaction shows the claimed action",
+   "pass": false
+  },
+  {
+   "id": "d4",
+   "criterion": "devnet",
+   "text": "Reads labelled public mainnet; writes labelled devnet only",
+   "evidence": "labels on the slide and in the README",
+   "pass": true
+  }
+ ],
+ "pack": {
+  "name": "risk-hooked agent (sample)",
+  "lane": "agent",
+  "problemStatement": "An agent that can place orders will sooner or later send a bad one: too big, based on a stale price, or in the wrong unit.",
+  "cleanCheckout": true,
+  "endToEndExample": true,
+  "limitations": [
+   "simulated on recorded data",
+   "17 minutes of one afternoon",
+   "order sizes and fee are assumptions",
+   "no funded devnet transaction yet"
+  ],
+  "testReport": {
+   "passing": 51,
+   "failing": 0
+  },
+  "failureTest": true,
+  "testsRunOnRecorded": true,
+  "testReportMatchesFrozenCommit": false,
+  "devnetAddressOrNoneStated": true,
+  "devnetTxLinkOpens": false,
+  "claimMatchesLink": false,
+  "readsLabelledMainnetWritesDevnet": true,
+  "simulatedReturnClaimed": false
+ },
+ "result": {
+  "checks": [
+   {
+    "id": "u1",
+    "criterion": "utility",
+    "text": "Names a user and a problem in one sentence",
+    "evidence": "first slide and first 30 seconds",
+    "pass": true
+   },
+   {
+    "id": "u2",
+    "criterion": "utility",
+    "text": "Runs from a clean checkout using only the README",
+    "evidence": "a fresh clone, the README commands",
+    "pass": true
+   },
+   {
+    "id": "u3",
+    "criterion": "utility",
+    "text": "Shows one decision end to end: input, rule, result",
+    "evidence": "the live proof part",
+    "pass": true
+   },
+   {
+    "id": "u4",
+    "criterion": "utility",
+    "text": "States what it does not do",
+    "evidence": "limitations in the README and said aloud",
+    "pass": true
+   },
+   {
+    "id": "t1",
+    "criterion": "tests",
+    "text": "npm test passes and the report is attached",
+    "evidence": "test report file in the demo pack",
+    "pass": true
+   },
+   {
+    "id": "t2",
+    "criterion": "tests",
+    "text": "A test covers the failure case (a bad input is refused)",
+    "evidence": "a named test for the bad input",
+    "pass": true
+   },
+   {
+    "id": "t3",
+    "criterion": "tests",
+    "text": "Tests run offline on recorded data",
+    "evidence": "run with Wi-Fi off",
+    "pass": true
+   },
+   {
+    "id": "t4",
+    "criterion": "tests",
+    "text": "The test report is from the frozen commit",
+    "evidence": "commit hash in the report matches the pack",
+    "pass": false
+   },
+   {
+    "id": "d1",
+    "criterion": "devnet",
+    "text": "Shows a devnet address, or says there is none and why",
+    "evidence": "address on the slide or a stated reason",
+    "pass": true
+   },
+   {
+    "id": "d2",
+    "criterion": "devnet",
+    "text": "At least one devnet transaction link opens",
+    "evidence": "explorer link with cluster=devnet",
+    "pass": false
+   },
+   {
+    "id": "d3",
+    "criterion": "devnet",
+    "text": "What the slide claims matches what the link shows",
+    "evidence": "the transaction shows the claimed action",
+    "pass": false
+   },
+   {
+    "id": "d4",
+    "criterion": "devnet",
+    "text": "Reads labelled public mainnet; writes labelled devnet only",
+    "evidence": "labels on the slide and in the README",
+    "pass": true
+   }
+  ],
+  "perCriterion": [
+   {
+    "id": "utility",
+    "label": "Utility",
+    "points": 4,
+    "outOf": 4
+   },
+   {
+    "id": "tests",
+    "label": "Tests",
+    "points": 3,
+    "outOf": 4
+   },
+   {
+    "id": "devnet",
+    "label": "Devnet evidence",
+    "points": 2,
+    "outOf": 4
+   }
+  ],
+  "points": 9,
+  "outOf": 12,
+  "missing": [
+   "t4",
+   "d2",
+   "d3"
+  ],
+  "returnsNote": "No return claim. Good."
+ },
+ "devnet": {
+  "capturedAt": "2026-10-21T19:34:53.467Z",
+  "slot": 513629831,
+  "version": "4.4.0-beta.1",
+  "throwawayAddress": "CjwxgDL1kggcEQpNEcCqnKcEAKLymX4CnDa9UnJFofMp",
+  "signatureCheck": {
+   "note": "simulateTransaction with sigVerify. The faucet refused an airdrop (HTTP 429, daily limit), so the account has no funds and nothing was sent.",
+   "validSignature": "AccountNotFound",
+   "flippedBit": "SignatureFailure"
+  }
+ }
+}

@@ -1,0 +1,80 @@
+{
+ "policy": {
+  "failuresToFallback": 3
+ },
+ "recordedDate": "2026-10-21",
+ "steps": [
+  {
+   "id": "notice",
+   "budgetSec": 5,
+   "do": "Notice the live number stops changing, or the pill turns red.",
+   "say": "That call did not come back."
+  },
+  {
+   "id": "retry",
+   "budgetSec": 5,
+   "do": "Wait for the next call to answer. Do not click around.",
+   "say": "One more try."
+  },
+  {
+   "id": "switch",
+   "budgetSec": 10,
+   "do": "Third failure in a row: press Recorded. Same code, same screen.",
+   "say": "The live call is not answering, so I am switching to recorded data from 2026-10-21. It is the same logic on data I captured earlier."
+  },
+  {
+   "id": "carry-on",
+   "budgetSec": 10,
+   "do": "Carry on from the same step. Do not restart the pitch.",
+   "say": "Same input shape, same rule, same refusal. Here is the decision."
+  },
+  {
+   "id": "screen",
+   "budgetSec": 20,
+   "do": "Open the backup recording and narrate over it.",
+   "say": "My screen is not cooperating, so I will narrate the recording I made earlier. Everything in it is real output from this repo."
+  }
+ ],
+ "example": {
+  "outcomes": [
+   true,
+   true,
+   false,
+   false,
+   false,
+   true
+  ],
+  "states": [
+   {
+    "mode": "live",
+    "fails": 0,
+    "action": "continue"
+   },
+   {
+    "mode": "live",
+    "fails": 0,
+    "action": "continue"
+   },
+   {
+    "mode": "live",
+    "fails": 1,
+    "action": "retry"
+   },
+   {
+    "mode": "live",
+    "fails": 2,
+    "action": "retry"
+   },
+   {
+    "mode": "recorded",
+    "fails": 3,
+    "action": "fallback"
+   },
+   {
+    "mode": "recorded",
+    "fails": 3,
+    "action": "none"
+   }
+  ]
+ }
+}

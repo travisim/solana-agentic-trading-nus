@@ -1,0 +1,8 @@
+{
+  "cluster": "mainnet-beta",
+  "slot": 459749459,
+  "capturedAt": "2026-10-21T19:35:56.392Z",
+  "slotsPerSecond": 4.63,
+  "source": "getSlot (confirmed) twice, 6.0 s apart, from api.mainnet.solana.com; first read slot 459749431",
+  "mode": "recorded"
+}

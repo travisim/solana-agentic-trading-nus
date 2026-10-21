@@ -1,0 +1,21 @@
+{
+  "name": "demo-rehearsal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build night 5: Demo Rehearsal. Reads use public mainnet data; every write is devnet only; no real funds.",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "demo:live": "node src/demo.ts --live",
+    "collect": "node src/collect.ts devnet",
+    "devnet": "node src/devnet.ts",
+    "test": "node --test test/*.test.ts",
+    "report": "node --test --test-reporter=tap test/*.test.ts > out/test-report.txt; tail -n 12 out/test-report.txt",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

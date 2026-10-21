@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo Day gallery</title>
+<style>
+body{margin:0;background:#000;color:#f4f4f6;font:300 16px/1.35 "Helvetica Neue",Helvetica,Arial,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:2rem}
+h1{font-weight:300;font-size:2.4rem;margin:0}.cap{color:#b3a5ff}.mut{color:#9a9aa2}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:1rem}
+.card{border:1.5px solid #4a4670;border-radius:.9rem;padding:1rem 1.2rem;background:#07070b}
+.card h2{font-weight:300;font-size:1.3rem;margin:.4rem 0}.card ul{padding-left:1.1rem;margin:.4rem 0}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:0 .7rem;font-size:.85rem;margin-right:.4rem}
+.agent{color:#b3a5ff}.exchange{color:#3ddc97}.tooling{color:#ffc15a}.ex{color:#ff7a85}
+button{font:inherit;color:#f4f4f6;background:#07070b;border:1.5px solid #4a4670;border-radius:.8rem;padding:.4rem .9rem;cursor:pointer}
+button[aria-pressed=true]{border-color:#3ddc97;color:#3ddc97}a{color:#b3a5ff;margin-right:1rem}
+:focus-visible{outline:3px solid #ffc15a;outline-offset:2px}
+</style></head><body><main>
+<h1>Demo Day, Thu 18 Feb 2027: project gallery</h1>
+<p class="cap">TEMPLATE DATA: every entry below is an EXAMPLE, not a real project. Lane filter, links to each repo and demo.</p>
+<p role="group" aria-label="Filter by lane"><button type="button" data-f="all" aria-pressed="true">all (3)</button> <button type="button" data-f="agent" aria-pressed="false">agent (1)</button> <button type="button" data-f="exchange" aria-pressed="false">exchange (1)</button> <button type="button" data-f="tooling" aria-pressed="false">tooling (1)</button></p>
+<div class="grid" id="grid">
+<article class="card" data-lane="agent">
+<div class="top"><span class="pill agent">agent</span><span class="pill ex">EXAMPLE</span></div>
+<h2>EXAMPLE: Spread Watch Agent</h2>
+<p>EXAMPLE ENTRY. An agent that checks two price sources and writes down why it did or did not act, using recorded data.</p>
+<p class="mut">Team: @example-handle-a, @example-handle-b</p>
+<ul><li>Tests: 14/14 passing (self-reported)</li><li>Devnet: finalized on devnet at slot 513629343</li><li>Limitation: EXAMPLE ENTRY. Only tested on one recorded hour; a stale price once slipped through before the age check.</li></ul>
+<p class="links"><a href="https://example.com/EXAMPLE-spread-watch-agent" target="_blank" rel="noopener noreferrer">Repo</a> <a href="https://example.com/EXAMPLE-spread-watch-agent/demo" target="_blank" rel="noopener noreferrer">Demo</a></p>
+</article>
+<article class="card" data-lane="exchange">
+<div class="top"><span class="pill exchange">exchange</span><span class="pill ex">EXAMPLE</span></div>
+<h2>EXAMPLE: Order Book Component</h2>
+<p>EXAMPLE ENTRY. A small matching component with a test for every rejected order, deployed to devnet.</p>
+<p class="mut">Team: @example-handle-c</p>
+<ul><li>Tests: 22/24 passing (self-reported)</li><li>Devnet: finalized on devnet at slot 513629341</li><li>Limitation: EXAMPLE ENTRY. Two tests fail on partial fills; they are listed in the README as known failures.</li></ul>
+<p class="links"><a href="https://example.com/EXAMPLE-order-book-component" target="_blank" rel="noopener noreferrer">Repo</a> </p>
+</article>
+<article class="card" data-lane="tooling">
+<div class="top"><span class="pill tooling">tooling</span><span class="pill ex">EXAMPLE</span></div>
+<h2>EXAMPLE: Clean Checkout Checker</h2>
+<p>EXAMPLE ENTRY. A command-line tool that runs a fresh clone of a project and reports which README steps failed.</p>
+<p class="mut">Team: @example-handle-d, @example-handle-e, @example-handle-f</p>
+<ul><li>Tests: 9/9 passing (self-reported)</li><li>Devnet: no devnet evidence</li><li>Limitation: EXAMPLE ENTRY. Reads files only and does not run Python projects. No devnet transaction: a tool does not need one.</li></ul>
+<p class="links"><a href="https://example.com/EXAMPLE-clean-checkout-checker" target="_blank" rel="noopener noreferrer">Repo</a> <a href="https://example.com/EXAMPLE-clean-checkout-checker/demo" target="_blank" rel="noopener noreferrer">Demo</a></p>
+</article>
+</div>
+<p class="mut">Recorded data (not live), generated 2026-10-21T21:06:35.956Z. Mainnet slot 459749459 read at 2026-10-21T19:35:56.392Z. Reads use public Solana data; every write is devnet only; no real funds. Test counts are self-reported by each team.</p>
+</main>
+<script>
+document.querySelectorAll("button[data-f]").forEach(function(b){b.addEventListener("click",function(){
+  var f=b.getAttribute("data-f");
+  document.querySelectorAll("button[data-f]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
+  document.querySelectorAll(".card").forEach(function(c){c.hidden=!(f==="all"||c.getAttribute("data-lane")===f)});
+})});
+</script></body></html>

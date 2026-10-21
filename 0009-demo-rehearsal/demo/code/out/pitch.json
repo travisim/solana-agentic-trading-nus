@@ -1,0 +1,153 @@
+{
+ "segments": [
+  {
+   "id": "problem",
+   "label": "Problem",
+   "budgetSec": 30,
+   "goal": "Who has the problem, in one sentence"
+  },
+  {
+   "id": "what",
+   "label": "What it does",
+   "budgetSec": 35,
+   "goal": "The idea and the parts, no jargon"
+  },
+  {
+   "id": "proof",
+   "label": "Live proof",
+   "budgetSec": 75,
+   "goal": "Live fix, failure test, devnet evidence"
+  },
+  {
+   "id": "next",
+   "label": "Limit and next",
+   "budgetSec": 40,
+   "goal": "One limitation, what is untested, what comes next"
+  }
+ ],
+ "totalSec": 180,
+ "qaSec": 120,
+ "wordsPerMinute": 130,
+ "script": [
+  {
+   "id": "problem",
+   "label": "Problem",
+   "budgetSec": 30,
+   "text": "An agent that can place orders will sooner or later send a bad one: too big, based on a stale price, or in the wrong unit. Anyone building an agent on Solana needs a plain check between the idea and the action. Without it, one wrong number moves real money.",
+   "words": 50,
+   "estSec": 23,
+   "fits": true
+  },
+  {
+   "id": "what",
+   "label": "What it does",
+   "budgetSec": 35,
+   "text": "This is a small agent. It reads recorded Orca SOL/USDC swaps, cuts them into 20,000 dollar bars, wakes on an 8 basis point change alert and proposes one order per alert. A risk hook checks each order against the Pyth oracle and answers yes or no, with the rule that decided. Accepted orders go into a ledger.",
+   "words": 57,
+   "estSec": 26,
+   "fits": true
+  },
+  {
+   "id": "proof",
+   "label": "Live proof",
+   "budgetSec": 75,
+   "text": "Here it runs on 1,114 real swaps: 10 change alerts, 9 orders accepted, 1 refused (1 by max-notional). Now the failure test: I feed it 4 bad orders, a 5,000 dollar order, a 300 second old oracle, a price in cents and a price 100 basis points off. All 4 are refused, each with its reason. Reads are public mainnet data; writes are devnet only. On devnet, the node verifies my signed memo transaction, but the faucet was rate limited, so there is no funded transaction link yet.",
+   "words": 88,
+   "estSec": 41,
+   "fits": true
+  },
+  {
+   "id": "next",
+   "label": "Limit and next",
+   "budgetSec": 40,
+   "text": "Limits: this is simulated on recorded data, about seventeen minutes of one afternoon. The order sizes and the fee are assumptions, and no order was sent anywhere. The ledger is not evidence of returns. Next: write one funded devnet memo for every accepted order, and run the same hook on the live feed.",
+   "words": 53,
+   "estSec": 24,
+   "fits": true
+  }
+ ],
+ "scriptEstSec": 114,
+ "checks": [
+  {
+   "id": "t-total",
+   "kind": "timing",
+   "text": "Finished within 3:00"
+  },
+  {
+   "id": "t-parts",
+   "kind": "timing",
+   "text": "No part ran more than 10 s over its budget"
+  },
+  {
+   "id": "c-problem",
+   "kind": "content",
+   "text": "Said who has the problem in the first 30 seconds"
+  },
+  {
+   "id": "c-live",
+   "kind": "content",
+   "text": "Showed one live action, not only a slide"
+  },
+  {
+   "id": "c-failure",
+   "kind": "content",
+   "text": "Ran the failure test and showed the refusal"
+  },
+  {
+   "id": "c-devnet",
+   "kind": "content",
+   "text": "Opened a devnet link, or said there is none and why"
+  },
+  {
+   "id": "c-limit",
+   "kind": "content",
+   "text": "Said one limitation out loud"
+  },
+  {
+   "id": "c-returns",
+   "kind": "content",
+   "text": "Made no return or profit claim"
+  },
+  {
+   "id": "c-restate",
+   "kind": "content",
+   "text": "A listener can restate the claim in one sentence"
+  }
+ ],
+ "sampleTiming": {
+  "segments": [
+   {
+    "id": "problem",
+    "label": "Problem",
+    "budgetSec": 30,
+    "usedSec": 23,
+    "status": "ok"
+   },
+   {
+    "id": "what",
+    "label": "What it does",
+    "budgetSec": 35,
+    "usedSec": 26,
+    "status": "ok"
+   },
+   {
+    "id": "proof",
+    "label": "Live proof",
+    "budgetSec": 75,
+    "usedSec": 41,
+    "status": "ok"
+   },
+   {
+    "id": "next",
+    "label": "Limit and next",
+    "budgetSec": 40,
+    "usedSec": 24,
+    "status": "ok"
+   }
+  ],
+  "totalSec": 114,
+  "underTotal": true,
+  "noWayOver": true,
+  "pass": true
+ }
+}

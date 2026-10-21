@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scorecard from a Ledger</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* live mode bar (shared/live.js) */
+.page{position:relative}
+.livebar{position:absolute;top:1.1rem;right:3rem;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;font-size:1rem;z-index:2}
+.livebar .lvtop,.livebar .lvsub{display:flex;align-items:center;gap:.6rem}
+.livebar .seg{display:inline-flex}
+.livebar .seg button{font-size:1rem;padding:.15rem .9rem;border-radius:0;margin:0}
+.livebar .seg button:first-child{border-radius:.7rem 0 0 .7rem}
+.livebar .seg button:last-child{border-radius:0 .7rem .7rem 0;margin-left:-1.5px}
+.livebar .lvtxt{font-size:.8rem}
+.livebar .pill{font-size:.85rem}
+.livebar [hidden]{display:none}
+.livestrip{border-color:var(--mint)}
+.livestrip .tag{color:var(--mint);font-size:.9rem;border:1.5px solid var(--mint);border-radius:99px;padding:0 .6rem;margin-right:.5rem}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.kpi{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.5rem .9rem}
+.kpi .k{color:var(--lav);font-size:.95rem}.kpi .v{font-size:1.9rem;line-height:1.15;font-variant-numeric:tabular-nums}.kpi .s{color:var(--muted);font-size:.85rem}
+.kpi.good{border-color:var(--mint)}.kpi.bad{border-color:var(--bad)}.kpi.warn{border-color:var(--warn)}
+.kpi.good .v{color:var(--mint)}.kpi.bad .v{color:var(--bad)}.kpi.warn .v{color:var(--warn)}
+.sel{display:flex;gap:.4rem;flex-wrap:wrap}.sel button{padding:.35rem .8rem;font-size:1rem}.top{padding:.45rem 1.1rem}
+.top{display:grid;grid-template-columns:2.3fr 1fr 1fr;gap:1.2rem;align-items:center}
+</style></head><body>
+<div class="page">
+<h1>Scorecard from a ledger</h1>
+<p class="cap">The trades never change. Drag the cost sliders and watch the verdict flip.</p>
+<main id="main" aria-label="Scorecard demo">
+<div class="box top">
+  <div class="sel" id="sel" role="group" aria-label="Choose a strategy"></div>
+  <div class="ctl" style="grid-template-columns:5rem 1fr 4.6rem"><label for="fee">Fee</label><input id="fee" type="range" min="0" max="15" step="0.5" aria-label="Trading fee in basis points per leg"><output id="feeo" for="fee"></output></div>
+  <div class="ctl" style="grid-template-columns:6.5rem 1fr 4.6rem"><label for="slip">Slippage</label><input id="slip" type="range" min="0" max="15" step="0.5" aria-label="Slippage in basis points per leg"><output id="slipo" for="slip"></output></div>
+</div>
+<div class="kpis" id="kpis"></div>
+<div class="box" style="flex:1;min-height:0;display:flex;flex-direction:column;padding:.5rem 1rem">
+  <div class="row" style="justify-content:space-between"><span class="lab" id="ledtitle"></span><span class="mut" style="font-size:.85rem">bar = net P&amp;L of one trade, lavender tick = gross before costs</span></div>
+  <svg id="led" viewBox="0 0 1600 250" role="img" aria-label="Net profit and loss of each trade in the ledger" style="flex:1;min-height:0"></svg>
+</div>
+<div class="box livestrip" id="strip" aria-live="polite" hidden></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>/* Scorecard maths and ship check, in plain JS. Port of demo-repo/code/src/{scorecard,shipcheck,dashboards}.ts.
+ * verify.mjs checks this file against ../code/out/*.json and against the TypeScript at other cost settings.
+ * Used twice: inlined into every demo (browser global CALC) and required by verify.mjs (module.exports). */
+(function (root, factory) { var m = factory(); if (typeof module === 'object' && module.exports) module.exports = m; else root.CALC = m; })(this, function () {
+  var r = function (x, d) { var p = Math.pow(10, d); return Math.round(x * p) / p; };
+  var mean = function (xs) { return xs.reduce(function (a, b) { return a + b; }, 0) / xs.length; };
+  var std = function (xs) { var m = mean(xs); return Math.sqrt(mean(xs.map(function (x) { return (x - m) * (x - m); }))); };
+
+  function netUsd(t, c) { var bps = c.feeBps + (t.paysSlippage ? c.slippageBps : 0); return t.grossUsd - t.legs * (bps / 10000) * t.notionalUsd; }
+  function gridOf(l) { var o = []; for (var t = l.windowStartT; t <= l.windowEndT; t += l.intervalSec) o.push(t); return o; }
+  function equityCurve(trades, c, cap, times) {
+    var s = trades.slice().sort(function (a, b) { return a.closeT - b.closeT; }), eq = cap, peak = cap, k = 0, E = [], D = [];
+    for (var i = 0; i < times.length; i++) {
+      while (k < s.length && s[k].closeT <= times[i]) eq += netUsd(s[k++], c);
+      peak = Math.max(peak, eq); E.push(r(eq, 4)); D.push(r(peak - eq, 4));
+    }
+    return { times: times, equity: E, drawdown: D };
+  }
+  function normCdf(z) {
+    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
+    var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return z >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
+  }
+  function breakEvenHitRate(win, loss) { return loss / (win + loss); }
+  function impliedHitRate(win, lossNeg, s) {
+    var d = win - lossNeg, A = (1 + s * s) * d * d, B = 2 * d * lossNeg - s * s * d * d, C = lossNeg * lossNeg, disc = B * B - 4 * A * C;
+    if (disc < 0) return null; var p = (-B + Math.sqrt(disc)) / (2 * A); return p >= 0 && p <= 1 ? p : null;
+  }
+  function score(trades, c, cap, times) {
+    var nets = trades.map(function (t) { return netUsd(t, c); }), n = trades.length;
+    var W = nets.filter(function (x) { return x > 0; }), L = nets.filter(function (x) { return x < 0; });
+    var gross = trades.reduce(function (a, t) { return a + t.grossUsd; }, 0), net = nets.reduce(function (a, b) { return a + b; }, 0), costs = gross - net;
+    var avgWin = W.length ? mean(W) : null, avgLoss = L.length ? mean(L) : null;
+    var eq = equityCurve(trades, c, cap, times), peak = cap, maxDd = 0, maxDdPct = 0, under = 0, run = 0, longest = 0;
+    eq.equity.forEach(function (e, i) {
+      peak = Math.max(peak, e); var dd = eq.drawdown[i]; maxDd = Math.max(maxDd, dd); maxDdPct = Math.max(maxDdPct, dd / peak * 100);
+      if (dd > 1e-9) { under++; run++; longest = Math.max(longest, run); } else run = 0;
+    });
+    var step = times.length > 1 ? (times[times.length - 1] - times[0]) / (times.length - 1) : 0;
+    var traded = trades.reduce(function (a, t) { return a + t.notionalUsd * t.legs; }, 0);
+    var gw = trades.filter(function (t) { return t.grossUsd > 0; }).map(function (t) { return t.grossUsd; });
+    var be = avgWin !== null && avgLoss !== null ? breakEvenHitRate(avgWin, -avgLoss) : null, hit = n ? W.length / n : null, pf = null;
+    if (be !== null && hit !== null && n >= 2) { var se = Math.sqrt(hit * (1 - hit) / n); pf = se === 0 ? (hit < be ? 1 : 0) : normCdf((be - hit) / se); }
+    var sd = n > 1 ? std(nets) : 0;
+    return {
+      trades: n, wins: W.length, losses: L.length, hitRate: hit === null ? null : r(hit, 4),
+      avgWinUsd: avgWin === null ? null : r(avgWin, 4), avgLossUsd: avgLoss === null ? null : r(avgLoss, 4),
+      payoffRatio: avgWin !== null && avgLoss !== null ? r(avgWin / -avgLoss, 4) : null, breakEvenHitRate: be === null ? null : r(be, 4),
+      expectancyUsd: n ? r(net / n, 4) : null, grossUsd: r(gross, 4), costsUsd: r(costs, 4), netUsd: r(net, 4),
+      costShareOfGross: gross > 0 ? r(costs / gross, 4) : null, maxDrawdownUsd: r(maxDd, 4), maxDrawdownPct: r(maxDdPct, 4),
+      longestUnderwaterSec: Math.round(longest * step), timeUnderwaterShare: times.length ? r(under / times.length, 4) : 0,
+      tradedUsd: r(traded, 2), turnoverX: cap ? r(traded / cap, 4) : 0, avgHoldSec: n ? Math.round(mean(trades.map(function (t) { return t.closeT - t.openT; }))) : null,
+      largestWinShare: gw.length ? r(Math.max.apply(null, gw) / gw.reduce(function (a, b) { return a + b; }, 0), 4) : null,
+      perTradeSharpe: sd > 0 ? r(net / n / sd, 4) : null, probFailure: pf === null ? null : r(pf, 4), enoughTrades: n >= 30
+    };
+  }
+  function byStrategy(trades) { var o = {}; trades.forEach(function (t) { (o[t.strategy] = o[t.strategy] || []).push(t); }); return o; }
+
+  /* ---------- ship check (port of shipcheck.ts) ---------- */
+  var B58 = '[1-9A-HJ-NP-Za-km-z]';
+  var CHECKS = [
+    ['readme-exists', 'README at the top of the project', 'fail'], ['readme-run', 'README says how to install and run', 'fail'],
+    ['readme-limits', 'README names one known limitation', 'warn'], ['readme-safety', 'README says devnet only, no real funds', 'warn'],
+    ['tests-exist', 'Tests exist', 'fail'], ['test-script', 'One command runs the tests', 'warn'],
+    ['secret-files', 'No .env or keypair files in the project', 'fail'], ['secret-content', 'No keys or secrets inside files', 'fail'],
+    ['gitignore', '.gitignore covers .env and node_modules', 'warn'], ['license', 'Licence file', 'warn'],
+    ['demo-script', 'Demo script or pitch notes', 'warn'], ['devnet-evidence', 'Devnet evidence (explorer link or signature)', 'warn'],
+    ['recorded-backup', 'Recorded backup for the demo', 'warn'], ['hygiene', 'No junk or oversized files', 'warn']
+  ].map(function (c) { return { id: c[0], label: c[1], severity: c[2] }; });
+  function base(p) { return p.split('/').pop(); }
+  function plural(n) { return n === 1 ? '' : 's'; }
+  function checkProject(p) {
+    var files = p.files, sev = {}; CHECKS.forEach(function (c) { sev[c.id] = c.severity; });
+    var textOf = function (re) { return files.filter(function (f) { return re.test(f.path) && f.text !== undefined; }); };
+    var rootFile = function (re) { return files.filter(function (f) { return f.path.indexOf('/') < 0 && re.test(f.path); })[0]; };
+    var readme = rootFile(/^readme(\.md|\.txt)?$/i), rt = readme && readme.text ? readme.text : '';
+    var pkg = files.filter(function (f) { return f.path === 'package.json'; })[0], scripts = null;
+    if (pkg && pkg.text) { try { scripts = JSON.parse(pkg.text).scripts || {}; } catch (e) { scripts = null; } }
+    var gi = (rootFile(/^\.gitignore$/) || {}).text || '', out = {};
+    function set(id, ok, okMsg, badMsg, fl) { out[id] = { status: ok ? 'pass' : sev[id], detail: ok ? okMsg : badMsg }; if (fl && fl.length) out[id].files = fl; }
+    set('readme-exists', !!readme, 'found ' + (readme && readme.path), 'no README.md at the top of the project');
+    set('readme-run', /```|^\s*\$ |\bnpm (install|run|test)\b|\bpnpm\b|\bcargo run\b|\bpython3? /im.test(rt) && /(install|run|start|usage)/i.test(rt), 'README has run commands', readme ? 'README has no install or run commands (add a code block with the exact commands)' : 'no README to check');
+    set('readme-limits', /limitation|known issue|caveat|does not (handle|support|show)|not (yet )?(supported|handled)/i.test(rt), 'README mentions a limitation', 'no limitation named; a first-time user should see the benefit AND the limit');
+    set('readme-safety', /devnet|no real funds|not real money|testnet/i.test(rt), 'README states the safety line', 'no mention of devnet or no real funds');
+    var testFiles = files.filter(function (f) { return /(^|\/)(tests?|__tests__)\//i.test(f.path) || /\.(test|spec)\.[cm]?[jt]sx?$/.test(f.path) || /(^|\/)test_[^/]+\.py$/.test(f.path) || /_test\.(py|rs|go)$/.test(f.path); });
+    set('tests-exist', testFiles.length > 0, testFiles.length + ' test file' + plural(testFiles.length), 'no test files found (a test/ folder or *.test.ts)');
+    if (scripts === null) out['test-script'] = { status: 'na', detail: pkg ? 'package.json could not be read' : 'no package.json (check your own test command)' };
+    else set('test-script', typeof scripts.test === 'string' && !/no test specified/i.test(scripts.test), 'npm test runs: ' + scripts.test, 'package.json has no real "test" script');
+    var sf = files.filter(function (f) { var b = base(f.path); if (/^\.env(\..+)?$/i.test(b) && !/\.(example|sample|template)$/i.test(b)) return true; return /^(id\.json|wallet\.json)$/i.test(b) || /keypair.*\.json$/i.test(b) || /\.(pem|key)$/i.test(b); }).map(function (f) { return f.path; });
+    set('secret-files', sf.length === 0, 'none found', sf.length + ' file' + plural(sf.length) + ' that look like secrets: remove them and rotate anything real', sf);
+    var KEYARR = /\[\s*(\d{1,3}\s*,\s*){63}\d{1,3}\s*\]/, KEYVAR = new RegExp('(PRIVATE_KEY|SECRET_KEY|SEED_PHRASE|MNEMONIC|API_KEY|APIKEY)\\s*[=:]\\s*["\']?' + B58 + '{32,}', 'i');
+    var leaks = files.filter(function (f) { return f.text !== undefined && base(f.path) !== 'package-lock.json' && (KEYARR.test(f.text) || KEYVAR.test(f.text)); }).map(function (f) { return f.path; });
+    set('secret-content', leaks.length === 0, 'no key-shaped text found', 'key-shaped text in ' + leaks.length + ' file' + plural(leaks.length) + ' (values are not printed)', leaks);
+    var needsNode = !!pkg || p.skippedDirs.indexOf('node_modules') >= 0;
+    var covers = function (name) { return new RegExp('^/?' + name.replace('.', '\\.') + '/?\\*?$', 'm').test(gi); };
+    var envOk = covers('.env') || /^\.env\*$/m.test(gi), nmOk = !needsNode || covers('node_modules');
+    set('gitignore', !!gi && envOk && nmOk, '.gitignore lists .env and node_modules', !gi ? 'no .gitignore' : ((envOk ? '' : '.env ') + (nmOk ? '' : 'node_modules ') + 'not listed').trim());
+    set('license', !!rootFile(/^(license|licence|copying)(\.md|\.txt)?$/i), 'licence file found', 'no LICENSE file (MIT is a fine default)');
+    var demo = files.filter(function (f) { return /demo[-_ ]?script|(^|\/)demo\.md$|pitch/i.test(f.path); }).map(function (f) { return f.path; });
+    set('demo-script', demo.length > 0 || /demo script|2-minute|3-minute|pitch/i.test(rt), demo.length ? 'found ' + demo[0] : 'README has a demo/pitch section', 'no demo script (write the 2 or 3 minute story: problem, run, evidence, limit)');
+    var md = textOf(/\.(md|txt)$/i).filter(function (f) { return !/template/i.test(f.path); });
+    var devnetTx = new RegExp('(explorer\\.solana\\.com|solscan\\.io|solana\\.fm)/tx/' + B58 + '{80,90}\\?cluster=devnet', 'i');
+    set('devnet-evidence', md.some(function (f) { return devnetTx.test(f.text); }), 'devnet explorer link with a transaction signature found', 'no devnet explorer link (.../tx/<signature>?cluster=devnet) in any .md file (templates do not count)');
+    set('recorded-backup', files.some(function (f) { return /(^|\/)(recorded|fixtures)\//i.test(f.path); }) || /--recorded|recorded (data|demo)|backup/i.test(rt), 'recorded data or backup mentioned', 'no recorded data or backup demo (the network WILL fail at the worst moment)');
+    var junk = files.filter(function (f) { return base(f.path) === '.DS_Store' || f.size > 5000000 || /\.(log|tmp)$/i.test(f.path); }).map(function (f) { return f.path; });
+    var nmBad = p.skippedDirs.indexOf('node_modules') >= 0 && !covers('node_modules');
+    set('hygiene', junk.length === 0 && !nmBad, 'clean', junk.length + ' junk or oversized file' + plural(junk.length) + (nmBad ? '; node_modules would be committed' : ''), junk);
+    var results = CHECKS.map(function (c) { var o = out[c.id], x = { id: c.id, label: c.label, severity: c.severity, status: o.status, detail: o.detail }; if (o.files) x.files = o.files; return x; });
+    var applicable = results.filter(function (x) { return x.status !== 'na'; }), fails = results.filter(function (x) { return x.status === 'fail'; }).length, warns = results.filter(function (x) { return x.status === 'warn'; }).length;
+    return { verdict: fails ? 'not ready' : warns ? 'nearly ready' : 'ready to ship', passed: applicable.filter(function (x) { return x.status === 'pass'; }).length, applicable: applicable.length, fails: fails, warns: warns, results: results };
+  }
+  /* browser folder pick: <input webkitdirectory> gives File objects with webkitRelativePath ("folder/sub/file") */
+  var SKIP = ['.git', 'node_modules', '.next', 'dist', 'build', 'target', '.venv', '__pycache__'];
+  var TEXT_EXT = /\.(md|txt|json|ts|tsx|js|mjs|cjs|py|rs|toml|yml|yaml|env|sh|html|css|example|lock)$/i, TEXT_NAMES = /^(readme|license|licence|makefile|dockerfile|\.gitignore|\.env.*)$/i;
+  function readFileList(list) {
+    var files = [], skipped = {}, jobs = [];
+    Array.prototype.forEach.call(list, function (f) {
+      var parts = (f.webkitRelativePath || f.name).split('/'); parts.shift(); if (!parts.length) parts = [f.name];
+      var hit = parts.slice(0, -1).filter(function (d) { return SKIP.indexOf(d) >= 0; })[0];
+      if (hit) { skipped[parts.slice(0, parts.indexOf(hit) + 1).join('/')] = 1; return; }
+      var rel = parts.join('/'), o = { path: rel, size: f.size }; files.push(o);
+      if (f.size <= 200000 && (TEXT_EXT.test(f.name) || TEXT_NAMES.test(f.name))) jobs.push(f.text().then(function (t) { o.text = t; }));
+    });
+    return Promise.all(jobs).then(function () { return { files: files, skippedDirs: Object.keys(skipped) }; });
+  }
+  function signaturesIn(project) {
+    var re = new RegExp('(explorer\\.solana\\.com|solscan\\.io|solana\\.fm)/tx/(' + B58 + '{80,90})(\\?cluster=(devnet))?', 'gi'), out = [], seen = {};
+    project.files.forEach(function (f) { if (f.text === undefined || /template/i.test(f.path) || !/\.(md|txt)$/i.test(f.path)) return; var m; re.lastIndex = 0; while ((m = re.exec(f.text))) { if (!seen[m[2]]) { seen[m[2]] = 1; out.push({ signature: m[2], cluster: m[4] ? 'devnet' : 'mainnet-beta', file: f.path }); } } });
+    return out;
+  }
+
+  /* ---------- live paper numbers (only used by the Live strips; not part of the recorded simulation) ---------- */
+  function paperLong(hist, notional, c) { /* a paper long of `notional` USD opened at the first live price, marked to each later price */
+    if (!hist.length) return null;
+    var e = hist[0], peak = 0, maxDd = 0, curve = hist.map(function (h) { var pnl = (h / e - 1) * notional; peak = Math.max(peak, pnl); maxDd = Math.max(maxDd, peak - pnl); return pnl; });
+    var gross = curve[curve.length - 1], cost = 2 * (c.feeBps + c.slippageBps) / 10000 * notional;
+    return { curve: curve, gross: gross, net: gross - cost, cost: cost, maxDd: maxDd, entry: e };
+  }
+  function tickStats(prices, c) { /* every live tick = one 1000 USD long for one tick (cost: both legs) */
+    var up = [], dn = [], upN = [], dnN = [], cost = 2 * (c.feeBps + c.slippageBps) / 10000 * 1000;
+    for (var i = 1; i < prices.length; i++) { var g = (prices[i] / prices[i - 1] - 1) * 1000, n = g - cost; if (g > 0) up.push(g); else if (g < 0) dn.push(g); if (n > 0) upN.push(n); else if (n < 0) dnN.push(n); }
+    var N = Math.max(0, prices.length - 1);
+    return { n: N, hitGross: N ? up.length / N : null, payoffGross: up.length && dn.length ? mean(up) / -mean(dn) : null, hitNet: N ? upN.length / N : null, payoffNet: upN.length && dnN.length ? mean(upN) / -mean(dnN) : null, cost: cost };
+  }
+  return { r: r, netUsd: netUsd, gridOf: gridOf, equityCurve: equityCurve, normCdf: normCdf, breakEvenHitRate: breakEvenHitRate, impliedHitRate: impliedHitRate, score: score, byStrategy: byStrategy, CHECKS: CHECKS, checkProject: checkProject, readFileList: readFileList, signaturesIn: signaturesIn, paperLong: paperLong, tickStats: tickStats };
+});
+</script>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+/* footer caption: says whether the data is recorded/live/fixture and its date */
+function sourceLine(el,data,what,extraTs){
+  const fx=Object.values(data).some(d=>d&&d.fixture);
+  const d0=Object.values(data).find(d=>d.generatedAt)||data[Object.keys(data)[0]];
+  const mode=d0.mode||'recorded';
+  const when=(d0.generatedAt||'').slice(0,10)||(extraTs?dateOf(extraTs).slice(0,10):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.textContent=(mode==='live'?'Live data':'Recorded data')+', captured '+when+'. ';
+  a.appendChild(document.createTextNode(what+' Public mainnet reads, no keys.'));
+  H('span',{},el,'Workshop 4');
+}
+</script>
+<script>/* Live mode for the lab demos. Plain JS, no libraries, inlined into every demo by build.mjs.
+ * Reads only: public Solana RPC, the Jupiter quote API, and two on-chain accounts (Pyth price, Orca pool).
+ * No keys, no wallets, no writes. Recorded data stays the default; Live is opt-in.
+ *
+ * Browser-safe endpoints (tested Oct 22, 2026):
+ *   RPC      https://solana-rpc.publicnode.com   (CORS open; api.mainnet.solana.com returns 403 to browser origins)
+ *   Jupiter  https://lite-api.jup.ag/swap/v1/quote
+ * The decoders below are plain-JS ports of demo-repo/code/src/collectors/{jupiter,pyth,orca}.ts.
+ *
+ * Test switches (URL): ?live=1 starts live. &fail=N makes the Nth live tick fail, to test the fallback (fail=1: first tick).
+ */
+const LIVE=(()=>{
+const RPC='https://solana-rpc.publicnode.com';
+const SOL='So11111111111111111111111111111111111111112', USDC='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const JUP_URL='https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL+'&outputMint='+USDC+'&amount=1000000000&slippageBps=50';
+const PYTH_PROGRAM='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ', PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE';
+const PYTH_FEED='ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d', PYTH_DISC='22f123639d7ef4cd';
+const WHIRL_PROGRAM='whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', ORCA_POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE';
+const POLL_MS=5000, MAX_POINTS=120, TIMEOUT_MS=8000;
+const params=new URLSearchParams(location.search+'&'+location.hash.slice(1));
+const FAIL_AT=params.has('fail')?(+params.get('fail')||1):0;
+
+class RateLimit extends Error{constructor(h){super('HTTP 429 (rate limited) from '+h);this.rate=true}}
+async function getJson(url,init){
+  const host=new URL(url).host, ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),TIMEOUT_MS);
+  try{const r=await fetch(url,Object.assign({signal:ctl.signal},init));
+    if(r.status===429)throw new RateLimit(host);
+    if(!r.ok)throw new Error('HTTP '+r.status+' from '+host);
+    return await r.json()}
+  catch(e){if(e.name==='AbortError')throw new Error('timeout from '+host);throw e}
+  finally{clearTimeout(to)}
+}
+async function getAccount(address){
+  const j=await getJson(RPC,{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getAccountInfo',params:[address,{encoding:'base64',commitment:'confirmed'}]})});
+  if(j.error)throw new Error('RPC error: '+j.error.message);
+  const v=j.result&&j.result.value; if(!v)throw new Error('account '+address+' not found');
+  const bin=atob(v.data[0]), bytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return {bytes,owner:v.owner,slot:j.result.context.slot};
+}
+const ALPHA='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function base58(bytes){let n=0n;for(const b of bytes)n=(n<<8n)|BigInt(b);let o='';while(n>0n){o=ALPHA[Number(n%58n)]+o;n/=58n}
+  for(const b of bytes){if(b!==0)break;o='1'+o}return o}
+const hex=(b,a,z)=>Array.from(b.slice(a,z),x=>x.toString(16).padStart(2,'0')).join('');
+
+/* venue price: what 1 SOL sells for, routed by Jupiter */
+async function fetchJupiterQuote(){
+  const q=await getJson(JUP_URL); if(!q.outAmount)throw new Error('Jupiter quote had no outAmount');
+  return {price:Number(q.outAmount)/1e6};
+}
+/* oracle price: the Pyth PriceUpdateV2 account, decoded from raw bytes (layout in code/src/collectors/pyth.ts) */
+async function fetchPythPrice(){
+  const a=await getAccount(PYTH_ACCOUNT), b=a.bytes;
+  if(a.owner!==PYTH_PROGRAM)throw new Error('unexpected Pyth account owner');
+  if(b.length<133||hex(b,0,8)!==PYTH_DISC)throw new Error('not a Pyth PriceUpdateV2 account');
+  if(hex(b,41,73)!==PYTH_FEED)throw new Error('Pyth account holds a different feed');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength), exp=v.getInt32(89,true);
+  const price=Number(v.getBigInt64(73,true))*10**exp, conf=Number(v.getBigInt64(81,true))*10**exp;
+  return {price,confBps:conf/price*1e4,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),slot:a.slot};
+}
+/* pool price: Orca Whirlpool SOL/USDC, price from sqrtPrice (Q64.64) (layout in code/src/collectors/orca.ts) */
+async function fetchOrcaPrice(){
+  const a=await getAccount(ORCA_POOL), b=a.bytes;
+  if(a.owner!==WHIRL_PROGRAM)throw new Error('unexpected pool owner');
+  if(b.length<213)throw new Error('Whirlpool account too short');
+  if(base58(b.slice(101,133))!==SOL||base58(b.slice(181,213))!==USDC)throw new Error('pool is not SOL/USDC');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength);
+  const sq=v.getBigUint64(65,true)|(v.getBigUint64(73,true)<<64n), root=Number(sq)/2**64;
+  return {price:root*root*1e3,slot:a.slot};
+}
+/* one tick: all three reads in parallel, one snapshot out */
+let tickNo=0; const JUP={q:null,at:0,note:null}, JUP_EVERY_MS=20000;
+async function fetchSnapshot(){
+  if(FAIL_AT&&++tickNo>=FAIL_AT)throw new RateLimit('forced-failure.test (?fail='+FAIL_AT+')');
+  // Jupiter's free quote API throttles per IP (a whole classroom shares one), so ask it at most every 20 s and
+  // keep going on the last quote (or the pool price) if it says 429. Only Pyth/Orca RPC failures fall back to recorded.
+  const jupP=(Date.now()-JUP.at<JUP_EVERY_MS&&JUP.q)?Promise.resolve(null):fetchJupiterQuote().then(q=>{JUP.q=q;JUP.at=Date.now();JUP.note=null;return q},e=>{JUP.at=Date.now()-JUP_EVERY_MS+5000;JUP.note=e&&e.rate?'Jupiter throttled, using last quote':'Jupiter unavailable, using last quote';return null});
+  const [,p,o]=await Promise.all([jupP,fetchPythPrice(),fetchOrcaPrice()]);
+  const t=Math.floor(Date.now()/1000);
+  const jup=JUP.q?JUP.q.price:o.price;
+  return {t,jupiter:jup,jupiterNote:JUP.q?JUP.note:(JUP.note||'Jupiter unavailable, showing pool price'),pyth:p.price,orca:o.price,confBps:p.confBps,publishTime:p.publishTime,postedSlot:p.postedSlot,
+    slot:Math.max(p.slot,o.slot),oracleAgeSec:Math.max(0,t-p.publishTime)};
+}
+
+/* Workshop 4 additions: devnet reads for the ship-check demo. Public devnet RPC, read only, no keys.
+ * getSignatureStatuses tells whether a transaction signature found in a README really landed on devnet. */
+const DEVNET_RPC='https://api.devnet.solana.com';
+async function devnetCall(method,params){
+  const j=await getJson(DEVNET_RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+  if(j.error)throw new Error('RPC error: '+j.error.message); return j.result;
+}
+function b58len(str){let n=0n;for(const ch of str){const i=ALPHA.indexOf(ch);if(i<0)return -1;n=n*58n+BigInt(i)}let len=0;while(n>0n){len++;n>>=8n}for(const ch of str){if(ch!=='1')break;len++}return len}
+async function fetchDevnetStatuses(sigs){
+  const slot=await devnetCall('getSlot',[{commitment:'confirmed'}]);
+  const list=sigs.slice(0,20), valid=list.filter(s=>b58len(s)===64); let st={};
+  if(valid.length){const v=(await devnetCall('getSignatureStatuses',[valid,{searchTransactionHistory:true}])).value; valid.forEach((s,i)=>{st[s]=v[i]})}
+  return {t:Math.floor(Date.now()/1000),slot,statuses:list.map(s=>{const x=st[s];return {signature:s,valid:b58len(s)===64,found:!!x,err:x?x.err:null,confirmation:x?x.confirmationStatus:null,txSlot:x?x.slot:null}})};
+}
+
+/* ---- state, pill UI, polling, fallback ---- */
+const S={live:false,hist:[],last:null,err:null,timer:null,busy:false,onTick:null,onMode:null,bar:null,recNote:'bundled data',fetcher:null};
+const el=(tag,cls,parent,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e};
+const clock=t=>new Date(t*1000).toLocaleTimeString('en-GB');
+function paint(extra){
+  const B=S.bar; if(!B)return;
+  B.rec.setAttribute('aria-pressed',String(!S.live)); B.liv.setAttribute('aria-pressed',String(S.live));
+  B.pill.className='pill '+(S.live?'mint':'lavc'); B.pill.textContent=S.live?'LIVE':'RECORDED';
+  B.err.hidden=!S.err; if(S.err){B.err.textContent=S.err.short;B.err.title=S.err.detail}
+  if(S.live&&S.last)B.txt.textContent='updated '+clock(S.last.t)+' · slot '+S.last.slot.toLocaleString('en-US')+(extra?' · '+extra:'');
+  else if(S.live)B.txt.textContent='connecting to public Solana data...'+(extra?' '+extra:'');
+  else B.txt.textContent=S.recNote;
+}
+function schedule(ms){clearTimeout(S.timer);S.timer=null;if(S.live&&!document.hidden)S.timer=setTimeout(tick,ms)}
+async function tick(){
+  if(!S.live||S.busy||document.hidden)return;
+  S.busy=true;
+  try{
+    if(S.fetcher&&FAIL_AT&&++tickNo>=FAIL_AT)throw new RateLimit('forced-failure.test (?fail='+FAIL_AT+')');
+    const snap=await (S.fetcher||fetchSnapshot)(); if(!S.live)return;
+    S.last=snap; S.hist.push(S.fetcher?snap:{t:snap.t,jupiter:snap.jupiter,pyth:snap.pyth,orca:snap.orca});
+    if(S.hist.length>MAX_POINTS)S.hist.shift();
+    paint(snap.jupiterNote); if(S.onTick)S.onTick(snap,S.hist);
+  }catch(e){ if(S.live)fallback(e) }
+  finally{S.busy=false; schedule(POLL_MS)}
+}
+function fallback(e){
+  S.err={short:e&&e.rate?'rate limited, back to recorded':'live data failed, back to recorded',detail:String(e&&e.message||e)};
+  setLive(false,true);
+}
+function setLive(on,keepErr){
+  if(on===S.live)return;
+  S.live=on; clearTimeout(S.timer);
+  if(on){S.err=null;S.hist=[];S.last=null;paint();tick()}
+  else{S.last=null;if(!keepErr)S.err=null;paint()}
+  if(S.onMode)S.onMode(on,S.err);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!S.live)return;
+  if(document.hidden){clearTimeout(S.timer);S.timer=null;paint('paused, tab hidden')}
+  else{paint();tick()}
+});
+/* startLive(onTick, {onMode, recordedNote}): builds the Recorded/Live switch and pill, starts live if ?live=1 */
+function startLive(onTick,opts){
+  opts=opts||{}; S.fetcher=opts.fetcher||null; S.onTick=onTick; S.onMode=opts.onMode||null; if(opts.recordedNote)S.recNote=opts.recordedNote;
+  const bar=el('div','livebar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Data mode: recorded or live');
+  const top=el('div','lvtop',bar), sub=el('div','lvsub',bar), seg=el('div','seg',top);
+  const rec=el('button',null,seg,'Recorded'), liv=el('button',null,seg,'Live'); rec.type=liv.type='button';
+  const pill=el('span','pill lavc',top,'RECORDED'); pill.title='Live reads: Jupiter quote, Pyth price account, Orca pool account (public RPC)';
+  const txt=el('span','lvtxt mut',sub), err=el('span','pill badc',sub); err.hidden=true;
+  err.setAttribute('role','status');
+  S.bar={rec,liv,pill,txt,err};
+  rec.onclick=()=>setLive(false); liv.onclick=()=>setLive(true);
+  document.querySelector('.page').appendChild(bar);
+  paint();
+  if(params.get('live')==='1')setLive(true);
+  return {setLive,isLive:()=>S.live};
+}
+/* footer caption while live (the recorded caption comes from sourceLine in common.js) */
+function liveSource(elm,what){
+  elm.innerHTML=''; const a=el('span',null,elm,'Live data'+(S.last?', updated '+clock(S.last.t):'')+'. '+what+' Public mainnet reads, no keys, nothing is written.');
+  el('span',null,elm,'Workshop 4');
+}
+return {startLive,fetchDevnetStatuses,devnetCall,fetchJupiterQuote,fetchPythPrice,fetchOrcaPrice,fetchSnapshot,liveSource,
+  isLive:()=>S.live,last:()=>S.last,hist:()=>S.hist,MAX_POINTS,POLL_MS};
+})();
+</script>
+<script>
+const L={"note":"Sample ledger: every closed trade of the five sample strategies, simulated on recorded SOL/USDC data. Not advice.","pair":"SOL/USDC","capitalUsd":10000,"windowStartT":1792602839,"windowEndT":1792605239,"intervalSec":5,"trades":[{"id":1,"strategy":"basis","side":"short","openT":1792602849,"closeT":1792602854,"entry":108.0534,"exit":108.0534,"notionalUsd":1000,"grossUsd":0,"legs":2,"paysSlippage":true},{"id":2,"strategy":"market-maker","side":"short","openT":1792602849,"closeT":1792602909,"entry":108.0401,"exit":107.9631,"notionalUsd":1000,"grossUsd":0.7127,"legs":1,"paysSlippage":false},{"id":3,"strategy":"market-maker","side":"short","openT":1792602854,"closeT":1792602914,"entry":108.0401,"exit":107.9631,"notionalUsd":1000,"grossUsd":0.7127,"legs":1,"paysSlippage":false},{"id":4,"strategy":"basis","side":"short","openT":1792602909,"closeT":1792602939,"entry":108.0087,"exit":108.0087,"notionalUsd":1000,"grossUsd":0,"legs":2,"paysSlippage":true},{"id":5,"strategy":"market-maker","side":"long","openT":1792602904,"closeT":1792602964,"entry":108.011,"exit":108.0851,"notionalUsd":1000,"grossUsd":0.6862,"legs":1,"paysSlippage":false},{"id":6,"strategy":"market-maker","side":"short","openT":1792602914,"closeT":1792602974,"entry":108.0063,"exit":108.0812,"notionalUsd":1000,"grossUsd":-0.6936,"legs":1,"paysSlippage":false},{"id":7,"strategy":"market-maker","side":"short","openT":1792602919,"closeT":1792602979,"entry":108.0063,"exit":108.0841,"notionalUsd":1000,"grossUsd":-0.7205,"legs":1,"paysSlippage":false},{"id":8,"strategy":"basis","side":"short","openT":1792603029,"closeT":1792603049,"entry":108.0572,"exit":108.0573,"notionalUsd":1000,"grossUsd":-0.0009,"legs":2,"paysSlippage":true},{"id":9,"strategy":"market-maker","side":"short","openT":1792603034,"closeT":1792603094,"entry":108.0463,"exit":108.0617,"notionalUsd":1000,"grossUsd":-0.1425,"legs":1,"paysSlippage":false},{"id":10,"strategy":"market-maker","side":"short","openT":1792603039,"closeT":1792603099,"entry":108.0463,"exit":108.101,"notionalUsd":1000,"grossUsd":-0.5063,"legs":1,"paysSlippage":false},{"id":11,"strategy":"basis","side":"short","openT":1792603184,"closeT":1792603194,"entry":108.176,"exit":108.1843,"notionalUsd":1000,"grossUsd":-0.0767,"legs":2,"paysSlippage":true},{"id":12,"strategy":"basis","side":"short","openT":1792603219,"closeT":1792603244,"entry":108.1829,"exit":108.2376,"notionalUsd":1000,"grossUsd":-0.5056,"legs":2,"paysSlippage":true},{"id":13,"strategy":"mean-reversion","side":"short","openT":1792603149,"closeT":1792603329,"entry":108.1769,"exit":108.2389,"notionalUsd":1000,"grossUsd":-0.5731,"legs":2,"paysSlippage":true},{"id":14,"strategy":"basis","side":"short","openT":1792603349,"closeT":1792603394,"entry":108.2239,"exit":108.2573,"notionalUsd":1000,"grossUsd":-0.3086,"legs":2,"paysSlippage":true},{"id":15,"strategy":"trend","side":"long","openT":1792603139,"closeT":1792603464,"entry":108.1206,"exit":108.2844,"notionalUsd":1000,"grossUsd":1.515,"legs":2,"paysSlippage":true},{"id":16,"strategy":"basis","side":"short","openT":1792603429,"closeT":1792603489,"entry":108.2668,"exit":108.2742,"notionalUsd":1000,"grossUsd":-0.0683,"legs":2,"paysSlippage":true},{"id":17,"strategy":"trend","side":"short","openT":1792603464,"closeT":1792603489,"entry":108.2844,"exit":108.3034,"notionalUsd":1000,"grossUsd":-0.1755,"legs":2,"paysSlippage":true},{"id":18,"strategy":"trend","side":"long","openT":1792603489,"closeT":1792603569,"entry":108.3034,"exit":108.2196,"notionalUsd":1000,"grossUsd":-0.7738,"legs":2,"paysSlippage":true},{"id":19,"strategy":"basis","side":"short","openT":1792603559,"closeT":1792603574,"entry":108.2837,"exit":108.2259,"notionalUsd":1000,"grossUsd":0.5338,"legs":2,"paysSlippage":true},{"id":20,"strategy":"mean-reversion","side":"long","openT":1792603574,"closeT":1792603584,"entry":108.1898,"exit":108.2501,"notionalUsd":1000,"grossUsd":0.5574,"legs":2,"paysSlippage":true},{"id":21,"strategy":"basis","side":"short","openT":1792603669,"closeT":1792603699,"entry":108.2565,"exit":108.2563,"notionalUsd":1000,"grossUsd":0.0018,"legs":2,"paysSlippage":true},{"id":22,"strategy":"trend","side":"short","openT":1792603569,"closeT":1792603704,"entry":108.2196,"exit":108.2919,"notionalUsd":1000,"grossUsd":-0.6681,"legs":2,"paysSlippage":true},{"id":23,"strategy":"basis","side":"short","openT":1792603869,"closeT":1792603889,"entry":108.408,"exit":108.408,"notionalUsd":1000,"grossUsd":0,"legs":2,"paysSlippage":true},{"id":24,"strategy":"mean-reversion","side":"short","openT":1792603774,"closeT":1792603954,"entry":108.3354,"exit":108.4695,"notionalUsd":1000,"grossUsd":-1.2378,"legs":2,"paysSlippage":true},{"id":25,"strategy":"mean-reversion","side":"short","openT":1792604004,"closeT":1792604049,"entry":108.5469,"exit":108.449,"notionalUsd":1000,"grossUsd":0.9019,"legs":2,"paysSlippage":true},{"id":26,"strategy":"basis","side":"short","openT":1792604019,"closeT":1792604084,"entry":108.5517,"exit":108.4649,"notionalUsd":1000,"grossUsd":0.7996,"legs":2,"paysSlippage":true},{"id":27,"strategy":"basis","side":"short","openT":1792604189,"closeT":1792604209,"entry":108.5686,"exit":108.5727,"notionalUsd":1000,"grossUsd":-0.0378,"legs":2,"paysSlippage":true},{"id":28,"strategy":"mean-reversion","side":"short","openT":1792604154,"closeT":1792604334,"entry":108.5973,"exit":108.6775,"notionalUsd":1000,"grossUsd":-0.7385,"legs":2,"paysSlippage":true},{"id":29,"strategy":"trend","side":"long","openT":1792603704,"closeT":1792604399,"entry":108.2919,"exit":108.607,"notionalUsd":1000,"grossUsd":2.9097,"legs":2,"paysSlippage":true},{"id":30,"strategy":"basis","side":"short","openT":1792604369,"closeT":1792604429,"entry":108.6107,"exit":108.6316,"notionalUsd":1000,"grossUsd":-0.1924,"legs":2,"paysSlippage":true},{"id":31,"strategy":"trend","side":"short","openT":1792604399,"closeT":1792604434,"entry":108.607,"exit":108.6736,"notionalUsd":1000,"grossUsd":-0.6132,"legs":2,"paysSlippage":true},{"id":32,"strategy":"basis","side":"short","openT":1792604479,"closeT":1792604504,"entry":108.6392,"exit":108.6785,"notionalUsd":1000,"grossUsd":-0.3617,"legs":2,"paysSlippage":true},{"id":33,"strategy":"mean-reversion","side":"short","openT":1792604439,"closeT":1792604549,"entry":108.6847,"exit":108.632,"notionalUsd":1000,"grossUsd":0.4849,"legs":2,"paysSlippage":true},{"id":34,"strategy":"trend","side":"long","openT":1792604434,"closeT":1792604574,"entry":108.6736,"exit":108.5814,"notionalUsd":1000,"grossUsd":-0.8484,"legs":2,"paysSlippage":true},{"id":35,"strategy":"basis","side":"short","openT":1792604569,"closeT":1792604609,"entry":108.6162,"exit":108.5766,"notionalUsd":1000,"grossUsd":0.3646,"legs":2,"paysSlippage":true},{"id":36,"strategy":"mean-reversion","side":"long","openT":1792604589,"closeT":1792604624,"entry":108.5391,"exit":108.622,"notionalUsd":1000,"grossUsd":0.7638,"legs":2,"paysSlippage":true},{"id":37,"strategy":"mean-reversion","side":"long","openT":1792604659,"closeT":1792604714,"entry":108.5199,"exit":108.5803,"notionalUsd":1000,"grossUsd":0.5566,"legs":2,"paysSlippage":true},{"id":38,"strategy":"basis","side":"short","openT":1792604639,"closeT":1792604729,"entry":108.5911,"exit":108.5459,"notionalUsd":1000,"grossUsd":0.4162,"legs":2,"paysSlippage":true},{"id":39,"strategy":"basis","side":"short","openT":1792604784,"closeT":1792604814,"entry":108.5604,"exit":108.5748,"notionalUsd":1000,"grossUsd":-0.1326,"legs":2,"paysSlippage":true},{"id":40,"strategy":"trend","side":"short","openT":1792604574,"closeT":1792604824,"entry":108.5814,"exit":108.5968,"notionalUsd":1000,"grossUsd":-0.1418,"legs":2,"paysSlippage":true},{"id":41,"strategy":"trend","side":"long","openT":1792604824,"closeT":1792604894,"entry":108.5968,"exit":108.5259,"notionalUsd":1000,"grossUsd":-0.6529,"legs":2,"paysSlippage":true},{"id":42,"strategy":"basis","side":"short","openT":1792604909,"closeT":1792604954,"entry":108.552,"exit":108.5285,"notionalUsd":1000,"grossUsd":0.2165,"legs":2,"paysSlippage":true},{"id":43,"strategy":"basis","side":"short","openT":1792604959,"closeT":1792605019,"entry":108.5283,"exit":108.4567,"notionalUsd":1000,"grossUsd":0.6597,"legs":2,"paysSlippage":true},{"id":44,"strategy":"mean-reversion","side":"long","openT":1792604964,"closeT":1792605044,"entry":108.481,"exit":108.5151,"notionalUsd":1000,"grossUsd":0.3143,"legs":2,"paysSlippage":true},{"id":45,"strategy":"trend","side":"short","openT":1792604894,"closeT":1792605099,"entry":108.5259,"exit":108.5193,"notionalUsd":1000,"grossUsd":0.0608,"legs":2,"paysSlippage":true}]};
+const SC={"note":"simulated on recorded data; not advice","feeBps":5,"slippageBps":2,"capitalUsd":10000,"windowStartT":1792602839,"windowEndT":1792605239,"overall":{"trades":45,"wins":5,"losses":40,"hitRate":0.1111,"avgWinUsd":0.4473,"avgLossUsd":-1.3985,"payoffRatio":0.3198,"breakEvenHitRate":0.7577,"expectancyUsd":-1.1934,"grossUsd":2.9976,"costsUsd":56.7,"netUsd":-53.7024,"costShareOfGross":18.9151,"maxDrawdownUsd":53.7024,"maxDrawdownPct":0.537,"longestUnderwaterSec":2390,"timeUnderwaterShare":0.9938,"tradedUsd":83000,"turnoverX":8.3,"avgHoldSec":88,"largestWinShare":0.221,"perTradeSharpe":-1.5406,"probFailure":1,"enoughTrades":true},"byStrategy":{"basis":{"trades":19,"wins":0,"losses":19,"hitRate":0,"avgWinUsd":null,"avgLossUsd":-1.3312,"payoffRatio":null,"breakEvenHitRate":null,"expectancyUsd":-1.3312,"grossUsd":1.3076,"costsUsd":26.6,"netUsd":-25.2924,"costShareOfGross":20.3426,"maxDrawdownUsd":25.2924,"maxDrawdownPct":0.2529,"longestUnderwaterSec":2390,"timeUnderwaterShare":0.9938,"tradedUsd":38000,"turnoverX":3.8,"avgHoldSec":37,"largestWinShare":0.2672,"perTradeSharpe":-3.9382,"probFailure":null,"enoughTrades":false},"market-maker":{"trades":7,"wins":3,"losses":4,"hitRate":0.4286,"avgWinUsd":0.2039,"avgLossUsd":-1.0157,"payoffRatio":0.2007,"breakEvenHitRate":0.8328,"expectancyUsd":-0.493,"grossUsd":0.0487,"costsUsd":3.5,"netUsd":-3.4513,"costShareOfGross":71.8686,"maxDrawdownUsd":4.0629,"maxDrawdownPct":0.0406,"longestUnderwaterSec":2270,"timeUnderwaterShare":0.9439,"tradedUsd":7000,"turnoverX":0.7,"avgHoldSec":60,"largestWinShare":0.3375,"perTradeSharpe":-0.7847,"probFailure":0.9847,"enoughTrades":false},"mean-reversion":{"trades":9,"wins":0,"losses":9,"hitRate":0,"avgWinUsd":null,"avgLossUsd":-1.2856,"payoffRatio":null,"breakEvenHitRate":null,"expectancyUsd":-1.2856,"grossUsd":1.0295,"costsUsd":12.6,"netUsd":-11.5705,"costShareOfGross":12.239,"maxDrawdownUsd":11.5705,"maxDrawdownPct":0.1157,"longestUnderwaterSec":1915,"timeUnderwaterShare":0.7963,"tradedUsd":18000,"turnoverX":1.8,"avgHoldSec":97,"largestWinShare":0.252,"perTradeSharpe":-1.7906,"probFailure":null,"enoughTrades":false},"trend":{"trades":10,"wins":2,"losses":8,"hitRate":0.2,"avgWinUsd":0.8124,"avgLossUsd":-1.8766,"payoffRatio":0.4329,"breakEvenHitRate":0.6979,"expectancyUsd":-1.3388,"grossUsd":0.6118,"costsUsd":14,"netUsd":-13.3882,"costShareOfGross":22.8833,"maxDrawdownUsd":13.5032,"maxDrawdownPct":0.135,"longestUnderwaterSec":1755,"timeUnderwaterShare":0.7297,"tradedUsd":20000,"turnoverX":2,"avgHoldSec":196,"largestWinShare":0.6487,"perTradeSharpe":-1.1589,"probFailure":1,"enoughTrades":false}}};
+const PRICES={"generatedAt":"2026-10-21T17:53:59.000Z","mode":"recorded","pair":"SOL/USDC","venues":[{"id":"jupiter","label":"Jupiter quote","price":108.624648,"ts":1792605239,"source":"lite-api quote, 1 SOL -> USDC"},{"id":"pyth","label":"Pyth oracle","price":108.60542862,"confBps":2.68,"publishTime":1792605236,"postedSlot":459720770,"currentSlot":459720770,"source":"on-chain PriceUpdateV2 via RPC"},{"id":"orca","label":"Orca SOL/USDC pool","price":108.58645232409829,"ts":1792605239,"source":"whirlpool sqrtPrice via RPC"}],"gapBps":{"jupiterVsPyth":1.8,"orcaVsPyth":-1.7,"jupiterVsOrca":3.5}};
+const TIMES=CALC.gridOf(L), GROUPS=CALC.byStrategy(L.trades), IDS=Object.keys(GROUPS).sort();
+const fee=$('#fee'),slip=$('#slip');fee.value=hv('fee',SC.feeBps);slip.value=hv('slip',SC.slippageBps);
+let cur=hv('s','all');if(cur!=='all'&&!GROUPS[cur])cur='all';
+const sel=$('#sel');
+['all'].concat(IDS).forEach(id=>{const b=H('button',{type:'button','data-id':id,'aria-pressed':String(id===cur)},sel,id==='all'?'All ('+L.trades.length+')':id+' ('+GROUPS[id].length+')');b.onclick=()=>{cur=id;render()}});
+const usd=(x,d=2)=>x===null?'n/a':(x>=0?'+':'-')+Math.abs(x).toFixed(d);
+const pc=(x,d=0)=>x===null?'n/a':(x*100).toFixed(d)+'%';
+function kpi(parent,k,v,s,cls){const d=H('div',{class:'kpi '+(cls||'')},parent);H('div',{class:'k'},d,k);H('div',{class:'v'},d,v);H('div',{class:'s'},d,s);return d}
+function render(){
+  const c={feeBps:+fee.value,slippageBps:+slip.value};
+  $('#feeo').textContent=f2(c.feeBps,1)+' bps';$('#slipo').textContent=f2(c.slippageBps,1)+' bps';
+  [...sel.children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.id===cur)));
+  const tr=cur==='all'?L.trades:GROUPS[cur], s=CALC.score(tr,c,L.capitalUsd,TIMES);
+  const K=$('#kpis');K.innerHTML='';
+  kpi(K,'Net P&L (USD)',usd(s.netUsd),'gross '+usd(s.grossUsd)+', costs '+(s.costsUsd>0.005?'-':'')+f2(s.costsUsd),s.netUsd>=0?'good':'bad');
+  const be=s.breakEvenHitRate, ok=s.hitRate!==null&&be!==null&&s.hitRate>=be;
+  kpi(K,'Hit rate after costs',pc(s.hitRate),'break-even '+pc(be,1)+(be===null?' (needs a win and a loss)':''),s.hitRate===null?'':(be===null?'warn':(ok?'good':'bad')));
+  kpi(K,'Average win / loss (USD)',usd(s.avgWinUsd)+' / '+usd(s.avgLossUsd),'payoff ratio '+(s.payoffRatio===null?'n/a':f2(s.payoffRatio)));
+  kpi(K,'Max drawdown',s.maxDrawdownUsd.toFixed(2)+' USD',f2(s.maxDrawdownPct)+'% of peak equity',s.maxDrawdownUsd>0?'warn':'good');
+  kpi(K,'Time under water',pc(s.timeUnderwaterShare),'longest stretch '+Math.round(s.longestUnderwaterSec/60)+' min of '+Math.round((L.windowEndT-L.windowStartT)/60),s.timeUnderwaterShare>0.5?'bad':'');
+  kpi(K,'Turnover',f2(s.turnoverX,1)+'x capital',Math.round(s.tradedUsd).toLocaleString('en-US')+' USD traded of '+L.capitalUsd.toLocaleString('en-US'));
+  kpi(K,'Costs vs gross profit',s.costShareOfGross===null?'n/a':pc(s.costShareOfGross),s.costShareOfGross===null?'gross is not above zero':'share of the gross profit that costs ate',s.costShareOfGross!==null&&s.costShareOfGross>=1?'bad':'');
+  kpi(K,'Chance true hit rate is below break-even',s.probFailure===null?'n/a':pc(s.probFailure),s.enoughTrades?s.trades+' trades':'only '+s.trades+' trades: read with care',s.enoughTrades?'':'warn');
+  /* ledger bars */
+  const svg=$('#led');svg.innerHTML='';$('#ledtitle').textContent='Ledger: '+tr.length+' trade'+(tr.length===1?'':'s')+' in close order ('+(cur==='all'?'all strategies':cur)+')';
+  if(!tr.length){S('text',{x:800,y:130,'text-anchor':'middle','font-size':30,class:'m'},svg,'No trades in this ledger.');paintStrip();return}
+  const rows=tr.slice().sort((a,b)=>a.closeT-b.closeT).map(t=>({n:CALC.netUsd(t,c),g:t.grossUsd}));
+  const mx=Math.max(1,...rows.flatMap(r=>[Math.abs(r.n),Math.abs(r.g)]))*1.1, y0=125, sc=105/mx, bw=Math.min(36,1500/rows.length), gap=(1500-bw*rows.length)/Math.max(1,rows.length-1);
+  S('line',{x1:40,x2:1560,y1:y0,y2:y0,stroke:'#9a9aa2','stroke-width':1.5},svg);
+  S('text',{x:4,y:y0+6,'font-size':18,class:'m'},svg,'0');
+  rows.forEach((r,i)=>{const x=50+i*(bw+Math.min(gap,10));const h=Math.max(2,Math.abs(r.n)*sc);
+    S('rect',{x:x,y:r.n>=0?y0-h:y0,width:bw,height:h,rx:3,fill:r.n>=0?'#3ddc97':'#ff7a85','fill-opacity':.85},svg);
+    const gy=y0-r.g*sc;S('line',{x1:x-2,x2:x+bw+2,y1:gy,y2:gy,stroke:'#b3a5ff','stroke-width':3},svg)});
+  S('text',{x:1556,y:22,'text-anchor':'end','font-size':18,class:'m'},svg,'+'+f2(mx/1.1)+' USD');S('text',{x:1556,y:244,'text-anchor':'end','font-size':18,class:'m'},svg,'-'+f2(mx/1.1)+' USD');
+  paintStrip();
+}
+/* LIVE strip: not part of the simulation. Each live tick, the Jupiter-vs-Orca gap against this ledger's round-trip cost line (2 legs x (fee + slippage)).
+   Tally = how many live ticks would have cleared the cost line. One quote is not a trade. */
+let LV=null,ticks=0,above=0,gapMax=0;
+function paintStrip(){
+  const B=$('#strip');B.hidden=!LV;if(!LV)return;B.innerHTML='';
+  const cost=2*(+fee.value+ +slip.value),g=Math.abs(bps(LV.jupiter,LV.orca)),mx=Math.max(30,cost*1.25,g*1.25,gapMax*1.25);
+  const t=H('div',{class:'row',style:'gap:.6rem;flex-wrap:wrap'},B);H('span',{class:'tag'},t,'LIVE');H('span',{class:'lab'},t,'Not part of the ledger: live Jupiter vs Orca gap against the cost line');
+  H('span',{class:'mut',style:'margin-left:auto'},t,above+' of '+ticks+' live tick'+(ticks===1?'':'s')+' cleared the cost line');
+  const sv=S('svg',{viewBox:'0 0 1600 70',role:'img','aria-label':'Live gap '+f2(g,1)+' basis points against cost line '+f2(cost,1)+' basis points'},B);
+  const X=v=>40+1520*v/mx;
+  S('line',{x1:40,x2:1560,y1:38,y2:38,stroke:'#4a4670','stroke-width':3},sv);
+  S('rect',{x:40,y:28,width:Math.max(3,X(g)-40),height:20,rx:6,fill:g>=cost?'#3ddc97':'#b3a5ff','fill-opacity':.85},sv);
+  S('line',{x1:X(cost),x2:X(cost),y1:6,y2:66,stroke:'#ffc15a','stroke-width':3},sv);
+  S('text',{x:Math.min(X(cost)+10,1380),y:22,'font-size':20,style:'fill:#ffc15a'},sv,'cost line '+f2(cost,1)+' bps');
+  S('text',{x:Math.min(X(g)+10,1500),y:66,'font-size':20,class:'l'},sv,'live gap '+f2(g,1)+' bps');
+  if(LV.jupiterNote)H('div',{class:'mut',style:'font-size:.85rem'},B,LV.jupiterNote);
+}
+function paintSrc(){LIVE.isLive()?LIVE.liveSource($('#src'),'Only the strip is live; the scorecard is simulated on recorded data and is not advice.'):
+  sourceLine($('#src'),{ledger:PRICES},'Sample ledger: '+L.trades.length+' simulated trades from the sample strategies, recorded data; not advice. Net = gross minus legs x (fee + slippage) x notional.')}
+fee.addEventListener('input',render);slip.addEventListener('input',render);render();paintSrc();
+LIVE.startLive(snap=>{LV=snap;ticks++;if(Math.abs(bps(snap.jupiter,snap.orca))>=2*(+fee.value+ +slip.value))above++;gapMax=Math.max(gapMax,Math.abs(bps(snap.jupiter,snap.orca)));paintStrip();paintSrc()},
+  {onMode:on=>{if(!on){LV=null;ticks=0;above=0;gapMax=0}paintStrip();paintSrc()},recordedNote:'bundled data, captured '+(PRICES.generatedAt||'').slice(0,10)});
+</script></body></html>

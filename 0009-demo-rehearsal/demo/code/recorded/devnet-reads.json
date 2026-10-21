@@ -1,0 +1,24 @@
+{
+ "cluster": "devnet",
+ "rpc": "https://api.devnet.solana.com",
+ "capturedAt": "2026-10-21T19:34:53.467Z",
+ "version": "4.4.0-beta.1",
+ "slot": 513629831,
+ "genesisHash": "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG",
+ "memoProgram": {
+  "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+  "exists": true,
+  "executable": true
+ },
+ "throwawayAddress": "CjwxgDL1kggcEQpNEcCqnKcEAKLymX4CnDa9UnJFofMp",
+ "signatureCheck": {
+  "note": "simulateTransaction with sigVerify. The faucet refused an airdrop (HTTP 429, daily limit), so the account has no funds and nothing was sent.",
+  "validSignature": "AccountNotFound",
+  "flippedBit": "SignatureFailure"
+ },
+ "faucet": {
+  "requested": "0.5 devnet SOL then 0.1 devnet SOL",
+  "result": "HTTP 429: airdrop limit reached",
+  "sent": false
+ }
+}

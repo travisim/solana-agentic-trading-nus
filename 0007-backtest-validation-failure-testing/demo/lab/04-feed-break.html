@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feed Break</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.lvwrap{margin-left:auto;padding-top:.5rem}
+
+.key{display:flex;gap:1.1rem;flex-wrap:wrap;font-size:.88rem;color:var(--muted);padding:.1rem .3rem}.key i{display:inline-block;width:.8rem;height:.8rem;border-radius:50%;margin-right:.3rem;vertical-align:-.05rem}
+</style></head><body>
+<div class="page">
+<div class="row" style="align-items:flex-start;justify-content:space-between"><h1>A broken feed raises an alarm</h1><div id="livebar" class="lvwrap"></div></div>
+<p class="cap">A healthy oracle keeps a steady gap to the venue price. A freeze makes the gap drift and the sums cross the line.</p>
+<main id="main" aria-label="Structural break alarm on the oracle gap">
+<div class="box" style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:1.4rem;align-items:center;padding:.4rem 1.1rem">
+  <div class="ctl" style="grid-template-columns:1fr 4rem;gap:.05rem .6rem"><label for="hh" style="grid-column:1/-1;font-size:1rem">Alarm level h</label><input id="hh" type="range" min="1" max="15" step="0.5" aria-label="Alarm level in standard deviations"><output id="hho" for="hh"></output></div>
+  <div class="ctl" style="grid-template-columns:1fr 4rem;gap:.05rem .6rem"><label for="kk" style="grid-column:1/-1;font-size:1rem">Slack k</label><input id="kk" type="range" min="0" max="2" step="0.1" aria-label="Slack in standard deviations"><output id="kko" for="kk"></output></div>
+  <div class="ctl" style="grid-template-columns:1fr 6.2rem;gap:.05rem .6rem"><label for="mm" style="grid-column:1/-1;font-size:1rem">Market move after the freeze</label><input id="mm" type="range" min="-10" max="10" step="1" aria-label="Extra market move after the freeze, basis points per minute"><output id="mmo" for="mm"></output></div>
+  <div class="ctl" style="grid-template-columns:1fr 5rem;gap:.05rem .6rem"><label for="fz" style="grid-column:1/-1;font-size:1rem">Freeze starts at</label><input id="fz" type="range" min="70" max="460" step="2" aria-label="Sample at which the oracle freezes"><output id="fzo" for="fz"></output></div>
+  <button id="inj" aria-pressed="false" style="white-space:nowrap">Freeze the oracle (simulated)</button>
+</div>
+<div class="grid" style="grid-template-columns:2.1fr 1fr;flex:1;min-height:0;gap:.8rem">
+  <div class="grid" style="grid-template-rows:1.25fr 1fr;gap:.8rem;min-height:0">
+    <div class="box" style="padding:.3rem .8rem .1rem;display:flex;flex-direction:column;min-height:0"><svg id="c1" viewBox="0 0 1000 290" role="img" aria-label="Gap between the venue price and the oracle price in basis points"></svg><div class="key" id="key"></div></div>
+    <div class="box" style="padding:.3rem .8rem .1rem"><svg id="c2" viewBox="0 0 1000 215" role="img" aria-label="The two running sums against the alarm level"></svg></div>
+  </div>
+  <div class="grid" style="grid-template-rows:auto 1fr;gap:.8rem;min-height:0"><div class="box" id="read" aria-live="polite"></div><div class="box" id="side"></div></div>
+</div>
+<div id="chk" class="mut" style="font-size:.85rem"></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+const sgt=sec=>new Date((sec+8*3600)*1000).toISOString().replace('T',' ').slice(0,16)+' SGT';
+/* footer caption: says whether the data is recorded/live/fixture, its capture date, and what the page shows.
+   opts.sim = extra sentence flagging a simulated element. */
+function sourceLine(el,data,what,ts,opts={}){
+  const vals=Object.values(data);
+  const fx=vals.some(d=>d&&d.fixture);
+  const d0=vals.find(d=>d.capturedAt||d.generatedAt)||vals[0];
+  const mode=d0.mode||'recorded';
+  const iso=(d0.capturedAt||d0.generatedAt||'');
+  const when=iso?sgt(Date.parse(iso)/1000):(ts?sgt(ts):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.append((mode==='live'?'Live data':'Recorded data (not live)')+', captured '+when+'. ');
+  a.append(what+' Public mainnet reads, no keys.');
+  if(opts.sim)H('span',{class:'fx'},a,' '+opts.sim);
+  H('span',{style:'white-space:nowrap'},el,'Build night 4');
+}
+function tlab(t,span){const s=new Date((t+28800)*1000).toISOString();return span<600?s.slice(11,19):s.slice(11,16)}
+/* Live strip (demos 1 and 2): one real Pyth read plus one Orca read every poll; shown only while Live is on.
+   It is NOT part of the simulation. Returns {update(r), show(on)}. */
+function mountLiveStrip(el){
+  el.style.display='none';el.setAttribute('aria-live','polite');
+  return {
+    show(on){el.style.display=on?'block':'none';if(!on)el.innerHTML=''},
+    update(r){
+      el.innerHTML='';
+      const row=H('div',{class:'row',style:'gap:1.6rem;flex-wrap:wrap;align-items:baseline'},el);
+      H('span',{class:'pill mint',style:'font-size:.85rem'},row,'LIVE, not part of the simulation');
+      H('span',{class:'num'},row,'Pyth $'+f2(r.pyth,3)+' ('+r.ageSec+' s old, '+r.slotsBehind+' slots behind)');
+      H('span',{class:'num'},row,'Orca pool $'+f2(r.orca,3));
+      H('span',{class:'num '+(Math.abs(r.gapBps)>r.costBps?'warnc':'mint')},row,'gap '+f2(r.gapBps,1)+' bps vs cost line '+r.costBps+' bps');
+      H('span',{class:'mut',style:'font-size:.9rem'},row,r.note);
+    }
+  };
+}
+async function liveSnapshot(){
+  const [p,o]=await Promise.all([LIVE.fetchPythPrice(),LIVE.fetchOrcaPrice()]);
+  const now=Math.floor(Date.now()/1000);
+  return {pyth:p.price,publishTime:p.publishTime,ageSec:Math.max(0,now-p.publishTime),slotsBehind:p.currentSlot-p.postedSlot,slot:p.currentSlot,orca:o.price,gapBps:(o.price/p.price-1)*1e4,t:now};
+}
+</script>
+<script>/* Demo maths for build night 4. This file is inlined into every demo AND run by verify.mjs against ../code/out/*.json.
+   Each function mirrors a function in ../code/src (named in the comment). Plain JavaScript, no dependencies. */
+const CALC=(()=>{
+  const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+  const sd=a=>{if(a.length<2)return 0;const m=mean(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1))};
+  const round=(x,d=4)=>Math.round(x*10**d)/10**d;
+  /* src/stats.ts normInv */
+  function normInv(p){
+    if(p<=0)return -Infinity;if(p>=1)return Infinity;
+    const a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.357751867269,-30.66479806614716,2.506628277459239],
+      b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572],
+      c=[-0.007784894002430293,-0.3223964580411365,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783],
+      d=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416],lo=0.02425;
+    let q,r;
+    if(p<lo){q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1)}
+    if(p>1-lo)return -normInv(1-p);
+    q=p-.5;r=q*q;
+    return ((((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q)/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+  }
+  const MIN_TRADES=4,G=0.5772156649015329;
+  /* src/stats.ts sharpeLike */
+  function sharpeLike(nets){if(nets.length<MIN_TRADES)return null;const s=sd(nets);return s===0?null:mean(nets)/s}
+  /* src/stats.ts luckBenchmark */
+  function luckBenchmark(n,variance){if(n<2||variance<=0)return 0;return Math.sqrt(variance)*((1-G)*normInv(1-1/n)+G*normInv(1-1/(n*Math.E)))}
+  /* src/overfit.ts: trades -> scores at a cost (bps per leg, fee + slippage together). notional 1000 USD per trade. */
+  function net(t,costBps,trade){return trade-t.legs*(costBps/1e4)*1000}
+  function trialScores(t,costBps){
+    const is=t.is.map(g=>net(t,costBps,g)),oos=t.oos.map(g=>net(t,costBps,g));
+    return {is:sharpeLike(is),oos:sharpeLike(oos),isTrades:is.length,oosTrades:oos.length,isNet:is.reduce((a,b)=>a+b,0),oosNet:oos.reduce((a,b)=>a+b,0)};
+  }
+  /* src/overfit.ts bestOfFirst */
+  function bestOfFirst(S,n){ /* S = array of trialScores for one draw */
+    const first=S.slice(0,n),idx=[];first.forEach((s,i)=>{if(s.is!==null)idx.push(i)});
+    if(!idx.length)return {n,best:-1,bestScore:null,benchmark:0,deflated:null,scoredCount:0};
+    let b=idx[0];for(const i of idx)if(first[i].is>first[b].is)b=i;
+    const sc=idx.map(i=>first[i].is),bench=luckBenchmark(n,sc.length>1?sd(sc)**2:0);
+    return {n,best:b,bestScore:first[b].is,benchmark:bench,deflated:first[b].is-bench,scoredCount:sc.length};
+  }
+  /* src/overfit.ts runSeed: rank of the in-sample winner among all scored out-of-sample scores */
+  function drawSummary(trials,costBps,n){
+    const S=trials.map(t=>trialScores(t,costBps)),b=bestOfFirst(S,n);
+    const ranked=S.map((s,i)=>({s,i})).filter(x=>x.s.oos!==null).sort((a,c)=>c.s.oos-a.s.oos);
+    const rk=b.best>=0?ranked.findIndex(x=>x.i===b.best):-1;
+    return Object.assign(b,{S,oosRank:rk>=0?rk+1:null,oosScored:ranked.length});
+  }
+  /* src/splits.ts assignFolds + purgedKFold. Returns per-fold role arrays. */
+  function assignFolds(m,k,mode,seed){
+    if(mode==='contiguous')return Array.from({length:m},(_,j)=>Math.min(k-1,Math.floor(j*k/m)));
+    let a=(seed>>>0);const next=()=>{a=(a+0x6d2b79f5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};
+    return Array.from({length:m},()=>Math.min(k-1,Math.floor(next()*k)));
+  }
+  /* role per sample: 'unused' (no label), 'test', 'train', 'purged', 'embargo' */
+  function purgedKFold(n,o){
+    const first=o.first==null?24:o.first,moments=[];for(let i=first;i+o.h<n;i++)moments.push(i);
+    const fold=assignFolds(moments.length,o.k,o.mode,o.seed==null?12345:o.seed),out=[];
+    for(let f=0;f<o.k;f++){
+      const test=moments.filter((_,j)=>fold[j]===f);if(!test.length)continue;
+      const leak=new Uint8Array(n+1),emb=new Uint8Array(n+1),isTest=new Uint8Array(n+1);
+      for(const i of test){isTest[i]=1;for(let j=Math.max(0,i-o.h);j<=Math.min(n-1,i+o.h);j++)leak[j]=1;
+        if(o.embargo>0)for(let j=i+o.h+1;j<=Math.min(n-1,i+o.h+o.embargo);j++)emb[j]=1}
+      const role=new Array(n).fill('unused');let kept=0,purged=0,embargoed=0,leaking=0;
+      for(const i of test)role[i]='test';
+      for(const j of moments){if(isTest[j])continue;
+        if(leak[j])leaking++;
+        if(o.purge&&leak[j]){purged++;role[j]='purged'}
+        else if(emb[j]){embargoed++;role[j]='embargo'}
+        else{kept++;role[j]='train'}}
+      out.push({fold:f,role,test:test.length,kept,purged,embargoed,leaking,testFirst:test[0],testLast:test[test.length-1]});
+    }
+    return out;
+  }
+  function foldAverages(n,o){const fs=purgedKFold(n,o),m=Math.max(1,fs.length),s=k=>fs.reduce((a,f)=>a+f[k],0)/m;return {trainKept:s('kept'),purged:s('purged'),embargoed:s('embargoed'),leaking:s('leaking')}}
+  /* src/risk.ts checkOrder (the build-night-1 risk hook) */
+  const LIMITS={maxNotionalUsd:1000,maxOracleGapBps:50,maxOracleAgeSec:60};
+  function checkOrder(order,ctx,L){
+    L=L||LIMITS;const no=(rule,reason)=>({ok:false,rule,reason}),{sizeUsd,price}=order;
+    if(order.side!=='buy'&&order.side!=='sell')return no('unit-sanity','side '+order.side+' is not buy or sell');
+    if(!Number.isFinite(sizeUsd)||sizeUsd<=0)return no('unit-sanity','size '+sizeUsd+' USD is not a positive number');
+    if(!Number.isFinite(price)||price<=0)return no('unit-sanity','price '+price+' is not a positive number');
+    if(!Number.isFinite(ctx.oraclePrice)||ctx.oraclePrice<=0)return no('unit-sanity','oracle price is missing or not positive');
+    const ratio=price/ctx.oraclePrice;if(ratio>5||ratio<0.2)return no('unit-sanity','price is '+ratio.toFixed(1)+'x the oracle price; wrong unit?');
+    if(ctx.oracleAgeSec>L.maxOracleAgeSec)return no('max-oracle-age','oracle is '+ctx.oracleAgeSec+' s old, limit is '+L.maxOracleAgeSec+' s');
+    if(sizeUsd>L.maxNotionalUsd)return no('max-notional',sizeUsd+' USD exceeds the '+L.maxNotionalUsd+' USD limit');
+    const gap=Math.abs(price-ctx.oraclePrice)/ctx.oraclePrice*1e4;
+    if(gap>L.maxOracleGapBps)return no('max-oracle-gap','price is '+gap.toFixed(1)+' bps from the oracle, limit is '+L.maxOracleGapBps+' bps');
+    return {ok:true,rule:null,reason:'within all limits'};
+  }
+  /* src/faults.ts replayFault */
+  const F={ORDER_EVERY:6,ORDER_SIZE_USD:250,BASE_FEE_BPS:5,BAD_FILL_BPS:20,SLIPPAGE_BUDGET_BPS:15,BREAKER_MAX_BREACHES:3,TICK_SEC:5};
+  function replayFault(pts,p,baseAgeSec,guards,limits){
+    guards=guards||{dedupe:false,breaker:false};const recs=[],seen=new Set();let breaches=0,halted=false;const end=p.startTick+p.durationTicks;
+    for(let i=F.ORDER_EVERY;i<pts.length;i+=F.ORDER_EVERY){
+      const win=p.kind!=='none'&&i>=p.startTick&&i<end,side=(i/F.ORDER_EVERY)%2===1?'buy':'sell';
+      const shock=win&&(p.kind==='stale-oracle'||p.kind==='rpc-outage')?1+p.shockBps/1e4:1,market=pts[i].jupiter*shock,lastGood=Math.max(0,p.startTick-1);
+      const frozen=win&&(p.kind==='stale-oracle'||p.kind==='rpc-outage');
+      const oraclePrice=frozen?pts[lastGood].pyth:pts[i].pyth,oracleAgeSec=frozen?baseAgeSec+(i-p.startTick+1)*F.TICK_SEC:baseAgeSec;
+      const orderPrice=win&&p.kind==='rpc-outage'?pts[lastGood].jupiter:win&&p.kind==='stale-oracle'?oraclePrice:market;
+      const order={side,sizeUsd:F.ORDER_SIZE_USD,price:round(orderPrice,4)},copies=win&&p.kind==='duplicate-submission'?2:1;
+      for(let c=1;c<=copies;c++){
+        const d=checkOrder(order,{oraclePrice,oracleAgeSec},limits);let ok=d.ok,rule=d.rule,reason=d.reason;
+        if(ok&&guards.dedupe){const key=side+'|'+order.sizeUsd+'|'+Math.floor(i/F.ORDER_EVERY);if(seen.has(key)){ok=false;rule='duplicate-order';reason='same order already sent in this 30 s slot'}else seen.add(key)}
+        if(ok&&guards.breaker&&halted){ok=false;rule='circuit-breaker';reason='halted after '+F.BREAKER_MAX_BREACHES+' fills worse than '+F.SLIPPAGE_BUDGET_BPS+' bps'}
+        let adv=side==='buy'?Math.max(0,(order.price/market-1)*1e4):Math.max(0,(1-order.price/market)*1e4);
+        if(win&&p.kind==='slippage-shock')adv+=p.slipBps;
+        const extra=win&&p.kind==='fee-change'?order.sizeUsd*Math.max(0,p.feeBps-F.BASE_FEE_BPS)/1e4:0,loss=order.sizeUsd*adv/1e4+extra;
+        if(ok&&guards.breaker&&adv>F.SLIPPAGE_BUDGET_BPS&&++breaches>=F.BREAKER_MAX_BREACHES)halted=true;
+        recs.push({tick:i,inWindow:win,copy:c,order,oraclePrice:round(oraclePrice,4),oracleAgeSec,marketPrice:round(market,4),ok,rule,reason,adverseBps:round(adv,2),lossUsd:ok?round(loss,4):0,lossIfNoHookUsd:round(loss,4)});
+      }
+    }
+    return {records:recs,inWindow:summarizeWindow(recs)};
+  }
+  function summarizeWindow(recs){
+    const w=recs.filter(r=>r.inWindow),byRule={};for(const r of w)if(!r.ok)byRule[r.rule||'unknown']=(byRule[r.rule||'unknown']||0)+1;
+    const acc=w.filter(r=>r.ok),rej=w.filter(r=>!r.ok);
+    return {orders:w.length,accepted:acc.length,rejected:rej.length,byRule,badFills:acc.filter(r=>r.adverseBps>F.BAD_FILL_BPS).length,worstAdverseBps:round(Math.max(0,...acc.map(r=>r.adverseBps)),2),
+      lossUsd:round(acc.reduce((a,r)=>a+r.lossUsd,0),2),lossIfNoHookUsd:round(w.reduce((a,r)=>a+r.lossIfNoHookUsd,0),2),exposureUsd:acc.reduce((a,r)=>a+r.order.sizeUsd,0),firstRejectTick:rej.length?rej[0].tick:null};
+  }
+  function retryCalls(sec){let t=0,w=1,c=0;while(t<sec){c++;t+=w;w=Math.min(w*2,30)}return {naive:Math.floor(sec),backoff:c}}
+  /* src/faults.ts: re-price a strategy row at other costs (net = gross - trades * legs * cost per leg * notional) */
+  function repriceStrategy(s,feeBps,slipBps){return s.pnlGrossUsd-s.trades*s.legsPerTrade*((feeBps+(s.paysSlippage?slipBps:0))/1e4)*s.notionalUsd}
+  /* src/breaks.ts gapSeries + detectBreak */
+  function gapSeries(pts,freezeAt,moveBpsPerMin){
+    moveBpsPerMin=moveBpsPerMin||0;
+    return pts.map((p,i)=>{const fr=freezeAt!==null&&i>=freezeAt,o=fr?pts[Math.max(0,freezeAt-1)].pyth:p.pyth,dr=fr?1+(moveBpsPerMin*((i-freezeAt+1)*5/60))/1e4:1;return ((p.jupiter*dr)/o-1)*1e4});
+  }
+  function detectBreak(gap,o){
+    const base=gap.slice(0,o.warmup),m=mean(base),s0=Math.max(sd(base),0.5);let up=0,down=0,alarm=null;
+    const s=gap.map((g,i)=>{if(i<o.warmup)return {up:0,down:0};const z=(g-m)/s0;up=Math.max(0,up+z-o.k);down=Math.max(0,down-z-o.k);if(alarm===null&&(up>o.h||down>o.h))alarm=i;return {up:round(up,3),down:round(down,3)}});
+    return {mean:round(m,3),sd:round(s0,3),s,alarmTick:alarm};
+  }
+  return {mean,sd,round,normInv,sharpeLike,luckBenchmark,trialScores,bestOfFirst,drawSummary,assignFolds,purgedKFold,foldAverages,checkOrder,LIMITS,F,replayFault,summarizeWindow,retryCalls,repriceStrategy,gapSeries,detectBreak};
+})();
+if(typeof module!=='undefined')module.exports=CALC;
+</script>
+<script>/* Live mode: read-only public Solana data, straight from the browser. No keys, no wallets, no writes.
+   Browser-safe RPC: solana-rpc.publicnode.com (api.mainnet.solana.com returns 403 for browser Origins). */
+const LIVE=(()=>{
+  const RPC=(typeof HASH!=='undefined'&&HASH.get('rpc'))||'https://solana-rpc.publicnode.com';
+  const POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE',SOL_MINT='So11111111111111111111111111111111111111112',USDC_MINT='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE',PYTH_OWNER='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ',PYTH_DISC='22f123639d7ef4cd';
+  const A58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58(b){let n=0n;for(const x of b)n=n*256n+BigInt(x);let s='';while(n>0n){s=A58[Number(n%58n)]+s;n/=58n}for(const x of b){if(x===0)s='1'+s;else break}return s}
+  function fromB64(s){const r=atob(s),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+  const hex=(u,a,b)=>Array.from(u.slice(a,b),x=>x.toString(16).padStart(2,'0')).join('');
+  let id=1;
+  async function rpc(method,params){
+    const r=await fetch(RPC,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:id++,method,params})});
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    if(j.error){const e=new Error(j.error.message||'rpc error');e.rate=/429|rate|too many/i.test(JSON.stringify(j.error));throw e}
+    return j.result;
+  }
+  async function account(addr){
+    const r=await rpc('getAccountInfo',[addr,{encoding:'base64',commitment:'confirmed'}]);
+    if(!r||!r.value)throw new Error('account not found');
+    return {slot:r.context.slot,owner:r.value.owner,bytes:fromB64(r.value.data[0])};
+  }
+  /* Pyth SOL/USD PriceUpdateV2 account: price i64@73, conf i64@81, expo i32@89, publish time i64@93, posted slot u64@125 */
+  async function fetchPythPrice(){
+    const a=await account(PYTH_ACCOUNT);
+    if(a.owner!==PYTH_OWNER)throw new Error('unexpected Pyth owner');
+    const u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    if(u.length<133||hex(u,0,8)!==PYTH_DISC)throw new Error('not a Pyth price account');
+    const expo=v.getInt32(89,true);
+    return {price:Number(v.getBigInt64(73,true))*10**expo,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),currentSlot:a.slot};
+  }
+  /* Orca whirlpool: sqrtPrice u128@65 (Q64.64); price = (sqrt/2^64)^2 * 10^(9-6) */
+  async function fetchOrcaPrice(){
+    const a=await account(POOL),u=a.bytes,v=new DataView(u.buffer,u.byteOffset,u.byteLength);
+    const sq=(v.getBigUint64(73,true)<<64n)|v.getBigUint64(65,true);
+    const r=Number(sq)/2**64;return {price:r*r*1000,slot:a.slot};
+  }
+  async function fetchJupiterQuote(){
+    const r=await fetch('https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL_MINT+'&outputMint='+USDC_MINT+'&amount=1000000000&slippageBps=50');
+    if(r.status===429)throw Object.assign(new Error('rate limited (HTTP 429)'),{rate:true});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();return {price:Number(j.outAmount)/1e6};
+  }
+  /* swaps: same rule as code/src/swaps.ts. A swap moves the two pool vaults in opposite directions. */
+  let vaults=null;
+  async function loadVaults(){
+    if(vaults)return vaults;const a=await account(POOL),u=a.bytes;
+    if(u.length<245||b58(u.slice(101,133))!==SOL_MINT||b58(u.slice(181,213))!==USDC_MINT)throw new Error('pool is not SOL/USDC');
+    return vaults={sol:b58(u.slice(133,165)),usdc:b58(u.slice(213,245))};
+  }
+  function swapFromTx(sig,tx,vt){
+    if(!tx||!tx.meta||tx.meta.err||tx.blockTime==null)return null;
+    const keys=tx.transaction.message.accountKeys.map(k=>typeof k==='string'?k:k.pubkey);
+    const d=(vault,mint)=>{const i=keys.indexOf(vault);if(i<0)return null;
+      const f=l=>(l||[]).find(b=>b.accountIndex===i&&b.mint===mint),pre=f(tx.meta.preTokenBalances),post=f(tx.meta.postTokenBalances);
+      return pre&&post?(Number(post.uiTokenAmount.amount)-Number(pre.uiTokenAmount.amount))/10**pre.uiTokenAmount.decimals:null};
+    const ds=d(vt.sol,SOL_MINT),du=d(vt.usdc,USDC_MINT);
+    if(ds===null||du===null||ds===0||du===0||Math.sign(ds)===Math.sign(du))return null;
+    return {t:tx.blockTime,slot:tx.slot,side:ds>0?'sell':'buy',solAmount:Math.abs(ds),usdcAmount:Math.abs(du),price:Math.abs(du)/Math.abs(ds),sig};
+  }
+  /* state={lastSig:null}; returns new swaps oldest first (at most `max`), and the current slot */
+  async function fetchNewSwaps(state,max=10){
+    const vt=await loadVaults();
+    const sigs=await rpc('getSignaturesForAddress',[POOL,Object.assign({limit:25,commitment:'confirmed'},state.lastSig?{until:state.lastSig}:{})]);
+    if(sigs.length)state.lastSig=sigs[0].signature;
+    const take=sigs.filter(s=>!s.err).slice(0,max).reverse(),out=[];
+    for(const s of take){
+      let tx=null;try{tx=await rpc('getTransaction',[s.signature,{encoding:'jsonParsed',maxSupportedTransactionVersion:1,commitment:'confirmed'}])}catch(e){if(e.rate||!out.length&&s===take[take.length-1])throw e}
+      const sw=swapFromTx(s.signature,tx,vt);if(sw)out.push(sw);
+      await new Promise(r=>setTimeout(r,120));
+    }
+    return {swaps:out,slot:sigs.length?sigs[0].slot:null};
+  }
+  /* UI + loop. opts: {el, intervalMs=5000, enter(), exit(), poll(): Promise<{slot?,note?}> (throw on failure)} */
+  function start(opts){
+    const el=opts.el,every=opts.intervalMs||5000;
+    el.innerHTML='';el.style.cssText='display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;justify-content:flex-end';
+    const grp=document.createElement('div');grp.setAttribute('role','group');grp.setAttribute('aria-label','Data source');grp.style.cssText='display:flex;gap:.4rem';
+    const bR=document.createElement('button'),bL=document.createElement('button');bR.textContent='Recorded';bL.textContent='Live';
+    bR.style.padding=bL.style.padding='.3rem .8rem';bR.style.fontSize=bL.style.fontSize='.95rem';
+    grp.append(bR,bL);const pill=document.createElement('span');pill.className='pill';pill.style.fontSize='.85rem';pill.setAttribute('aria-live','polite');
+    el.append(grp,pill);
+    let on=false,timer=null,busy=false,gen=0,fails=0;
+    const paint=()=>{bR.setAttribute('aria-pressed',on?'false':'true');bL.setAttribute('aria-pressed',on?'true':'false')};
+    const say=(txt,cls)=>{pill.textContent=txt;pill.className='pill '+(cls||'mut');pill.style.fontSize='.85rem'};
+    const hhmmss=()=>new Date(Date.now()+8*3600e3).toISOString().slice(11,19)+' SGT';
+    async function tick(){
+      if(!on||busy||document.hidden)return;busy=true;const g=gen;
+      try{const r=await opts.poll()||{};if(g!==gen)return;fails=0;say('LIVE · '+hhmmss()+(r.slot?' · slot '+r.slot:'')+(r.note?' · '+r.note:''),'mint')}
+      catch(e){if(g===gen){fails++;console.warn('live poll failed ('+fails+'/3):',e&&e.message);if(fails>=3)fallback(e);else say('LIVE · retrying ('+fails+'/3)','warnc')}}
+      finally{busy=false}
+    }
+    function setLive(v){
+      if(v===on)return;on=v;gen++;fails=0;paint();clearInterval(timer);timer=null;
+      if(on){say('LIVE · connecting','warnc');opts.enter();tick();timer=setInterval(tick,every)}
+      else{opts.exit();say('Recorded data','mut')}
+    }
+    function fallback(e){on=false;gen++;paint();clearInterval(timer);timer=null;opts.exit();say((e&&e.rate?'rate limited, back to recorded':'live unavailable, back to recorded'),'badc');console.warn('live mode failed:',e&&e.message)}
+    bR.addEventListener('click',()=>setLive(false));bL.addEventListener('click',()=>setLive(true));
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+    paint();say('Recorded data','mut');
+    if(/[?&#]live=1/.test(location.search+location.hash))setLive(true);
+    return {isLive:()=>on};
+  }
+  return {fetchPythPrice,fetchOrcaPrice,fetchJupiterQuote,fetchNewSwaps,start,rpc};
+})();
+if(typeof module!=='undefined')module.exports=LIVE;
+</script>
+<script>
+const BR={"pair":"SOL/USDC","capturedAt":"2026-10-21T17:53:59.000Z","mode":"recorded","note":"Simulated, on recorded data; not advice","params":{"warmup":60,"k":0.5,"h":5},"freezeAt":288,"t":[1792602839,1792602844,1792602849,1792602854,1792602859,1792602864,1792602869,1792602874,1792602879,1792602884,1792602889,1792602894,1792602899,1792602904,1792602909,1792602914,1792602919,1792602924,1792602929,1792602934,1792602939,1792602944,1792602949,1792602954,1792602959,1792602964,1792602969,1792602974,1792602979,1792602984,1792602989,1792602994,1792602999,1792603004,1792603009,1792603014,1792603019,1792603024,1792603029,1792603034,1792603039,1792603044,1792603049,1792603054,1792603059,1792603064,1792603069,1792603074,1792603079,1792603084,1792603089,1792603094,1792603099,1792603104,1792603109,1792603114,1792603119,1792603124,1792603129,1792603134,1792603139,1792603144,1792603149,1792603154,1792603159,1792603164,1792603169,1792603174,1792603179,1792603184,1792603189,1792603194,1792603199,1792603204,1792603209,1792603214,1792603219,1792603224,1792603229,1792603234,1792603239,1792603244,1792603249,1792603254,1792603259,1792603264,1792603269,1792603274,1792603279,1792603284,1792603289,1792603294,1792603299,1792603304,1792603309,1792603314,1792603319,1792603324,1792603329,1792603334,1792603339,1792603344,1792603349,1792603354,1792603359,1792603364,1792603369,1792603374,1792603379,1792603384,1792603389,1792603394,1792603399,1792603404,1792603409,1792603414,1792603419,1792603424,1792603429,1792603434,1792603439,1792603444,1792603449,1792603454,1792603459,1792603464,1792603469,1792603474,1792603479,1792603484,1792603489,1792603494,1792603499,1792603504,1792603509,1792603514,1792603519,1792603524,1792603529,1792603534,1792603539,1792603544,1792603549,1792603554,1792603559,1792603564,1792603569,1792603574,1792603579,1792603584,1792603589,1792603594,1792603599,1792603604,1792603609,1792603614,1792603619,1792603624,1792603629,1792603634,1792603639,1792603644,1792603649,1792603654,1792603659,1792603664,1792603669,1792603674,1792603679,1792603684,1792603689,1792603694,1792603699,1792603704,1792603709,1792603714,1792603719,1792603724,1792603729,1792603734,1792603739,1792603744,1792603749,1792603754,1792603759,1792603764,1792603769,1792603774,1792603779,1792603784,1792603789,1792603794,1792603799,1792603804,1792603809,1792603814,1792603819,1792603824,1792603829,1792603834,1792603839,1792603844,1792603849,1792603854,1792603859,1792603864,1792603869,1792603874,1792603879,1792603884,1792603889,1792603894,1792603899,1792603904,1792603909,1792603914,1792603919,1792603924,1792603929,1792603934,1792603939,1792603944,1792603949,1792603954,1792603959,1792603964,1792603969,1792603974,1792603979,1792603984,1792603989,1792603994,1792603999,1792604004,1792604009,1792604014,1792604019,1792604024,1792604029,1792604034,1792604039,1792604044,1792604049,1792604054,1792604059,1792604064,1792604069,1792604074,1792604079,1792604084,1792604089,1792604094,1792604099,1792604104,1792604109,1792604114,1792604119,1792604124,1792604129,1792604134,1792604139,1792604144,1792604149,1792604154,1792604159,1792604164,1792604169,1792604174,1792604179,1792604184,1792604189,1792604194,1792604199,1792604204,1792604209,1792604214,1792604219,1792604224,1792604229,1792604234,1792604239,1792604244,1792604249,1792604254,1792604259,1792604264,1792604269,1792604274,1792604279,1792604284,1792604289,1792604294,1792604299,1792604304,1792604309,1792604314,1792604319,1792604324,1792604329,1792604334,1792604339,1792604344,1792604349,1792604354,1792604359,1792604364,1792604369,1792604374,1792604379,1792604384,1792604389,1792604394,1792604399,1792604404,1792604409,1792604414,1792604419,1792604424,1792604429,1792604434,1792604439,1792604444,1792604449,1792604454,1792604459,1792604464,1792604469,1792604474,1792604479,1792604484,1792604489,1792604494,1792604499,1792604504,1792604509,1792604514,1792604519,1792604524,1792604529,1792604534,1792604539,1792604544,1792604549,1792604554,1792604559,1792604564,1792604569,1792604574,1792604579,1792604584,1792604589,1792604594,1792604599,1792604604,1792604609,1792604614,1792604619,1792604624,1792604629,1792604634,1792604639,1792604644,1792604649,1792604654,1792604659,1792604664,1792604669,1792604674,1792604679,1792604684,1792604689,1792604694,1792604699,1792604704,1792604709,1792604714,1792604719,1792604724,1792604729,1792604734,1792604739,1792604744,1792604749,1792604754,1792604759,1792604764,1792604769,1792604774,1792604779,1792604784,1792604789,1792604794,1792604799,1792604804,1792604809,1792604814,1792604819,1792604824,1792604829,1792604834,1792604839,1792604844,1792604849,1792604854,1792604859,1792604864,1792604869,1792604874,1792604879,1792604884,1792604889,1792604894,1792604899,1792604904,1792604909,1792604914,1792604919,1792604924,1792604929,1792604934,1792604939,1792604944,1792604949,1792604954,1792604959,1792604964,1792604969,1792604974,1792604979,1792604984,1792604989,1792604994,1792604999,1792605004,1792605009,1792605014,1792605019,1792605024,1792605029,1792605034,1792605039,1792605044,1792605049,1792605054,1792605059,1792605064,1792605069,1792605074,1792605079,1792605084,1792605089,1792605094,1792605099,1792605104,1792605109,1792605114,1792605119,1792605124,1792605129,1792605134,1792605139,1792605144,1792605149,1792605154,1792605159,1792605164,1792605169,1792605174,1792605179,1792605184,1792605189,1792605194,1792605199,1792605204,1792605209,1792605214,1792605219,1792605224,1792605229,1792605234,1792605239],"gapHealthyBps":[3.38,7,9.547,3.295,4.997,1.841,0.602,-0.333,1.647,1.453,1.462,-0.75,-3.517,-5.35,4.196,2.464,2.806,0.722,4.473,4.899,2.935,7.397,1.406,1.878,3.025,1.351,0.638,0.897,3.414,4.089,2.451,2.424,2.36,4.34,-0.814,-3.839,0.38,-1.527,1.676,2.454,0.852,2.268,0.537,-1.601,3.36,2.953,4.202,7.331,0.879,0.601,2.425,4.581,-0.426,-3.756,1.305,1.259,1.796,3.628,3.443,4.793,1.591,1.684,6.799,6.187,1.784,0.601,-1.119,-0.129,5.789,7.778,8.388,1.516,1.469,0,-1.414,-0.472,1.813,11.181,0.009,0.822,1.866,3.335,2.78,5.449,4.728,4.681,3.49,0.545,1.532,0.794,1.329,-2.105,0.231,1.404,1.09,2.466,1.339,-2.217,0.804,0.028,-0.878,0,2.348,1.904,3.161,4.076,2.727,8.512,7.958,1.93,1.792,2.614,2.558,2.484,1.764,-0.979,0.24,-2.078,1.783,2.44,1.756,2.8,0.675,2.809,4.38,5.757,5.553,5.572,4.352,6.745,1.708,1.93,1.745,-0.489,0.563,4.203,-0.794,-1.764,-1.791,0.074,0.877,3.178,3.649,-0.656,1.866,1.626,-1.404,-4.158,1.839,5.657,4.732,3.28,1.044,1.488,1.626,1.497,4.01,1.1,2.615,7.134,1.635,-1.348,1.737,1.34,-0.212,-0.804,2.153,3.354,1.987,6.468,0.314,0.84,1.7,2.512,1.921,2.614,0.776,1.173,3.769,4.387,-0.111,0,1.182,1.431,2.493,2.392,1.837,3.019,2.733,2.428,2.529,2.326,1.865,1.791,2.548,4.09,2.778,4.329,5.187,2.325,2.085,2.565,1.947,5.001,-0.701,-2.601,4.549,5.371,2.444,-0.35,1.937,4.068,4.575,5.506,0.443,2.065,0.959,1.862,1.743,2.591,2.047,-0.996,1.383,3.938,-0.415,0.692,1.531,1.227,4.768,6.982,1.106,4.056,2.673,4.71,4.09,1.585,1.06,1.263,3.263,3.862,1.594,-0.986,-1.457,-0.986,1.605,1.789,0.599,5.58,6.567,2.139,4.618,4.802,0.765,0.7,3.161,4.239,0.101,1.124,1.631,4.34,1.391,0.884,1.409,3.067,2.865,2.726,1.907,2.616,-1.648,-3.619,7.657,6.994,1.879,0.221,2.1,3.896,2.256,3.711,1.335,2.412,0.479,1.676,2.587,1.796,2.403,2.67,0.249,1.05,1.97,3.692,1.712,1.51,1.445,2.228,-2.182,0.156,2.412,2.725,1.739,1.141,1.086,-0.488,1.39,-2.448,0.018,-1.667,1.133,1.059,1.722,3.758,0.506,0.866,1.492,1.676,2.321,4.752,1.491,1.243,3.213,3.599,2.466,1.951,0.764,-0.156,2.393,2.844,0.331,-5.264,0.93,-0.166,-0.267,0.893,2.604,2.715,3.045,2.484,1.113,-2.144,2.43,1.887,0.497,0.433,-2.163,-2.338,0.635,-1.611,1.078,0.967,0.829,-0.157,-0.774,2.819,3.952,3.427,1.133,1.51,1.114,3.49,-3.738,-4.079,2.469,1.907,-0.018,-1.769,0.645,-0.94,1.29,2.212,2.526,2.332,1.438,0.12,1.401,4.71,1.511,5.326,-0.405,-0.737,1.235,-0.369,1.29,1.382,1.235,1.244,1.069,-0.479,1.17,1.069,1.152,6.856,1.317,-0.193,1.925,1.345,1.649,3.408,1.096,1.068,0.663,1.234,-0.516,-0.295,-0.193,0.322,0.792,2.774,0.58,1.262,1.714,4.321,-2.975,-3.215,1.263,0.415,1.235,0.452,3.936,3.023,1.023,1.364,0.857,-0.746,-1.52,-2.875,1.235,0.369,0.553,0.461,-0.599,-0.526,-0.258,-1.383,1.301,1.642,4.926,6.614,1.66,0.535,1.429,2.72,1.872,4.278,2.774,1.945,1.843,1.235,2.646,3.024,4.443,3.466,1.493,0.534,1.705,2.184,1.493,1.475,1.41,1.475,1.484,2.267,-0.009,-0.055,1.438,1.539,1.521,2.304,1.668,1.668,2.414,3.695,3.004,3.041,0.903,0.617,3.16,3.326,3.086,4.182,2.256,2.155,1.768],"gapFrozenBps":[3.38,7,9.547,3.295,4.997,1.841,0.602,-0.333,1.647,1.453,1.462,-0.75,-3.517,-5.35,4.196,2.464,2.806,0.722,4.473,4.899,2.935,7.397,1.406,1.878,3.025,1.351,0.638,0.897,3.414,4.089,2.451,2.424,2.36,4.34,-0.814,-3.839,0.38,-1.527,1.676,2.454,0.852,2.268,0.537,-1.601,3.36,2.953,4.202,7.331,0.879,0.601,2.425,4.581,-0.426,-3.756,1.305,1.259,1.796,3.628,3.443,4.793,1.591,1.684,6.799,6.187,1.784,0.601,-1.119,-0.129,5.789,7.778,8.388,1.516,1.469,0,-1.414,-0.472,1.813,11.181,0.009,0.822,1.866,3.335,2.78,5.449,4.728,4.681,3.49,0.545,1.532,0.794,1.329,-2.105,0.231,1.404,1.09,2.466,1.339,-2.217,0.804,0.028,-0.878,0,2.348,1.904,3.161,4.076,2.727,8.512,7.958,1.93,1.792,2.614,2.558,2.484,1.764,-0.979,0.24,-2.078,1.783,2.44,1.756,2.8,0.675,2.809,4.38,5.757,5.553,5.572,4.352,6.745,1.708,1.93,1.745,-0.489,0.563,4.203,-0.794,-1.764,-1.791,0.074,0.877,3.178,3.649,-0.656,1.866,1.626,-1.404,-4.158,1.839,5.657,4.732,3.28,1.044,1.488,1.626,1.497,4.01,1.1,2.615,7.134,1.635,-1.348,1.737,1.34,-0.212,-0.804,2.153,3.354,1.987,6.468,0.314,0.84,1.7,2.512,1.921,2.614,0.776,1.173,3.769,4.387,-0.111,0,1.182,1.431,2.493,2.392,1.837,3.019,2.733,2.428,2.529,2.326,1.865,1.791,2.548,4.09,2.778,4.329,5.187,2.325,2.085,2.565,1.947,5.001,-0.701,-2.601,4.549,5.371,2.444,-0.35,1.937,4.068,4.575,5.506,0.443,2.065,0.959,1.862,1.743,2.591,2.047,-0.996,1.383,3.938,-0.415,0.692,1.531,1.227,4.768,6.982,1.106,4.056,2.673,4.71,4.09,1.585,1.06,1.263,3.263,3.862,1.594,-0.986,-1.457,-0.986,1.605,1.789,0.599,5.58,6.567,2.139,4.618,4.802,0.765,0.7,3.161,4.239,0.101,1.124,1.631,4.34,1.391,0.884,1.409,3.067,2.865,2.726,1.907,2.616,-1.648,-3.619,7.657,6.994,1.879,0.221,2.1,3.896,2.256,3.711,1.335,2.412,0.479,1.676,2.587,1.796,2.403,2.67,0.249,1.05,1.97,3.508,3.241,3.038,2.974,3.554,-0.101,2.237,3.066,3.379,6.73,6.132,5.874,4.3,4.235,0.396,-1.538,-3.223,-3.038,-3.112,-2.449,-0.424,-1.335,-0.976,-0.359,-0.175,0.47,3.342,3.351,3.103,5.073,5.773,6.795,6.279,5.515,4.594,5.405,5.856,4.917,-0.681,-0.958,-2.053,-2.154,-2.486,8.314,8.425,9.879,9.318,8.434,5.174,6.408,5.865,4.604,4.539,1.943,0.672,-0.258,-2.504,-2.606,-2.716,-2.725,-3.71,-6.611,-3.02,-1.887,-1.427,-1.639,-1.261,-1.353,1.022,-4.263,-4.604,-3.545,-4.106,-5.699,-7.449,-8.379,-9.962,-9.778,-8.857,-8.544,-8.738,-9.631,-9.842,-9.649,-6.344,-6.629,-2.817,-4.622,-4.953,-4.834,-6.436,-6.509,-6.417,-6.399,-6.39,-6.758,-8.305,-7.964,-8.065,-7.992,-2.293,-1.363,-2.873,-1.657,-2.237,-1.934,-0.276,-1.271,-1.298,-1.897,-1.326,-3.158,-2.937,-6.592,-6.077,-7.108,-5.128,-6.169,-5.487,-5.202,-2.596,-7.587,-7.826,-7.605,-8.452,-8.553,-9.336,-6.344,-7.255,-6.905,-6.565,-7.329,-8.931,-9.704,-11.058,-11.095,-11.96,-12.835,-12.927,-14.796,-14.722,-16.103,-17.227,-17.392,-17.052,-13.848,-12.163,-12.153,-13.277,-12.973,-11.684,-11.224,-8.82,-7.872,-8.701,-9.023,-9.631,-9.087,-8.71,-7.292,-7.117,-7.264,-8.222,-8.434,-7.955,-8.406,-8.425,-8.728,-8.664,-8.489,-7.706,-9.981,-10.027,-10.091,-9.99,-8.415,-7.633,-7.136,-7.136,-6.648,-5.368,-4.834,-4.797,-5.552,-5.837,-3.195,-3.029,-1.289,-0.193,0.7,0.598,1.261],"healthy":{"mean":2.037,"sd":2.719,"alarmTick":null},"frozen":{"mean":2.037,"sd":2.719,"alarmTick":307},"freezeNote":"The freeze is SIMULATED (the oracle value is repeated); the venue price and the gap before it are real."},FD={"pair":"SOL/USDC","capturedAt":"2026-10-21T17:53:59.000Z","mode":"recorded","note":"Simulated, on recorded data; not advice","baseAgeSec":3,"orderEveryTicks":6,"orderSizeUsd":250,"baseFeeBps":5,"badFillBps":20,"slippageBudgetBps":15,"breakerMaxBreaches":3,"limits":{"maxNotionalUsd":1000,"maxOracleGapBps":50,"maxOracleAgeSec":60},"series":[{"t":1792602839,"jupiter":108.0334,"pyth":107.9969},{"t":1792602844,"jupiter":108.0725,"pyth":107.9969},{"t":1792602849,"jupiter":108.1,"pyth":107.9969},{"t":1792602854,"jupiter":108.0902,"pyth":108.0546},{"t":1792602859,"jupiter":108.1287,"pyth":108.0747},{"t":1792602864,"jupiter":108.0946,"pyth":108.0747},{"t":1792602869,"jupiter":108.0688,"pyth":108.0623},{"t":1792602874,"jupiter":108.0587,"pyth":108.0623},{"t":1792602879,"jupiter":108.061,"pyth":108.0432},{"t":1792602884,"jupiter":108.0589,"pyth":108.0432},{"t":1792602889,"jupiter":108.07,"pyth":108.0542},{"t":1792602894,"jupiter":108.0461,"pyth":108.0542},{"t":1792602899,"jupiter":108.0162,"pyth":108.0542},{"t":1792602904,"jupiter":107.9737,"pyth":108.0315},{"t":1792602909,"jupiter":108.0084,"pyth":107.9631},{"t":1792602914,"jupiter":107.9897,"pyth":107.9631},{"t":1792602919,"jupiter":108.0016,"pyth":107.9713},{"t":1792602924,"jupiter":107.9791,"pyth":107.9713},{"t":1792602929,"jupiter":108.0196,"pyth":107.9713},{"t":1792602934,"jupiter":108.0242,"pyth":107.9713},{"t":1792602939,"jupiter":108.0504,"pyth":108.0187},{"t":1792602944,"jupiter":108.0986,"pyth":108.0187},{"t":1792602949,"jupiter":108.0997,"pyth":108.0845},{"t":1792602954,"jupiter":108.1048,"pyth":108.0845},{"t":1792602959,"jupiter":108.1178,"pyth":108.0851},{"t":1792602964,"jupiter":108.0997,"pyth":108.0851},{"t":1792602969,"jupiter":108.0881,"pyth":108.0812},{"t":1792602974,"jupiter":108.0909,"pyth":108.0812},{"t":1792602979,"jupiter":108.121,"pyth":108.0841},{"t":1792602984,"jupiter":108.1283,"pyth":108.0841},{"t":1792602989,"jupiter":108.1324,"pyth":108.1059},{"t":1792602994,"jupiter":108.1321,"pyth":108.1059},{"t":1792602999,"jupiter":108.0966,"pyth":108.0711},{"t":1792603004,"jupiter":108.118,"pyth":108.0711},{"t":1792603009,"jupiter":108.0834,"pyth":108.0922},{"t":1792603014,"jupiter":108.0507,"pyth":108.0922},{"t":1792603019,"jupiter":108.0375,"pyth":108.0334},{"t":1792603024,"jupiter":108.0169,"pyth":108.0334},{"t":1792603029,"jupiter":108.0212,"pyth":108.0031},{"t":1792603034,"jupiter":108.0296,"pyth":108.0031},{"t":1792603039,"jupiter":108.0243,"pyth":108.0151},{"t":1792603044,"jupiter":108.0396,"pyth":108.0151},{"t":1792603049,"jupiter":108.0702,"pyth":108.0644},{"t":1792603054,"jupiter":108.0471,"pyth":108.0644},{"t":1792603059,"jupiter":108.0631,"pyth":108.0268},{"t":1792603064,"jupiter":108.0587,"pyth":108.0268},{"t":1792603069,"jupiter":108.0863,"pyth":108.0409},{"t":1792603074,"jupiter":108.1201,"pyth":108.0409},{"t":1792603079,"jupiter":108.0924,"pyth":108.0829},{"t":1792603084,"jupiter":108.0894,"pyth":108.0829},{"t":1792603089,"jupiter":108.0879,"pyth":108.0617},{"t":1792603094,"jupiter":108.1112,"pyth":108.0617},{"t":1792603099,"jupiter":108.0964,"pyth":108.101},{"t":1792603104,"jupiter":108.0604,"pyth":108.101},{"t":1792603109,"jupiter":108.0584,"pyth":108.0443},{"t":1792603114,"jupiter":108.0579,"pyth":108.0443},{"t":1792603119,"jupiter":108.0615,"pyth":108.0421},{"t":1792603124,"jupiter":108.0813,"pyth":108.0421},{"t":1792603129,"jupiter":108.0793,"pyth":108.0421},{"t":1792603134,"jupiter":108.1173,"pyth":108.0655},{"t":1792603139,"jupiter":108.1206,"pyth":108.1034},{"t":1792603144,"jupiter":108.1216,"pyth":108.1034},{"t":1792603149,"jupiter":108.1769,"pyth":108.1034},{"t":1792603154,"jupiter":108.1973,"pyth":108.1304},{"t":1792603159,"jupiter":108.1774,"pyth":108.1581},{"t":1792603164,"jupiter":108.1646,"pyth":108.1581},{"t":1792603169,"jupiter":108.1469,"pyth":108.159},{"t":1792603174,"jupiter":108.1576,"pyth":108.159},{"t":1792603179,"jupiter":108.1937,"pyth":108.1311},{"t":1792603184,"jupiter":108.2152,"pyth":108.1311},{"t":1792603189,"jupiter":108.2218,"pyth":108.1311},{"t":1792603194,"jupiter":108.2089,"pyth":108.1925},{"t":1792603199,"jupiter":108.2168,"pyth":108.2009},{"t":1792603204,"jupiter":108.2009,"pyth":108.2009},{"t":1792603209,"jupiter":108.1856,"pyth":108.2009},{"t":1792603214,"jupiter":108.156,"pyth":108.1611},{"t":1792603219,"jupiter":108.1525,"pyth":108.1329},{"t":1792603224,"jupiter":108.2538,"pyth":108.1329},{"t":1792603229,"jupiter":108.2419,"pyth":108.2418},{"t":1792603234,"jupiter":108.2507,"pyth":108.2418},{"t":1792603239,"jupiter":108.262,"pyth":108.2418},{"t":1792603244,"jupiter":108.2779,"pyth":108.2418},{"t":1792603249,"jupiter":108.3111,"pyth":108.281},{"t":1792603254,"jupiter":108.34,"pyth":108.281},{"t":1792603259,"jupiter":108.3322,"pyth":108.281},{"t":1792603264,"jupiter":108.3717,"pyth":108.321},{"t":1792603269,"jupiter":108.3588,"pyth":108.321},{"t":1792603274,"jupiter":108.3558,"pyth":108.3499},{"t":1792603279,"jupiter":108.3586,"pyth":108.342},{"t":1792603284,"jupiter":108.3506,"pyth":108.342},{"t":1792603289,"jupiter":108.3457,"pyth":108.3313},{"t":1792603294,"jupiter":108.3085,"pyth":108.3313},{"t":1792603299,"jupiter":108.2968,"pyth":108.2943},{"t":1792603304,"jupiter":108.3095,"pyth":108.2943},{"t":1792603309,"jupiter":108.2728,"pyth":108.261},{"t":1792603314,"jupiter":108.2877,"pyth":108.261},{"t":1792603319,"jupiter":108.2792,"pyth":108.2647},{"t":1792603324,"jupiter":108.2407,"pyth":108.2647},{"t":1792603329,"jupiter":108.2389,"pyth":108.2302},{"t":1792603334,"jupiter":108.2305,"pyth":108.2302},{"t":1792603339,"jupiter":108.1892,"pyth":108.1987},{"t":1792603344,"jupiter":108.1987,"pyth":108.1987},{"t":1792603349,"jupiter":108.2055,"pyth":108.1801},{"t":1792603354,"jupiter":108.2007,"pyth":108.1801},{"t":1792603359,"jupiter":108.2163,"pyth":108.1821},{"t":1792603364,"jupiter":108.2262,"pyth":108.1821},{"t":1792603369,"jupiter":108.2116,"pyth":108.1821},{"t":1792603374,"jupiter":108.2872,"pyth":108.1951},{"t":1792603379,"jupiter":108.2812,"pyth":108.1951},{"t":1792603384,"jupiter":108.2858,"pyth":108.2649},{"t":1792603389,"jupiter":108.2825,"pyth":108.2631},{"t":1792603394,"jupiter":108.2914,"pyth":108.2631},{"t":1792603399,"jupiter":108.3004,"pyth":108.2727},{"t":1792603404,"jupiter":108.2996,"pyth":108.2727},{"t":1792603409,"jupiter":108.2991,"pyth":108.28},{"t":1792603414,"jupiter":108.2694,"pyth":108.28},{"t":1792603419,"jupiter":108.2589,"pyth":108.2563},{"t":1792603424,"jupiter":108.2338,"pyth":108.2563},{"t":1792603429,"jupiter":108.2337,"pyth":108.2144},{"t":1792603434,"jupiter":108.2408,"pyth":108.2144},{"t":1792603439,"jupiter":108.2355,"pyth":108.2165},{"t":1792603444,"jupiter":108.2468,"pyth":108.2165},{"t":1792603449,"jupiter":108.2294,"pyth":108.2221},{"t":1792603454,"jupiter":108.2525,"pyth":108.2221},{"t":1792603459,"jupiter":108.2695,"pyth":108.2221},{"t":1792603464,"jupiter":108.2844,"pyth":108.2221},{"t":1792603469,"jupiter":108.2822,"pyth":108.2221},{"t":1792603474,"jupiter":108.2824,"pyth":108.2221},{"t":1792603479,"jupiter":108.2826,"pyth":108.2355},{"t":1792603484,"jupiter":108.3085,"pyth":108.2355},{"t":1792603489,"jupiter":108.3034,"pyth":108.2849},{"t":1792603494,"jupiter":108.3058,"pyth":108.2849},{"t":1792603499,"jupiter":108.3038,"pyth":108.2849},{"t":1792603504,"jupiter":108.2796,"pyth":108.2849},{"t":1792603509,"jupiter":108.291,"pyth":108.2849},{"t":1792603514,"jupiter":108.3052,"pyth":108.2597},{"t":1792603519,"jupiter":108.2916,"pyth":108.3002},{"t":1792603524,"jupiter":108.2811,"pyth":108.3002},{"t":1792603529,"jupiter":108.2808,"pyth":108.3002},{"t":1792603534,"jupiter":108.2642,"pyth":108.2634},{"t":1792603539,"jupiter":108.2729,"pyth":108.2634},{"t":1792603544,"jupiter":108.2869,"pyth":108.2525},{"t":1792603549,"jupiter":108.292,"pyth":108.2525},{"t":1792603554,"jupiter":108.2563,"pyth":108.2634},{"t":1792603559,"jupiter":108.2565,"pyth":108.2363},{"t":1792603564,"jupiter":108.2539,"pyth":108.2363},{"t":1792603569,"jupiter":108.2196,"pyth":108.2348},{"t":1792603574,"jupiter":108.1898,"pyth":108.2348},{"t":1792603579,"jupiter":108.2088,"pyth":108.1889},{"t":1792603584,"jupiter":108.2501,"pyth":108.1889},{"t":1792603589,"jupiter":108.2401,"pyth":108.1889},{"t":1792603594,"jupiter":108.2579,"pyth":108.2224},{"t":1792603599,"jupiter":108.2446,"pyth":108.2333},{"t":1792603604,"jupiter":108.2494,"pyth":108.2333},{"t":1792603609,"jupiter":108.2347,"pyth":108.2171},{"t":1792603614,"jupiter":108.2333,"pyth":108.2171},{"t":1792603619,"jupiter":108.2605,"pyth":108.2171},{"t":1792603624,"jupiter":108.229,"pyth":108.2171},{"t":1792603629,"jupiter":108.2396,"pyth":108.2113},{"t":1792603634,"jupiter":108.2885,"pyth":108.2113},{"t":1792603639,"jupiter":108.291,"pyth":108.2733},{"t":1792603644,"jupiter":108.2587,"pyth":108.2733},{"t":1792603649,"jupiter":108.2649,"pyth":108.2461},{"t":1792603654,"jupiter":108.2606,"pyth":108.2461},{"t":1792603659,"jupiter":108.2366,"pyth":108.2389},{"t":1792603664,"jupiter":108.2302,"pyth":108.2389},{"t":1792603669,"jupiter":108.2363,"pyth":108.213},{"t":1792603674,"jupiter":108.2493,"pyth":108.213},{"t":1792603679,"jupiter":108.2464,"pyth":108.2249},{"t":1792603684,"jupiter":108.2949,"pyth":108.2249},{"t":1792603689,"jupiter":108.279,"pyth":108.2756},{"t":1792603694,"jupiter":108.2847,"pyth":108.2756},{"t":1792603699,"jupiter":108.2831,"pyth":108.2647},{"t":1792603704,"jupiter":108.2919,"pyth":108.2647},{"t":1792603709,"jupiter":108.3008,"pyth":108.28},{"t":1792603714,"jupiter":108.3083,"pyth":108.28},{"t":1792603719,"jupiter":108.2884,"pyth":108.28},{"t":1792603724,"jupiter":108.2826,"pyth":108.2699},{"t":1792603729,"jupiter":108.3058,"pyth":108.265},{"t":1792603734,"jupiter":108.3125,"pyth":108.265},{"t":1792603739,"jupiter":108.2925,"pyth":108.2937},{"t":1792603744,"jupiter":108.2937,"pyth":108.2937},{"t":1792603749,"jupiter":108.2949,"pyth":108.2821},{"t":1792603754,"jupiter":108.2976,"pyth":108.2821},{"t":1792603759,"jupiter":108.3243,"pyth":108.2973},{"t":1792603764,"jupiter":108.3232,"pyth":108.2973},{"t":1792603769,"jupiter":108.3226,"pyth":108.3027},{"t":1792603774,"jupiter":108.3354,"pyth":108.3027},{"t":1792603779,"jupiter":108.3537,"pyth":108.3241},{"t":1792603784,"jupiter":108.3504,"pyth":108.3241},{"t":1792603789,"jupiter":108.3568,"pyth":108.3294},{"t":1792603794,"jupiter":108.3546,"pyth":108.3294},{"t":1792603799,"jupiter":108.3496,"pyth":108.3294},{"t":1792603804,"jupiter":108.3515,"pyth":108.3321},{"t":1792603809,"jupiter":108.3414,"pyth":108.3138},{"t":1792603814,"jupiter":108.3581,"pyth":108.3138},{"t":1792603819,"jupiter":108.3722,"pyth":108.3421},{"t":1792603824,"jupiter":108.389,"pyth":108.3421},{"t":1792603829,"jupiter":108.3983,"pyth":108.3421},{"t":1792603834,"jupiter":108.4011,"pyth":108.3759},{"t":1792603839,"jupiter":108.3975,"pyth":108.3749},{"t":1792603844,"jupiter":108.4027,"pyth":108.3749},{"t":1792603849,"jupiter":108.3968,"pyth":108.3757},{"t":1792603854,"jupiter":108.4299,"pyth":108.3757},{"t":1792603859,"jupiter":108.4082,"pyth":108.4158},{"t":1792603864,"jupiter":108.3876,"pyth":108.4158},{"t":1792603869,"jupiter":108.4138,"pyth":108.3645},{"t":1792603874,"jupiter":108.4227,"pyth":108.3645},{"t":1792603879,"jupiter":108.4539,"pyth":108.4274},{"t":1792603884,"jupiter":108.4236,"pyth":108.4274},{"t":1792603889,"jupiter":108.4253,"pyth":108.4043},{"t":1792603894,"jupiter":108.4484,"pyth":108.4043},{"t":1792603899,"jupiter":108.4744,"pyth":108.4248},{"t":1792603904,"jupiter":108.4845,"pyth":108.4248},{"t":1792603909,"jupiter":108.4673,"pyth":108.4625},{"t":1792603914,"jupiter":108.4849,"pyth":108.4625},{"t":1792603919,"jupiter":108.4742,"pyth":108.4638},{"t":1792603924,"jupiter":108.484,"pyth":108.4638},{"t":1792603929,"jupiter":108.4746,"pyth":108.4557},{"t":1792603934,"jupiter":108.4838,"pyth":108.4557},{"t":1792603939,"jupiter":108.4779,"pyth":108.4557},{"t":1792603944,"jupiter":108.4449,"pyth":108.4557},{"t":1792603949,"jupiter":108.4418,"pyth":108.4268},{"t":1792603954,"jupiter":108.4695,"pyth":108.4268},{"t":1792603959,"jupiter":108.4419,"pyth":108.4464},{"t":1792603964,"jupiter":108.4539,"pyth":108.4464},{"t":1792603969,"jupiter":108.4523,"pyth":108.4357},{"t":1792603974,"jupiter":108.449,"pyth":108.4357},{"t":1792603979,"jupiter":108.4743,"pyth":108.4226},{"t":1792603984,"jupiter":108.4983,"pyth":108.4226},{"t":1792603989,"jupiter":108.4876,"pyth":108.4756},{"t":1792603994,"jupiter":108.5196,"pyth":108.4756},{"t":1792603999,"jupiter":108.5248,"pyth":108.4958},{"t":1792604004,"jupiter":108.5469,"pyth":108.4958},{"t":1792604009,"jupiter":108.5898,"pyth":108.5454},{"t":1792604014,"jupiter":108.5626,"pyth":108.5454},{"t":1792604019,"jupiter":108.5111,"pyth":108.4996},{"t":1792604024,"jupiter":108.5133,"pyth":108.4996},{"t":1792604029,"jupiter":108.5314,"pyth":108.496},{"t":1792604034,"jupiter":108.5379,"pyth":108.496},{"t":1792604039,"jupiter":108.5335,"pyth":108.5162},{"t":1792604044,"jupiter":108.5055,"pyth":108.5162},{"t":1792604049,"jupiter":108.449,"pyth":108.4648},{"t":1792604054,"jupiter":108.4541,"pyth":108.4648},{"t":1792604059,"jupiter":108.4492,"pyth":108.4318},{"t":1792604064,"jupiter":108.4512,"pyth":108.4318},{"t":1792604069,"jupiter":108.4304,"pyth":108.4239},{"t":1792604074,"jupiter":108.4844,"pyth":108.4239},{"t":1792604079,"jupiter":108.4951,"pyth":108.4239},{"t":1792604084,"jupiter":108.4973,"pyth":108.4741},{"t":1792604089,"jupiter":108.5411,"pyth":108.491},{"t":1792604094,"jupiter":108.5431,"pyth":108.491},{"t":1792604099,"jupiter":108.5322,"pyth":108.5239},{"t":1792604104,"jupiter":108.5315,"pyth":108.5239},{"t":1792604109,"jupiter":108.5496,"pyth":108.5153},{"t":1792604114,"jupiter":108.5613,"pyth":108.5153},{"t":1792604119,"jupiter":108.5427,"pyth":108.5416},{"t":1792604124,"jupiter":108.5538,"pyth":108.5416},{"t":1792604129,"jupiter":108.5464,"pyth":108.5287},{"t":1792604134,"jupiter":108.5758,"pyth":108.5287},{"t":1792604139,"jupiter":108.5791,"pyth":108.564},{"t":1792604144,"jupiter":108.5736,"pyth":108.564},{"t":1792604149,"jupiter":108.5793,"pyth":108.564},{"t":1792604154,"jupiter":108.5973,"pyth":108.564},{"t":1792604159,"jupiter":108.5974,"pyth":108.5663},{"t":1792604164,"jupiter":108.5959,"pyth":108.5663},{"t":1792604169,"jupiter":108.5939,"pyth":108.5732},{"t":1792604174,"jupiter":108.6016,"pyth":108.5732},{"t":1792604179,"jupiter":108.566,"pyth":108.5839},{"t":1792604184,"jupiter":108.5446,"pyth":108.5839},{"t":1792604189,"jupiter":108.6076,"pyth":108.5245},{"t":1792604194,"jupiter":108.6004,"pyth":108.5245},{"t":1792604199,"jupiter":108.6143,"pyth":108.5939},{"t":1792604204,"jupiter":108.5963,"pyth":108.5939},{"t":1792604209,"jupiter":108.5974,"pyth":108.5746},{"t":1792604214,"jupiter":108.6169,"pyth":108.5746},{"t":1792604219,"jupiter":108.616,"pyth":108.5915},{"t":1792604224,"jupiter":108.6318,"pyth":108.5915},{"t":1792604229,"jupiter":108.6195,"pyth":108.605},{"t":1792604234,"jupiter":108.6312,"pyth":108.605},{"t":1792604239,"jupiter":108.6077,"pyth":108.6025},{"t":1792604244,"jupiter":108.6207,"pyth":108.6025},{"t":1792604249,"jupiter":108.6294,"pyth":108.6013},{"t":1792604254,"jupiter":108.6208,"pyth":108.6013},{"t":1792604259,"jupiter":108.6274,"pyth":108.6013},{"t":1792604264,"jupiter":108.6399,"pyth":108.6109},{"t":1792604269,"jupiter":108.6136,"pyth":108.6109},{"t":1792604274,"jupiter":108.6223,"pyth":108.6109},{"t":1792604279,"jupiter":108.6323,"pyth":108.6109},{"t":1792604284,"jupiter":108.649,"pyth":108.6089},{"t":1792604289,"jupiter":108.6461,"pyth":108.6275},{"t":1792604294,"jupiter":108.6439,"pyth":108.6275},{"t":1792604299,"jupiter":108.6432,"pyth":108.6275},{"t":1792604304,"jupiter":108.6495,"pyth":108.6253},{"t":1792604309,"jupiter":108.6098,"pyth":108.6335},{"t":1792604314,"jupiter":108.6352,"pyth":108.6335},{"t":1792604319,"jupiter":108.6442,"pyth":108.618},{"t":1792604324,"jupiter":108.6476,"pyth":108.618},{"t":1792604329,"jupiter":108.684,"pyth":108.6651},{"t":1792604334,"jupiter":108.6775,"pyth":108.6651},{"t":1792604339,"jupiter":108.6747,"pyth":108.6629},{"t":1792604344,"jupiter":108.6576,"pyth":108.6629},{"t":1792604349,"jupiter":108.6569,"pyth":108.6418},{"t":1792604354,"jupiter":108.6152,"pyth":108.6418},{"t":1792604359,"jupiter":108.5942,"pyth":108.594},{"t":1792604364,"jupiter":108.5759,"pyth":108.594},{"t":1792604369,"jupiter":108.5779,"pyth":108.5656},{"t":1792604374,"jupiter":108.5771,"pyth":108.5656},{"t":1792604379,"jupiter":108.5843,"pyth":108.5656},{"t":1792604384,"jupiter":108.6063,"pyth":108.5655},{"t":1792604389,"jupiter":108.5964,"pyth":108.5909},{"t":1792604394,"jupiter":108.6003,"pyth":108.5909},{"t":1792604399,"jupiter":108.607,"pyth":108.5908},{"t":1792604404,"jupiter":108.609,"pyth":108.5908},{"t":1792604409,"jupiter":108.616,"pyth":108.5908},{"t":1792604414,"jupiter":108.6472,"pyth":108.5956},{"t":1792604419,"jupiter":108.6473,"pyth":108.6311},{"t":1792604424,"jupiter":108.6446,"pyth":108.6311},{"t":1792604429,"jupiter":108.666,"pyth":108.6311},{"t":1792604434,"jupiter":108.6736,"pyth":108.6345},{"t":1792604439,"jupiter":108.6847,"pyth":108.6579},{"t":1792604444,"jupiter":108.6791,"pyth":108.6579},{"t":1792604449,"jupiter":108.6708,"pyth":108.6625},{"t":1792604454,"jupiter":108.6608,"pyth":108.6625},{"t":1792604459,"jupiter":108.6696,"pyth":108.6436},{"t":1792604464,"jupiter":108.6745,"pyth":108.6436},{"t":1792604469,"jupiter":108.6643,"pyth":108.6607},{"t":1792604474,"jupiter":108.6035,"pyth":108.6607},{"t":1792604479,"jupiter":108.6005,"pyth":108.5904},{"t":1792604484,"jupiter":108.5886,"pyth":108.5904},{"t":1792604489,"jupiter":108.5875,"pyth":108.5904},{"t":1792604494,"jupiter":108.5839,"pyth":108.5742},{"t":1792604499,"jupiter":108.7012,"pyth":108.6729},{"t":1792604504,"jupiter":108.7024,"pyth":108.6729},{"t":1792604509,"jupiter":108.7182,"pyth":108.6851},{"t":1792604514,"jupiter":108.7121,"pyth":108.6851},{"t":1792604519,"jupiter":108.7025,"pyth":108.6904},{"t":1792604524,"jupiter":108.6671,"pyth":108.6904},{"t":1792604529,"jupiter":108.6805,"pyth":108.6541},{"t":1792604534,"jupiter":108.6746,"pyth":108.6541},{"t":1792604539,"jupiter":108.6609,"pyth":108.6555},{"t":1792604544,"jupiter":108.6602,"pyth":108.6555},{"t":1792604549,"jupiter":108.632,"pyth":108.6555},{"t":1792604554,"jupiter":108.6182,"pyth":108.6436},{"t":1792604559,"jupiter":108.6081,"pyth":108.6012},{"t":1792604564,"jupiter":108.5837,"pyth":108.6012},{"t":1792604569,"jupiter":108.5826,"pyth":108.5709},{"t":1792604574,"jupiter":108.5814,"pyth":108.5709},{"t":1792604579,"jupiter":108.5813,"pyth":108.5723},{"t":1792604584,"jupiter":108.5706,"pyth":108.5723},{"t":1792604589,"jupiter":108.5391,"pyth":108.5475},{"t":1792604594,"jupiter":108.5781,"pyth":108.5475},{"t":1792604599,"jupiter":108.5904,"pyth":108.5475},{"t":1792604604,"jupiter":108.5954,"pyth":108.5582},{"t":1792604609,"jupiter":108.5931,"pyth":108.5808},{"t":1792604614,"jupiter":108.5972,"pyth":108.5808},{"t":1792604619,"jupiter":108.5962,"pyth":108.5841},{"t":1792604624,"jupiter":108.622,"pyth":108.5841},{"t":1792604629,"jupiter":108.5646,"pyth":108.6052},{"t":1792604634,"jupiter":108.5609,"pyth":108.6052},{"t":1792604639,"jupiter":108.5724,"pyth":108.5456},{"t":1792604644,"jupiter":108.5663,"pyth":108.5456},{"t":1792604649,"jupiter":108.549,"pyth":108.5492},{"t":1792604654,"jupiter":108.53,"pyth":108.5492},{"t":1792604659,"jupiter":108.5199,"pyth":108.5129},{"t":1792604664,"jupiter":108.5027,"pyth":108.5129},{"t":1792604669,"jupiter":108.5047,"pyth":108.4907},{"t":1792604674,"jupiter":108.5147,"pyth":108.4907},{"t":1792604679,"jupiter":108.5181,"pyth":108.4907},{"t":1792604684,"jupiter":108.516,"pyth":108.4907},{"t":1792604689,"jupiter":108.5063,"pyth":108.4907},{"t":1792604694,"jupiter":108.504,"pyth":108.5027},{"t":1792604699,"jupiter":108.5061,"pyth":108.4909},{"t":1792604704,"jupiter":108.542,"pyth":108.4909},{"t":1792604709,"jupiter":108.5389,"pyth":108.5225},{"t":1792604714,"jupiter":108.5803,"pyth":108.5225},{"t":1792604719,"jupiter":108.5607,"pyth":108.5651},{"t":1792604724,"jupiter":108.5571,"pyth":108.5651},{"t":1792604729,"jupiter":108.5584,"pyth":108.545},{"t":1792604734,"jupiter":108.541,"pyth":108.545},{"t":1792604739,"jupiter":108.5402,"pyth":108.5262},{"t":1792604744,"jupiter":108.5412,"pyth":108.5262},{"t":1792604749,"jupiter":108.5414,"pyth":108.528},{"t":1792604754,"jupiter":108.5415,"pyth":108.528},{"t":1792604759,"jupiter":108.5375,"pyth":108.5259},{"t":1792604764,"jupiter":108.5207,"pyth":108.5259},{"t":1792604769,"jupiter":108.5244,"pyth":108.5117},{"t":1792604774,"jupiter":108.5233,"pyth":108.5117},{"t":1792604779,"jupiter":108.5241,"pyth":108.5116},{"t":1792604784,"jupiter":108.586,"pyth":108.5116},{"t":1792604789,"jupiter":108.5961,"pyth":108.5818},{"t":1792604794,"jupiter":108.5797,"pyth":108.5818},{"t":1792604799,"jupiter":108.5929,"pyth":108.572},{"t":1792604804,"jupiter":108.5866,"pyth":108.572},{"t":1792604809,"jupiter":108.5899,"pyth":108.572},{"t":1792604814,"jupiter":108.6079,"pyth":108.5709},{"t":1792604819,"jupiter":108.5971,"pyth":108.5852},{"t":1792604824,"jupiter":108.5968,"pyth":108.5852},{"t":1792604829,"jupiter":108.5903,"pyth":108.5831},{"t":1792604834,"jupiter":108.5965,"pyth":108.5831},{"t":1792604839,"jupiter":108.5766,"pyth":108.5822},{"t":1792604844,"jupiter":108.579,"pyth":108.5822},{"t":1792604849,"jupiter":108.5393,"pyth":108.5414},{"t":1792604854,"jupiter":108.5449,"pyth":108.5414},{"t":1792604859,"jupiter":108.5337,"pyth":108.5251},{"t":1792604864,"jupiter":108.5552,"pyth":108.5251},{"t":1792604869,"jupiter":108.5439,"pyth":108.5376},{"t":1792604874,"jupiter":108.5513,"pyth":108.5376},{"t":1792604879,"jupiter":108.5544,"pyth":108.5358},{"t":1792604884,"jupiter":108.5827,"pyth":108.5358},{"t":1792604889,"jupiter":108.5285,"pyth":108.5608},{"t":1792604894,"jupiter":108.5259,"pyth":108.5608},{"t":1792604899,"jupiter":108.5283,"pyth":108.5146},{"t":1792604904,"jupiter":108.5191,"pyth":108.5146},{"t":1792604909,"jupiter":108.518,"pyth":108.5046},{"t":1792604914,"jupiter":108.5095,"pyth":108.5046},{"t":1792604919,"jupiter":108.542,"pyth":108.4993},{"t":1792604924,"jupiter":108.5321,"pyth":108.4993},{"t":1792604929,"jupiter":108.5359,"pyth":108.5248},{"t":1792604934,"jupiter":108.5396,"pyth":108.5248},{"t":1792604939,"jupiter":108.5313,"pyth":108.522},{"t":1792604944,"jupiter":108.5139,"pyth":108.522},{"t":1792604949,"jupiter":108.5055,"pyth":108.522},{"t":1792604954,"jupiter":108.4908,"pyth":108.522},{"t":1792604959,"jupiter":108.4904,"pyth":108.477},{"t":1792604964,"jupiter":108.481,"pyth":108.477},{"t":1792604969,"jupiter":108.4715,"pyth":108.4655},{"t":1792604974,"jupiter":108.4705,"pyth":108.4655},{"t":1792604979,"jupiter":108.4502,"pyth":108.4567},{"t":1792604984,"jupiter":108.451,"pyth":108.4567},{"t":1792604989,"jupiter":108.436,"pyth":108.4388},{"t":1792604994,"jupiter":108.4238,"pyth":108.4388},{"t":1792604999,"jupiter":108.422,"pyth":108.4079},{"t":1792605004,"jupiter":108.4257,"pyth":108.4079},{"t":1792605009,"jupiter":108.4605,"pyth":108.4071},{"t":1792605014,"jupiter":108.4788,"pyth":108.4071},{"t":1792605019,"jupiter":108.4789,"pyth":108.4609},{"t":1792605024,"jupiter":108.4667,"pyth":108.4609},{"t":1792605029,"jupiter":108.47,"pyth":108.4545},{"t":1792605034,"jupiter":108.484,"pyth":108.4545},{"t":1792605039,"jupiter":108.489,"pyth":108.4687},{"t":1792605044,"jupiter":108.5151,"pyth":108.4687},{"t":1792605049,"jupiter":108.5254,"pyth":108.4953},{"t":1792605054,"jupiter":108.5164,"pyth":108.4953},{"t":1792605059,"jupiter":108.5129,"pyth":108.4929},{"t":1792605064,"jupiter":108.5063,"pyth":108.4929},{"t":1792605069,"jupiter":108.5122,"pyth":108.4835},{"t":1792605074,"jupiter":108.5163,"pyth":108.4835},{"t":1792605079,"jupiter":108.5317,"pyth":108.4835},{"t":1792605084,"jupiter":108.5336,"pyth":108.496},{"t":1792605089,"jupiter":108.532,"pyth":108.5158},{"t":1792605094,"jupiter":108.5216,"pyth":108.5158},{"t":1792605099,"jupiter":108.5193,"pyth":108.5008},{"t":1792605104,"jupiter":108.5245,"pyth":108.5008},{"t":1792605109,"jupiter":108.5196,"pyth":108.5034},{"t":1792605114,"jupiter":108.5194,"pyth":108.5034},{"t":1792605119,"jupiter":108.5161,"pyth":108.5008},{"t":1792605124,"jupiter":108.5168,"pyth":108.5008},{"t":1792605129,"jupiter":108.5187,"pyth":108.5026},{"t":1792605134,"jupiter":108.5272,"pyth":108.5026},{"t":1792605139,"jupiter":108.5025,"pyth":108.5026},{"t":1792605144,"jupiter":108.502,"pyth":108.5026},{"t":1792605149,"jupiter":108.5013,"pyth":108.4857},{"t":1792605154,"jupiter":108.5024,"pyth":108.4857},{"t":1792605159,"jupiter":108.5195,"pyth":108.503},{"t":1792605164,"jupiter":108.528,"pyth":108.503},{"t":1792605169,"jupiter":108.5334,"pyth":108.5153},{"t":1792605174,"jupiter":108.5334,"pyth":108.5153},{"t":1792605179,"jupiter":108.5387,"pyth":108.5125},{"t":1792605184,"jupiter":108.5526,"pyth":108.5125},{"t":1792605189,"jupiter":108.5584,"pyth":108.5258},{"t":1792605194,"jupiter":108.5588,"pyth":108.5258},{"t":1792605199,"jupiter":108.5506,"pyth":108.5408},{"t":1792605204,"jupiter":108.5475,"pyth":108.5408},{"t":1792605209,"jupiter":108.5762,"pyth":108.5419},{"t":1792605214,"jupiter":108.578,"pyth":108.5419},{"t":1792605219,"jupiter":108.5969,"pyth":108.5634},{"t":1792605224,"jupiter":108.6088,"pyth":108.5634},{"t":1792605229,"jupiter":108.6185,"pyth":108.594},{"t":1792605234,"jupiter":108.6174,"pyth":108.594},{"t":1792605239,"jupiter":108.6246,"pyth":108.6054}],"scenarios":[{"kind":"stale-oracle","note":"The oracle stops updating (frozen at its last value) while the market moves 80 bps. The agent quotes off the oracle.","params":{"kind":"stale-oracle","startTick":288,"durationTicks":60,"shockBps":-80,"slipBps":40,"feeBps":30},"hookOnly":{"orders":10,"accepted":2,"rejected":8,"byRule":{"max-oracle-age":8},"badFills":1,"worstAdverseBps":80.75,"lossUsd":2.02,"lossIfNoHookUsd":10.04,"exposureUsd":500,"firstRejectTick":300},"withFix":{"orders":10,"accepted":2,"rejected":8,"byRule":{"max-oracle-age":8},"badFills":1,"worstAdverseBps":80.75,"lossUsd":2.02,"lossIfNoHookUsd":10.04,"exposureUsd":500,"firstRejectTick":300}},{"kind":"rpc-outage","note":"RPC returns HTTP 429 for 5 minutes. The agent keeps its last good prices while the market moves 80 bps.","params":{"kind":"rpc-outage","startTick":288,"durationTicks":60,"shockBps":-80,"slipBps":40,"feeBps":30},"hookOnly":{"orders":10,"accepted":2,"rejected":8,"byRule":{"max-oracle-age":8},"badFills":1,"worstAdverseBps":81.81,"lossUsd":2.05,"lossIfNoHookUsd":10.17,"exposureUsd":500,"firstRejectTick":300},"withFix":{"orders":10,"accepted":2,"rejected":8,"byRule":{"max-oracle-age":8},"badFills":1,"worstAdverseBps":81.81,"lossUsd":2.05,"lossIfNoHookUsd":10.17,"exposureUsd":500,"firstRejectTick":300}},{"kind":"slippage-shock","note":"Every fill is 40 bps worse than expected for 5 minutes (thin pool, congestion).","params":{"kind":"slippage-shock","startTick":288,"durationTicks":60,"shockBps":-80,"slipBps":40,"feeBps":30},"hookOnly":{"orders":10,"accepted":10,"rejected":0,"byRule":{},"badFills":10,"worstAdverseBps":40,"lossUsd":10,"lossIfNoHookUsd":10,"exposureUsd":2500,"firstRejectTick":null},"withFix":{"orders":10,"accepted":3,"rejected":7,"byRule":{"circuit-breaker":7},"badFills":3,"worstAdverseBps":40,"lossUsd":3,"lossIfNoHookUsd":10,"exposureUsd":750,"firstRejectTick":306}},{"kind":"fee-change","note":"Fee per leg jumps from 5 to 30 bps for 5 minutes.","params":{"kind":"fee-change","startTick":288,"durationTicks":60,"shockBps":-80,"slipBps":40,"feeBps":30},"hookOnly":{"orders":10,"accepted":10,"rejected":0,"byRule":{},"badFills":0,"worstAdverseBps":0,"lossUsd":6.25,"lossIfNoHookUsd":6.25,"exposureUsd":2500,"firstRejectTick":null},"withFix":{"orders":10,"accepted":10,"rejected":0,"byRule":{},"badFills":0,"worstAdverseBps":0,"lossUsd":6.25,"lossIfNoHookUsd":6.25,"exposureUsd":2500,"firstRejectTick":null}},{"kind":"duplicate-submission","note":"A timeout makes the agent send every order twice for 5 minutes.","params":{"kind":"duplicate-submission","startTick":288,"durationTicks":60,"shockBps":-80,"slipBps":40,"feeBps":30},"hookOnly":{"orders":20,"accepted":20,"rejected":0,"byRule":{},"badFills":0,"worstAdverseBps":0,"lossUsd":0,"lossIfNoHookUsd":0,"exposureUsd":5000,"firstRejectTick":null},"withFix":{"orders":20,"accepted":10,"rejected":10,"byRule":{"duplicate-order":10},"badFills":0,"worstAdverseBps":0,"lossUsd":0,"lossIfNoHookUsd":0,"exposureUsd":2500,"firstRejectTick":288}}],"strategies":{"base":[{"id":"cross-venue-arb","name":"Cross-venue arbitrage","family":"Cross-venue arbitrage","dataNeeds":["venue"],"trades":0,"pnlGrossUsd":0,"pnlNetUsd":0,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"basis","name":"Pool vs oracle basis","family":"Oracle/venue basis","dataNeeds":["venue","oracle"],"trades":19,"pnlGrossUsd":1.31,"pnlNetUsd":-25.29,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"trend","name":"Moving-average trend","family":"Trend / momentum","dataNeeds":["venue"],"trades":10,"pnlGrossUsd":0.61,"pnlNetUsd":-13.39,"hitRate":0.2,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"mean-reversion","name":"Mean reversion (z-score)","family":"Mean reversion / stat arb","dataNeeds":["venue"],"trades":9,"pnlGrossUsd":1.03,"pnlNetUsd":-11.57,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"market-maker","name":"Market maker around Pyth","family":"Market making","dataNeeds":["oracle","venue","inventory"],"trades":7,"pnlGrossUsd":0.05,"pnlNetUsd":-3.45,"hitRate":0.429,"notionalUsd":1000,"legsPerTrade":1,"paysSlippage":false}],"baseCosts":{"feeBps":5,"slippageBps":2},"slippageShock":{"costs":{"feeBps":5,"slippageBps":40},"results":[{"id":"cross-venue-arb","name":"Cross-venue arbitrage","trades":0,"pnlGrossUsd":0,"pnlNetUsd":0},{"id":"basis","name":"Pool vs oracle basis","trades":19,"pnlGrossUsd":1.31,"pnlNetUsd":-169.69},{"id":"trend","name":"Moving-average trend","trades":10,"pnlGrossUsd":0.61,"pnlNetUsd":-89.39},{"id":"mean-reversion","name":"Mean reversion (z-score)","trades":9,"pnlGrossUsd":1.03,"pnlNetUsd":-79.97},{"id":"market-maker","name":"Market maker around Pyth","trades":7,"pnlGrossUsd":0.05,"pnlNetUsd":-3.45}]},"feeChange":{"costs":{"feeBps":30,"slippageBps":2},"results":[{"id":"cross-venue-arb","name":"Cross-venue arbitrage","trades":0,"pnlGrossUsd":0,"pnlNetUsd":0},{"id":"basis","name":"Pool vs oracle basis","trades":19,"pnlGrossUsd":1.31,"pnlNetUsd":-120.29},{"id":"trend","name":"Moving-average trend","trades":10,"pnlGrossUsd":0.61,"pnlNetUsd":-63.39},{"id":"mean-reversion","name":"Mean reversion (z-score)","trades":9,"pnlGrossUsd":1.03,"pnlNetUsd":-56.57},{"id":"market-maker","name":"Market maker around Pyth","trades":7,"pnlGrossUsd":0.05,"pnlNetUsd":-20.95}]},"breakEvenCostBpsPerLeg":[{"id":"cross-venue-arb","bps":null},{"id":"basis","bps":0.34},{"id":"trend","bps":0.31},{"id":"mean-reversion","bps":0.57},{"id":"market-maker","bps":0.07}]},"retry":{"windowSec":300,"naive":300,"backoff":14}};
+const BAD='#ff7a85',HI='#ffc15a',OK='#3ddc97',LAV='#b3a5ff';
+const hh=$('#hh'),kk=$('#kk'),mm=$('#mm'),fz=$('#fz'),inj=$('#inj');
+hh.value=+hv('h',BR.params.h);kk.value=+hv('k',BR.params.k);mm.value=+hv('move',0);fz.value=+hv('at',BR.freezeAt);
+let injected=hv('freeze','0')==='1',LV=false,LG=[],LFRZ=null;
+const PTS=FD.series;
+function series(){
+  if(LV){const wu=12;const gap=LG.map((p,i)=>{const o=LFRZ!==null&&i>=LFRZ?LG[Math.max(0,LFRZ-1)].pyth:p.pyth;return (p.orca/o-1)*1e4});return {gap,t:LG.map(p=>p.t),warmup:Math.min(wu,Math.max(1,LG.length-1)),ready:LG.length>wu,frz:LFRZ}}
+  const frz=injected?+fz.value:null;return {gap:CALC.gapSeries(PTS,frz,+mm.value),t:PTS.map(p=>p.t),warmup:BR.params.warmup,ready:true,frz};
+}
+function render(){
+  $('#hho').textContent=f2(+hh.value,1);$('#kko').textContent=f2(+kk.value,1);$('#mmo').textContent=(+mm.value>0?'+':'')+mm.value+' bps/min';$('#fzo').textContent=Math.round(+fz.value*5/60)+' min';
+  inj.setAttribute('aria-pressed',injected);inj.textContent=injected?'Oracle frozen (simulated): click to undo':'Freeze the oracle (simulated)';
+  const D=series(),n=D.gap.length;if(n<2){$('#read').textContent='Waiting for live reads...';return}
+  const det=CALC.detectBreak(D.gap,{warmup:D.warmup,k:+kk.value,h:+hh.value}),healthy=LV?null:CALC.detectBreak(CALC.gapSeries(PTS,null,0),{warmup:D.warmup,k:+kk.value,h:+hh.value});
+  const PL=64,PW=925,X=i=>PL+PW*i/Math.max(1,n-1);
+  const c1=$('#c1');c1.innerHTML='';
+  const lo=Math.min(...D.gap,det.mean-2*det.sd),hi=Math.max(...D.gap,det.mean+2*det.sd),pd=(hi-lo)*.1||1,Y=v=>28+200*(1-(v-(lo-pd))/((hi+pd)-(lo-pd)));
+  S('text',{x:PL,y:16,'font-size':18,class:'l'},c1,'Gap between the venue price and the oracle the agent can see (bps)'+(LV?', live Orca minus Pyth':''));
+  S('rect',{x:PL,y:Y(det.mean+2*det.sd),width:X(D.warmup-1)-PL,height:Y(det.mean-2*det.sd)-Y(det.mean+2*det.sd),fill:LAV,'fill-opacity':.12},c1);
+  S('line',{x1:PL,x2:PL+PW,y1:Y(det.mean),y2:Y(det.mean),stroke:'#4a4670','stroke-dasharray':'4 4'},c1);
+  for(const v of [lo,det.mean,hi])S('text',{x:PL-6,y:Y(v)+5,'text-anchor':'end','font-size':15,class:'m'},c1,f2(v,0));
+  if(D.frz!==null){S('line',{x1:X(D.frz),x2:X(D.frz),y1:24,y2:232,stroke:BAD,'stroke-dasharray':'3 4','stroke-width':1.6},c1);S('text',{x:X(D.frz)-6,y:40,'text-anchor':'end','font-size':16,style:'fill:'+BAD},c1,'oracle frozen (simulated)')}
+  S('polyline',{points:D.gap.map((g,i)=>X(i).toFixed(1)+','+Y(g).toFixed(1)).join(' '),fill:'none',stroke:OK,'stroke-width':2.4},c1);
+  if(det.alarmTick!==null){S('line',{x1:X(det.alarmTick),x2:X(det.alarmTick),y1:24,y2:232,stroke:HI,'stroke-width':2.4},c1);S('circle',{cx:X(det.alarmTick),cy:Y(D.gap[det.alarmTick]),r:7,fill:HI},c1);S('text',{x:X(det.alarmTick)+8,y:58,'font-size':17,style:'fill:'+HI},c1,'ALARM')}
+  for(let k=0;k<=4;k++){const i=Math.round((n-1)*k/4);S('text',{x:X(i),y:262,'text-anchor':k===0?'start':k===4?'end':'middle','font-size':15,class:'m'},c1,sgt(D.t[i]).slice(11,LV?19:16)+' SGT')}
+  const key=$('#key');key.innerHTML='';[[OK,'gap in bps'],[LAV,'baseline window (first '+D.warmup+' samples): mean '+f2(det.mean,1)+' bps, spread '+f2(det.sd,1)+' bps'],[HI,'alarm']].forEach(([c,t])=>{const s=H('span',{},key);H('i',{style:'background:'+c},s);s.append(t)});
+  /* sums */
+  const c2=$('#c2');c2.innerHTML='';
+  const mx=+hh.value*6,SY=v=>24+150*(1-Math.min(v,mx)/mx);
+  S('text',{x:PL,y:16,'font-size':18,class:'l'},c2,'Running sums (in spreads, clipped at 6 x h) against the alarm level h = '+f2(+hh.value,1));
+  S('polyline',{points:det.s.map((q,i)=>X(i).toFixed(1)+','+SY(q.up).toFixed(1)).join(' '),fill:'none',stroke:LAV,'stroke-width':2.4},c2);
+  S('polyline',{points:det.s.map((q,i)=>X(i).toFixed(1)+','+SY(q.down).toFixed(1)).join(' '),fill:'none',stroke:'#8a8a94','stroke-width':2.4},c2);
+  S('line',{x1:PL,x2:PL+PW,y1:SY(+hh.value),y2:SY(+hh.value),stroke:HI,'stroke-dasharray':'7 5','stroke-width':2},c2);
+  if(det.alarmTick!==null)S('line',{x1:X(det.alarmTick),x2:X(det.alarmTick),y1:20,y2:176,stroke:HI,'stroke-width':2.4},c2);
+  S('text',{x:PL+PW,y:SY(+hh.value)-6,'text-anchor':'end','font-size':16,style:'fill:'+HI},c2,'alarm level');
+  S('text',{x:PL,y:206,'font-size':16,class:'m'},c2,'lavender: gap drifting up   grey: gap drifting down');
+  for(const v of [0,Math.round(mx)])S('text',{x:PL-6,y:SY(v)+5,'text-anchor':'end','font-size':15,class:'m'},c2,v);
+  /* readouts */
+  const r=$('#read');r.innerHTML='';const alarm=det.alarmTick!==null,after=alarm&&D.frz!==null&&det.alarmTick>=D.frz,falseA=alarm&&(D.frz===null||det.alarmTick<D.frz);
+  r.className='box '+(falseA?'warn':alarm?'bad':'mint');
+  H('div',{class:'lab'},r,'Feed health');
+  H('div',{class:'big '+(alarm?(falseA?'warnc':'badc'):'mint')},r,!D.ready?'COLLECTING BASELINE':alarm?'ALARM':'HEALTHY');
+  H('div',{class:'num',style:'font-size:1.05rem'},r,!D.ready?LG.length+' of 13 live reads needed':alarm?(after?'raised '+(det.alarmTick-D.frz)*5+' s after the freeze (sample '+det.alarmTick+')':'FALSE ALARM at sample '+det.alarmTick+' before any freeze: raise h or k'):'no alarm in '+n+' samples');
+  H('div',{class:'mut',style:'font-size:.95rem;margin-top:.3rem'},r,after?'An agent that stops when this fires makes no orders on the frozen price.':'Press the button to freeze the oracle (simulated) and watch the sums.');
+  const sd=$('#side');sd.innerHTML='';
+  H('div',{class:'lab'},sd,'Trade-off');
+  if(!LV)H('div',{class:'num',style:'font-size:1rem'},sd,'Healthy 40 minutes at these settings: '+(healthy.alarmTick===null?'no false alarm':'FALSE ALARM at sample '+healthy.alarmTick));
+  H('div',{class:'mut',style:'font-size:.95rem;margin-top:.4rem'},sd,'A low alarm level reacts fast but cries wolf on ordinary wobble. A high one stays quiet but reacts late. Slack k ignores small gaps so noise does not pile up.');
+  H('div',{class:'mut',style:'font-size:.95rem;margin-top:.4rem'},sd,'The freeze is simulated by repeating the last oracle value. A calm market after the freeze (move 0) is the hardest case: the gap only drifts as far as the market actually moved.');
+  const sc=!LV&&injected&&+hh.value===BR.params.h&&+kk.value===BR.params.k&&+mm.value===0&&+fz.value===BR.freezeAt;
+  $('#chk').textContent=LV?'Live: each point is a real Orca pool price and a real Pyth read from your browser, 5 s apart; the baseline is the first 12 reads. The freeze is simulated from the moment you press the button.':(sc?'At default settings this matches breaks.json: alarm at sample '+det.alarmTick+(det.alarmTick===BR.frozen.alarmTick?' (same)':' (DIFFERENT from '+BR.frozen.alarmTick+')'):'Recomputed in your browser with your settings; breaks.json holds the defaults (alarm at sample '+BR.frozen.alarmTick+').');
+}
+[hh,kk,mm,fz].forEach(e=>e.addEventListener('input',render));
+inj.addEventListener('click',()=>{injected=!injected;if(LV)LFRZ=injected?Math.max(1,LG.length):null;render()});
+function footer(){if(LV)sourceLine($('#src'),{breaks:{mode:'live',capturedAt:new Date().toISOString()}},LG.length+' live Orca and Pyth reads from your browser, one every 5 s.',0,{sim:'A freeze, if you press the button, is SIMULATED.'});
+  else sourceLine($('#src'),{breaks:BR},PTS.length+' real samples every 5 s, '+sgt(PTS[0].t).slice(11,16)+' to '+sgt(PTS[PTS.length-1].t).slice(11)+'; the baseline is the first '+BR.params.warmup+'.',PTS[0].t,{sim:'The freeze is SIMULATED, not a real outage.'})}
+LIVE.start({el:$('#livebar'),enter:()=>{LV=true;LG=[];LFRZ=null;injected=false;footer();render()},exit:()=>{LV=false;injected=false;footer();render()},
+  poll:async()=>{const r=await liveSnapshot();LG.push({t:r.t,orca:r.orca,pyth:r.pyth});if(LG.length>120){LG.shift();if(LFRZ!==null)LFRZ=Math.max(1,LFRZ-1)}footer();render();return {slot:r.slot}}});
+footer();render();
+</script></body></html>
