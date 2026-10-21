@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Price Gap</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* live mode bar (shared/live.js) */
+.page{position:relative}
+.livebar{position:absolute;top:1.1rem;right:3rem;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;font-size:1rem;z-index:2}
+.livebar .lvtop,.livebar .lvsub{display:flex;align-items:center;gap:.6rem}
+.livebar .seg{display:inline-flex}
+.livebar .seg button{font-size:1rem;padding:.15rem .9rem;border-radius:0;margin:0}
+.livebar .seg button:first-child{border-radius:.7rem 0 0 .7rem}
+.livebar .seg button:last-child{border-radius:0 .7rem .7rem 0;margin-left:-1.5px}
+.livebar .lvtxt{font-size:.8rem}
+.livebar .pill{font-size:.85rem}
+.livebar [hidden]{display:none}
+.livestrip{border-color:var(--mint)}
+.livestrip .tag{color:var(--mint);font-size:.9rem;border:1.5px solid var(--mint);border-radius:99px;padding:0 .6rem;margin-right:.5rem}
+</style></head><body>
+<div class="page">
+<h1>Three prices for one asset</h1>
+<p class="cap">Move the slider through time. The gap between Jupiter, Pyth and Orca is measured in basis points (1 bp = 0.01%).</p>
+<main id="main" aria-label="Three prices for one asset demo">
+<div class="box" style="padding:.5rem .8rem"><svg id="c1" viewBox="0 0 1600 300" role="img" aria-label="SOL/USDC price over time from Jupiter, Pyth and Orca"></svg></div>
+<div class="grid" style="grid-template-columns:1.7fr 1fr;flex:1">
+  <div class="box" style="padding:.5rem .8rem"><svg id="c2" viewBox="0 0 1000 310" role="img" aria-label="Gap versus Pyth in basis points over time"></svg></div>
+  <div class="box" id="read"></div>
+</div>
+<div class="box"><div class="ctl"><label for="t">Time (scrub)</label><input id="t" type="range" min="0" max="1000" step="1" aria-label="Time position in the recorded series"><output id="to" for="t"></output></div></div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+/* footer caption: says whether the data is recorded/live/fixture and its date */
+function sourceLine(el,data,what,extraTs){
+  const fx=Object.values(data).some(d=>d&&d.fixture);
+  const d0=Object.values(data).find(d=>d.generatedAt)||data[Object.keys(data)[0]];
+  const mode=d0.mode||'recorded';
+  const when=(d0.generatedAt||'').slice(0,10)||(extraTs?dateOf(extraTs).slice(0,10):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.textContent=(mode==='live'?'Live data':'Recorded data')+', captured '+when+'. ';
+  a.appendChild(document.createTextNode(what+' Public mainnet reads, no keys.'));
+  H('span',{},el,'Build night 1');
+}
+</script>
+<script>/* Live mode for the lab demos. Plain JS, no libraries, inlined into every demo by build.mjs.
+ * Reads only: public Solana RPC, the Jupiter quote API, and two on-chain accounts (Pyth price, Orca pool).
+ * No keys, no wallets, no writes. Recorded data stays the default; Live is opt-in.
+ *
+ * Browser-safe endpoints (tested Oct 22, 2026):
+ *   RPC      https://solana-rpc.publicnode.com   (CORS open; api.mainnet.solana.com returns 403 to browser origins)
+ *   Jupiter  https://lite-api.jup.ag/swap/v1/quote
+ * The decoders below are plain-JS ports of demo-repo/code/src/collectors/{jupiter,pyth,orca}.ts.
+ *
+ * Test switches (URL): ?live=1 starts live. &fail=N makes the Nth live tick fail, to test the fallback (fail=1: first tick).
+ */
+const LIVE=(()=>{
+const RPC='https://solana-rpc.publicnode.com';
+const SOL='So11111111111111111111111111111111111111112', USDC='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const JUP_URL='https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL+'&outputMint='+USDC+'&amount=1000000000&slippageBps=50';
+const PYTH_PROGRAM='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ', PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE';
+const PYTH_FEED='ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d', PYTH_DISC='22f123639d7ef4cd';
+const WHIRL_PROGRAM='whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', ORCA_POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE';
+const POLL_MS=5000, MAX_POINTS=120, TIMEOUT_MS=8000;
+const params=new URLSearchParams(location.search+'&'+location.hash.slice(1));
+const FAIL_AT=params.has('fail')?(+params.get('fail')||1):0;
+
+class RateLimit extends Error{constructor(h){super('HTTP 429 (rate limited) from '+h);this.rate=true}}
+async function getJson(url,init){
+  const host=new URL(url).host, ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),TIMEOUT_MS);
+  try{const r=await fetch(url,Object.assign({signal:ctl.signal},init));
+    if(r.status===429)throw new RateLimit(host);
+    if(!r.ok)throw new Error('HTTP '+r.status+' from '+host);
+    return await r.json()}
+  catch(e){if(e.name==='AbortError')throw new Error('timeout from '+host);throw e}
+  finally{clearTimeout(to)}
+}
+async function getAccount(address){
+  const j=await getJson(RPC,{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getAccountInfo',params:[address,{encoding:'base64',commitment:'confirmed'}]})});
+  if(j.error)throw new Error('RPC error: '+j.error.message);
+  const v=j.result&&j.result.value; if(!v)throw new Error('account '+address+' not found');
+  const bin=atob(v.data[0]), bytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return {bytes,owner:v.owner,slot:j.result.context.slot};
+}
+const ALPHA='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function base58(bytes){let n=0n;for(const b of bytes)n=(n<<8n)|BigInt(b);let o='';while(n>0n){o=ALPHA[Number(n%58n)]+o;n/=58n}
+  for(const b of bytes){if(b!==0)break;o='1'+o}return o}
+const hex=(b,a,z)=>Array.from(b.slice(a,z),x=>x.toString(16).padStart(2,'0')).join('');
+
+/* venue price: what 1 SOL sells for, routed by Jupiter */
+async function fetchJupiterQuote(){
+  const q=await getJson(JUP_URL); if(!q.outAmount)throw new Error('Jupiter quote had no outAmount');
+  return {price:Number(q.outAmount)/1e6};
+}
+/* oracle price: the Pyth PriceUpdateV2 account, decoded from raw bytes (layout in code/src/collectors/pyth.ts) */
+async function fetchPythPrice(){
+  const a=await getAccount(PYTH_ACCOUNT), b=a.bytes;
+  if(a.owner!==PYTH_PROGRAM)throw new Error('unexpected Pyth account owner');
+  if(b.length<133||hex(b,0,8)!==PYTH_DISC)throw new Error('not a Pyth PriceUpdateV2 account');
+  if(hex(b,41,73)!==PYTH_FEED)throw new Error('Pyth account holds a different feed');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength), exp=v.getInt32(89,true);
+  const price=Number(v.getBigInt64(73,true))*10**exp, conf=Number(v.getBigInt64(81,true))*10**exp;
+  return {price,confBps:conf/price*1e4,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),slot:a.slot};
+}
+/* pool price: Orca Whirlpool SOL/USDC, price from sqrtPrice (Q64.64) (layout in code/src/collectors/orca.ts) */
+async function fetchOrcaPrice(){
+  const a=await getAccount(ORCA_POOL), b=a.bytes;
+  if(a.owner!==WHIRL_PROGRAM)throw new Error('unexpected pool owner');
+  if(b.length<213)throw new Error('Whirlpool account too short');
+  if(base58(b.slice(101,133))!==SOL||base58(b.slice(181,213))!==USDC)throw new Error('pool is not SOL/USDC');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength);
+  const sq=v.getBigUint64(65,true)|(v.getBigUint64(73,true)<<64n), root=Number(sq)/2**64;
+  return {price:root*root*1e3,slot:a.slot};
+}
+/* one tick: all three reads in parallel, one snapshot out */
+let tickNo=0; const JUP={q:null,at:0,note:null}, JUP_EVERY_MS=20000;
+async function fetchSnapshot(){
+  if(FAIL_AT&&++tickNo>=FAIL_AT)throw new RateLimit('forced-failure.test (?fail='+FAIL_AT+')');
+  // Jupiter's free quote API throttles per IP (a whole classroom shares one), so ask it at most every 20 s and
+  // keep going on the last quote (or the pool price) if it says 429. Only Pyth/Orca RPC failures fall back to recorded.
+  const jupP=(Date.now()-JUP.at<JUP_EVERY_MS&&JUP.q)?Promise.resolve(null):fetchJupiterQuote().then(q=>{JUP.q=q;JUP.at=Date.now();JUP.note=null;return q},e=>{JUP.at=Date.now()-JUP_EVERY_MS+5000;JUP.note=e&&e.rate?'Jupiter throttled, using last quote':'Jupiter unavailable, using last quote';return null});
+  const [,p,o]=await Promise.all([jupP,fetchPythPrice(),fetchOrcaPrice()]);
+  const t=Math.floor(Date.now()/1000);
+  const jup=JUP.q?JUP.q.price:o.price;
+  return {t,jupiter:jup,jupiterNote:JUP.q?JUP.note:(JUP.note||'Jupiter unavailable, showing pool price'),pyth:p.price,orca:o.price,confBps:p.confBps,publishTime:p.publishTime,postedSlot:p.postedSlot,
+    slot:Math.max(p.slot,o.slot),oracleAgeSec:Math.max(0,t-p.publishTime)};
+}
+
+/* ---- state, pill UI, polling, fallback ---- */
+const S={live:false,hist:[],last:null,err:null,timer:null,busy:false,onTick:null,onMode:null,bar:null,recNote:'bundled data'};
+const el=(tag,cls,parent,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e};
+const clock=t=>new Date(t*1000).toLocaleTimeString('en-GB');
+function paint(extra){
+  const B=S.bar; if(!B)return;
+  B.rec.setAttribute('aria-pressed',String(!S.live)); B.liv.setAttribute('aria-pressed',String(S.live));
+  B.pill.className='pill '+(S.live?'mint':'lavc'); B.pill.textContent=S.live?'LIVE':'RECORDED';
+  B.err.hidden=!S.err; if(S.err){B.err.textContent=S.err.short;B.err.title=S.err.detail}
+  if(S.live&&S.last)B.txt.textContent='updated '+clock(S.last.t)+' · slot '+S.last.slot.toLocaleString('en-US')+(extra?' · '+extra:'');
+  else if(S.live)B.txt.textContent='connecting to public Solana data...'+(extra?' '+extra:'');
+  else B.txt.textContent=S.recNote;
+}
+function schedule(ms){clearTimeout(S.timer);S.timer=null;if(S.live&&!document.hidden)S.timer=setTimeout(tick,ms)}
+async function tick(){
+  if(!S.live||S.busy||document.hidden)return;
+  S.busy=true;
+  try{
+    const snap=await fetchSnapshot(); if(!S.live)return;
+    S.last=snap; S.hist.push({t:snap.t,jupiter:snap.jupiter,pyth:snap.pyth,orca:snap.orca});
+    if(S.hist.length>MAX_POINTS)S.hist.shift();
+    paint(snap.jupiterNote); if(S.onTick)S.onTick(snap,S.hist);
+  }catch(e){ if(S.live)fallback(e) }
+  finally{S.busy=false; schedule(POLL_MS)}
+}
+function fallback(e){
+  S.err={short:e&&e.rate?'rate limited, back to recorded':'live data failed, back to recorded',detail:String(e&&e.message||e)};
+  setLive(false,true);
+}
+function setLive(on,keepErr){
+  if(on===S.live)return;
+  S.live=on; clearTimeout(S.timer);
+  if(on){S.err=null;S.hist=[];S.last=null;paint();tick()}
+  else{S.last=null;if(!keepErr)S.err=null;paint()}
+  if(S.onMode)S.onMode(on,S.err);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!S.live)return;
+  if(document.hidden){clearTimeout(S.timer);S.timer=null;paint('paused, tab hidden')}
+  else{paint();tick()}
+});
+/* startLive(onTick, {onMode, recordedNote}): builds the Recorded/Live switch and pill, starts live if ?live=1 */
+function startLive(onTick,opts){
+  opts=opts||{}; S.onTick=onTick; S.onMode=opts.onMode||null; if(opts.recordedNote)S.recNote=opts.recordedNote;
+  const bar=el('div','livebar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Data mode: recorded or live');
+  const top=el('div','lvtop',bar), sub=el('div','lvsub',bar), seg=el('div','seg',top);
+  const rec=el('button',null,seg,'Recorded'), liv=el('button',null,seg,'Live'); rec.type=liv.type='button';
+  const pill=el('span','pill lavc',top,'RECORDED'); pill.title='Live reads: Jupiter quote, Pyth price account, Orca pool account (public RPC)';
+  const txt=el('span','lvtxt mut',sub), err=el('span','pill badc',sub); err.hidden=true;
+  err.setAttribute('role','status');
+  S.bar={rec,liv,pill,txt,err};
+  rec.onclick=()=>setLive(false); liv.onclick=()=>setLive(true);
+  document.querySelector('.page').appendChild(bar);
+  paint();
+  if(params.get('live')==='1')setLive(true);
+  return {setLive,isLive:()=>S.live};
+}
+/* footer caption while live (the recorded caption comes from sourceLine in common.js) */
+function liveSource(elm,what){
+  elm.innerHTML=''; const a=el('span',null,elm,'Live data'+(S.last?', updated '+clock(S.last.t):'')+'. '+what+' Public mainnet reads, no keys, nothing is written.');
+  el('span',null,elm,'Build night 1');
+}
+return {startLive,fetchJupiterQuote,fetchPythPrice,fetchOrcaPrice,fetchSnapshot,liveSource,
+  isLive:()=>S.live,last:()=>S.last,hist:()=>S.hist,MAX_POINTS,POLL_MS};
+})();
+</script>
+<script>
+const SERIES={"pair":"SOL/USDC","intervalSec":5,"points":[{"t":1792602839,"jupiter":108.0334,"pyth":107.9969,"orca":107.992},{"t":1792602844,"jupiter":108.0725,"pyth":107.9969,"orca":108.004},{"t":1792602849,"jupiter":108.1,"pyth":107.9969,"orca":108.0534},{"t":1792602854,"jupiter":108.0902,"pyth":108.0546,"orca":108.0534},{"t":1792602859,"jupiter":108.1287,"pyth":108.0747,"orca":108.0926},{"t":1792602864,"jupiter":108.0946,"pyth":108.0747,"orca":108.0929},{"t":1792602869,"jupiter":108.0688,"pyth":108.0623,"orca":108.0929},{"t":1792602874,"jupiter":108.0587,"pyth":108.0623,"orca":108.0739},{"t":1792602879,"jupiter":108.061,"pyth":108.0432,"orca":108.0739},{"t":1792602884,"jupiter":108.0589,"pyth":108.0432,"orca":108.0739},{"t":1792602889,"jupiter":108.07,"pyth":108.0542,"orca":108.0739},{"t":1792602894,"jupiter":108.0461,"pyth":108.0542,"orca":108.0742},{"t":1792602899,"jupiter":108.0162,"pyth":108.0542,"orca":108.0566},{"t":1792602904,"jupiter":107.9737,"pyth":108.0315,"orca":108.0105},{"t":1792602909,"jupiter":108.0084,"pyth":107.9631,"orca":108.0087},{"t":1792602914,"jupiter":107.9897,"pyth":107.9631,"orca":108.0087},{"t":1792602919,"jupiter":108.0016,"pyth":107.9713,"orca":108.0087},{"t":1792602924,"jupiter":107.9791,"pyth":107.9713,"orca":108.0087},{"t":1792602929,"jupiter":108.0196,"pyth":107.9713,"orca":108.0087},{"t":1792602934,"jupiter":108.0242,"pyth":107.9713,"orca":108.0087},{"t":1792602939,"jupiter":108.0504,"pyth":108.0187,"orca":108.0087},{"t":1792602944,"jupiter":108.0986,"pyth":108.0187,"orca":108.0605},{"t":1792602949,"jupiter":108.0997,"pyth":108.0845,"orca":108.0605},{"t":1792602954,"jupiter":108.1048,"pyth":108.0845,"orca":108.0633},{"t":1792602959,"jupiter":108.1178,"pyth":108.0851,"orca":108.0808},{"t":1792602964,"jupiter":108.0997,"pyth":108.0851,"orca":108.0809},{"t":1792602969,"jupiter":108.0881,"pyth":108.0812,"orca":108.0809},{"t":1792602974,"jupiter":108.0909,"pyth":108.0812,"orca":108.081},{"t":1792602979,"jupiter":108.121,"pyth":108.0841,"orca":108.0864},{"t":1792602984,"jupiter":108.1283,"pyth":108.0841,"orca":108.0956},{"t":1792602989,"jupiter":108.1324,"pyth":108.1059,"orca":108.0956},{"t":1792602994,"jupiter":108.1321,"pyth":108.1059,"orca":108.1138},{"t":1792602999,"jupiter":108.0966,"pyth":108.0711,"orca":108.1139},{"t":1792603004,"jupiter":108.118,"pyth":108.0711,"orca":108.1139},{"t":1792603009,"jupiter":108.0834,"pyth":108.0922,"orca":108.1139},{"t":1792603014,"jupiter":108.0507,"pyth":108.0922,"orca":108.0911},{"t":1792603019,"jupiter":108.0375,"pyth":108.0334,"orca":108.0711},{"t":1792603024,"jupiter":108.0169,"pyth":108.0334,"orca":108.0684},{"t":1792603029,"jupiter":108.0212,"pyth":108.0031,"orca":108.0572},{"t":1792603034,"jupiter":108.0296,"pyth":108.0031,"orca":108.0572},{"t":1792603039,"jupiter":108.0243,"pyth":108.0151,"orca":108.0572},{"t":1792603044,"jupiter":108.0396,"pyth":108.0151,"orca":108.0573},{"t":1792603049,"jupiter":108.0702,"pyth":108.0644,"orca":108.0573},{"t":1792603054,"jupiter":108.0471,"pyth":108.0644,"orca":108.0573},{"t":1792603059,"jupiter":108.0631,"pyth":108.0268,"orca":108.0573},{"t":1792603064,"jupiter":108.0587,"pyth":108.0268,"orca":108.0573},{"t":1792603069,"jupiter":108.0863,"pyth":108.0409,"orca":108.0573},{"t":1792603074,"jupiter":108.1201,"pyth":108.0409,"orca":108.0739},{"t":1792603079,"jupiter":108.0924,"pyth":108.0829,"orca":108.0808},{"t":1792603084,"jupiter":108.0894,"pyth":108.0829,"orca":108.0808},{"t":1792603089,"jupiter":108.0879,"pyth":108.0617,"orca":108.0808},{"t":1792603094,"jupiter":108.1112,"pyth":108.0617,"orca":108.0808},{"t":1792603099,"jupiter":108.0964,"pyth":108.101,"orca":108.0847},{"t":1792603104,"jupiter":108.0604,"pyth":108.101,"orca":108.0848},{"t":1792603109,"jupiter":108.0584,"pyth":108.0443,"orca":108.0848},{"t":1792603114,"jupiter":108.0579,"pyth":108.0443,"orca":108.0848},{"t":1792603119,"jupiter":108.0615,"pyth":108.0421,"orca":108.0848},{"t":1792603124,"jupiter":108.0813,"pyth":108.0421,"orca":108.0848},{"t":1792603129,"jupiter":108.0793,"pyth":108.0421,"orca":108.0848},{"t":1792603134,"jupiter":108.1173,"pyth":108.0655,"orca":108.0848},{"t":1792603139,"jupiter":108.1206,"pyth":108.1034,"orca":108.0894},{"t":1792603144,"jupiter":108.1216,"pyth":108.1034,"orca":108.0894},{"t":1792603149,"jupiter":108.1769,"pyth":108.1034,"orca":108.1312},{"t":1792603154,"jupiter":108.1973,"pyth":108.1304,"orca":108.1617},{"t":1792603159,"jupiter":108.1774,"pyth":108.1581,"orca":108.1617},{"t":1792603164,"jupiter":108.1646,"pyth":108.1581,"orca":108.1617},{"t":1792603169,"jupiter":108.1469,"pyth":108.159,"orca":108.1617},{"t":1792603174,"jupiter":108.1576,"pyth":108.159,"orca":108.1617},{"t":1792603179,"jupiter":108.1937,"pyth":108.1311,"orca":108.1618},{"t":1792603184,"jupiter":108.2152,"pyth":108.1311,"orca":108.176},{"t":1792603189,"jupiter":108.2218,"pyth":108.1311,"orca":108.1843},{"t":1792603194,"jupiter":108.2089,"pyth":108.1925,"orca":108.1843},{"t":1792603199,"jupiter":108.2168,"pyth":108.2009,"orca":108.1843},{"t":1792603204,"jupiter":108.2009,"pyth":108.2009,"orca":108.1843},{"t":1792603209,"jupiter":108.1856,"pyth":108.2009,"orca":108.1843},{"t":1792603214,"jupiter":108.156,"pyth":108.1611,"orca":108.1843},{"t":1792603219,"jupiter":108.1525,"pyth":108.1329,"orca":108.1829},{"t":1792603224,"jupiter":108.2538,"pyth":108.1329,"orca":108.2112},{"t":1792603229,"jupiter":108.2419,"pyth":108.2418,"orca":108.2209},{"t":1792603234,"jupiter":108.2507,"pyth":108.2418,"orca":108.2271},{"t":1792603239,"jupiter":108.262,"pyth":108.2418,"orca":108.2271},{"t":1792603244,"jupiter":108.2779,"pyth":108.2418,"orca":108.2376},{"t":1792603249,"jupiter":108.3111,"pyth":108.281,"orca":108.2713},{"t":1792603254,"jupiter":108.34,"pyth":108.281,"orca":108.3087},{"t":1792603259,"jupiter":108.3322,"pyth":108.281,"orca":108.3086},{"t":1792603264,"jupiter":108.3717,"pyth":108.321,"orca":108.3325},{"t":1792603269,"jupiter":108.3588,"pyth":108.321,"orca":108.3296},{"t":1792603274,"jupiter":108.3558,"pyth":108.3499,"orca":108.3296},{"t":1792603279,"jupiter":108.3586,"pyth":108.342,"orca":108.3296},{"t":1792603284,"jupiter":108.3506,"pyth":108.342,"orca":108.3296},{"t":1792603289,"jupiter":108.3457,"pyth":108.3313,"orca":108.3296},{"t":1792603294,"jupiter":108.3085,"pyth":108.3313,"orca":108.33},{"t":1792603299,"jupiter":108.2968,"pyth":108.2943,"orca":108.33},{"t":1792603304,"jupiter":108.3095,"pyth":108.2943,"orca":108.33},{"t":1792603309,"jupiter":108.2728,"pyth":108.261,"orca":108.3001},{"t":1792603314,"jupiter":108.2877,"pyth":108.261,"orca":108.2985},{"t":1792603319,"jupiter":108.2792,"pyth":108.2647,"orca":108.2983},{"t":1792603324,"jupiter":108.2407,"pyth":108.2647,"orca":108.2794},{"t":1792603329,"jupiter":108.2389,"pyth":108.2302,"orca":108.2723},{"t":1792603334,"jupiter":108.2305,"pyth":108.2302,"orca":108.2636},{"t":1792603339,"jupiter":108.1892,"pyth":108.1987,"orca":108.2242},{"t":1792603344,"jupiter":108.1987,"pyth":108.1987,"orca":108.2239},{"t":1792603349,"jupiter":108.2055,"pyth":108.1801,"orca":108.2239},{"t":1792603354,"jupiter":108.2007,"pyth":108.1801,"orca":108.2239},{"t":1792603359,"jupiter":108.2163,"pyth":108.1821,"orca":108.2239},{"t":1792603364,"jupiter":108.2262,"pyth":108.1821,"orca":108.2239},{"t":1792603369,"jupiter":108.2116,"pyth":108.1821,"orca":108.2247},{"t":1792603374,"jupiter":108.2872,"pyth":108.1951,"orca":108.2456},{"t":1792603379,"jupiter":108.2812,"pyth":108.1951,"orca":108.2468},{"t":1792603384,"jupiter":108.2858,"pyth":108.2649,"orca":108.2507},{"t":1792603389,"jupiter":108.2825,"pyth":108.2631,"orca":108.2507},{"t":1792603394,"jupiter":108.2914,"pyth":108.2631,"orca":108.2573},{"t":1792603399,"jupiter":108.3004,"pyth":108.2727,"orca":108.2573},{"t":1792603404,"jupiter":108.2996,"pyth":108.2727,"orca":108.2668},{"t":1792603409,"jupiter":108.2991,"pyth":108.28,"orca":108.2668},{"t":1792603414,"jupiter":108.2694,"pyth":108.28,"orca":108.2668},{"t":1792603419,"jupiter":108.2589,"pyth":108.2563,"orca":108.2668},{"t":1792603424,"jupiter":108.2338,"pyth":108.2563,"orca":108.2668},{"t":1792603429,"jupiter":108.2337,"pyth":108.2144,"orca":108.2668},{"t":1792603434,"jupiter":108.2408,"pyth":108.2144,"orca":108.2653},{"t":1792603439,"jupiter":108.2355,"pyth":108.2165,"orca":108.2649},{"t":1792603444,"jupiter":108.2468,"pyth":108.2165,"orca":108.2648},{"t":1792603449,"jupiter":108.2294,"pyth":108.2221,"orca":108.2597},{"t":1792603454,"jupiter":108.2525,"pyth":108.2221,"orca":108.2585},{"t":1792603459,"jupiter":108.2695,"pyth":108.2221,"orca":108.2585},{"t":1792603464,"jupiter":108.2844,"pyth":108.2221,"orca":108.2585},{"t":1792603469,"jupiter":108.2822,"pyth":108.2221,"orca":108.2585},{"t":1792603474,"jupiter":108.2824,"pyth":108.2221,"orca":108.2585},{"t":1792603479,"jupiter":108.2826,"pyth":108.2355,"orca":108.2584},{"t":1792603484,"jupiter":108.3085,"pyth":108.2355,"orca":108.2584},{"t":1792603489,"jupiter":108.3034,"pyth":108.2849,"orca":108.2742},{"t":1792603494,"jupiter":108.3058,"pyth":108.2849,"orca":108.2743},{"t":1792603499,"jupiter":108.3038,"pyth":108.2849,"orca":108.2743},{"t":1792603504,"jupiter":108.2796,"pyth":108.2849,"orca":108.2743},{"t":1792603509,"jupiter":108.291,"pyth":108.2849,"orca":108.2743},{"t":1792603514,"jupiter":108.3052,"pyth":108.2597,"orca":108.2761},{"t":1792603519,"jupiter":108.2916,"pyth":108.3002,"orca":108.2836},{"t":1792603524,"jupiter":108.2811,"pyth":108.3002,"orca":108.2836},{"t":1792603529,"jupiter":108.2808,"pyth":108.3002,"orca":108.2835},{"t":1792603534,"jupiter":108.2642,"pyth":108.2634,"orca":108.2836},{"t":1792603539,"jupiter":108.2729,"pyth":108.2634,"orca":108.2836},{"t":1792603544,"jupiter":108.2869,"pyth":108.2525,"orca":108.2837},{"t":1792603549,"jupiter":108.292,"pyth":108.2525,"orca":108.2837},{"t":1792603554,"jupiter":108.2563,"pyth":108.2634,"orca":108.2837},{"t":1792603559,"jupiter":108.2565,"pyth":108.2363,"orca":108.2837},{"t":1792603564,"jupiter":108.2539,"pyth":108.2363,"orca":108.2837},{"t":1792603569,"jupiter":108.2196,"pyth":108.2348,"orca":108.2501},{"t":1792603574,"jupiter":108.1898,"pyth":108.2348,"orca":108.2259},{"t":1792603579,"jupiter":108.2088,"pyth":108.1889,"orca":108.2257},{"t":1792603584,"jupiter":108.2501,"pyth":108.1889,"orca":108.2257},{"t":1792603589,"jupiter":108.2401,"pyth":108.1889,"orca":108.2257},{"t":1792603594,"jupiter":108.2579,"pyth":108.2224,"orca":108.2257},{"t":1792603599,"jupiter":108.2446,"pyth":108.2333,"orca":108.2257},{"t":1792603604,"jupiter":108.2494,"pyth":108.2333,"orca":108.2257},{"t":1792603609,"jupiter":108.2347,"pyth":108.2171,"orca":108.2257},{"t":1792603614,"jupiter":108.2333,"pyth":108.2171,"orca":108.2259},{"t":1792603619,"jupiter":108.2605,"pyth":108.2171,"orca":108.2259},{"t":1792603624,"jupiter":108.229,"pyth":108.2171,"orca":108.2259},{"t":1792603629,"jupiter":108.2396,"pyth":108.2113,"orca":108.2244},{"t":1792603634,"jupiter":108.2885,"pyth":108.2113,"orca":108.2404},{"t":1792603639,"jupiter":108.291,"pyth":108.2733,"orca":108.2565},{"t":1792603644,"jupiter":108.2587,"pyth":108.2733,"orca":108.2565},{"t":1792603649,"jupiter":108.2649,"pyth":108.2461,"orca":108.2565},{"t":1792603654,"jupiter":108.2606,"pyth":108.2461,"orca":108.2565},{"t":1792603659,"jupiter":108.2366,"pyth":108.2389,"orca":108.2565},{"t":1792603664,"jupiter":108.2302,"pyth":108.2389,"orca":108.2565},{"t":1792603669,"jupiter":108.2363,"pyth":108.213,"orca":108.2565},{"t":1792603674,"jupiter":108.2493,"pyth":108.213,"orca":108.2562},{"t":1792603679,"jupiter":108.2464,"pyth":108.2249,"orca":108.2562},{"t":1792603684,"jupiter":108.2949,"pyth":108.2249,"orca":108.2562},{"t":1792603689,"jupiter":108.279,"pyth":108.2756,"orca":108.2562},{"t":1792603694,"jupiter":108.2847,"pyth":108.2756,"orca":108.2562},{"t":1792603699,"jupiter":108.2831,"pyth":108.2647,"orca":108.2563},{"t":1792603704,"jupiter":108.2919,"pyth":108.2647,"orca":108.2563},{"t":1792603709,"jupiter":108.3008,"pyth":108.28,"orca":108.2632},{"t":1792603714,"jupiter":108.3083,"pyth":108.28,"orca":108.2781},{"t":1792603719,"jupiter":108.2884,"pyth":108.28,"orca":108.2781},{"t":1792603724,"jupiter":108.2826,"pyth":108.2699,"orca":108.2781},{"t":1792603729,"jupiter":108.3058,"pyth":108.265,"orca":108.2781},{"t":1792603734,"jupiter":108.3125,"pyth":108.265,"orca":108.2781},{"t":1792603739,"jupiter":108.2925,"pyth":108.2937,"orca":108.2783},{"t":1792603744,"jupiter":108.2937,"pyth":108.2937,"orca":108.2783},{"t":1792603749,"jupiter":108.2949,"pyth":108.2821,"orca":108.2783},{"t":1792603754,"jupiter":108.2976,"pyth":108.2821,"orca":108.2783},{"t":1792603759,"jupiter":108.3243,"pyth":108.2973,"orca":108.2896},{"t":1792603764,"jupiter":108.3232,"pyth":108.2973,"orca":108.2903},{"t":1792603769,"jupiter":108.3226,"pyth":108.3027,"orca":108.2903},{"t":1792603774,"jupiter":108.3354,"pyth":108.3027,"orca":108.2903},{"t":1792603779,"jupiter":108.3537,"pyth":108.3241,"orca":108.3154},{"t":1792603784,"jupiter":108.3504,"pyth":108.3241,"orca":108.3154},{"t":1792603789,"jupiter":108.3568,"pyth":108.3294,"orca":108.3186},{"t":1792603794,"jupiter":108.3546,"pyth":108.3294,"orca":108.3186},{"t":1792603799,"jupiter":108.3496,"pyth":108.3294,"orca":108.3187},{"t":1792603804,"jupiter":108.3515,"pyth":108.3321,"orca":108.3189},{"t":1792603809,"jupiter":108.3414,"pyth":108.3138,"orca":108.3189},{"t":1792603814,"jupiter":108.3581,"pyth":108.3138,"orca":108.3188},{"t":1792603819,"jupiter":108.3722,"pyth":108.3421,"orca":108.334},{"t":1792603824,"jupiter":108.389,"pyth":108.3421,"orca":108.3507},{"t":1792603829,"jupiter":108.3983,"pyth":108.3421,"orca":108.3638},{"t":1792603834,"jupiter":108.4011,"pyth":108.3759,"orca":108.3647},{"t":1792603839,"jupiter":108.3975,"pyth":108.3749,"orca":108.3651},{"t":1792603844,"jupiter":108.4027,"pyth":108.3749,"orca":108.3651},{"t":1792603849,"jupiter":108.3968,"pyth":108.3757,"orca":108.366},{"t":1792603854,"jupiter":108.4299,"pyth":108.3757,"orca":108.3758},{"t":1792603859,"jupiter":108.4082,"pyth":108.4158,"orca":108.4081},{"t":1792603864,"jupiter":108.3876,"pyth":108.4158,"orca":108.4081},{"t":1792603869,"jupiter":108.4138,"pyth":108.3645,"orca":108.408},{"t":1792603874,"jupiter":108.4227,"pyth":108.3645,"orca":108.408},{"t":1792603879,"jupiter":108.4539,"pyth":108.4274,"orca":108.408},{"t":1792603884,"jupiter":108.4236,"pyth":108.4274,"orca":108.408},{"t":1792603889,"jupiter":108.4253,"pyth":108.4043,"orca":108.408},{"t":1792603894,"jupiter":108.4484,"pyth":108.4043,"orca":108.4088},{"t":1792603899,"jupiter":108.4744,"pyth":108.4248,"orca":108.4273},{"t":1792603904,"jupiter":108.4845,"pyth":108.4248,"orca":108.4489},{"t":1792603909,"jupiter":108.4673,"pyth":108.4625,"orca":108.4489},{"t":1792603914,"jupiter":108.4849,"pyth":108.4625,"orca":108.4489},{"t":1792603919,"jupiter":108.4742,"pyth":108.4638,"orca":108.449},{"t":1792603924,"jupiter":108.484,"pyth":108.4638,"orca":108.45},{"t":1792603929,"jupiter":108.4746,"pyth":108.4557,"orca":108.4501},{"t":1792603934,"jupiter":108.4838,"pyth":108.4557,"orca":108.4501},{"t":1792603939,"jupiter":108.4779,"pyth":108.4557,"orca":108.4501},{"t":1792603944,"jupiter":108.4449,"pyth":108.4557,"orca":108.4501},{"t":1792603949,"jupiter":108.4418,"pyth":108.4268,"orca":108.4501},{"t":1792603954,"jupiter":108.4695,"pyth":108.4268,"orca":108.4501},{"t":1792603959,"jupiter":108.4419,"pyth":108.4464,"orca":108.4501},{"t":1792603964,"jupiter":108.4539,"pyth":108.4464,"orca":108.4502},{"t":1792603969,"jupiter":108.4523,"pyth":108.4357,"orca":108.4502},{"t":1792603974,"jupiter":108.449,"pyth":108.4357,"orca":108.4502},{"t":1792603979,"jupiter":108.4743,"pyth":108.4226,"orca":108.4502},{"t":1792603984,"jupiter":108.4983,"pyth":108.4226,"orca":108.4581},{"t":1792603989,"jupiter":108.4876,"pyth":108.4756,"orca":108.4653},{"t":1792603994,"jupiter":108.5196,"pyth":108.4756,"orca":108.4812},{"t":1792603999,"jupiter":108.5248,"pyth":108.4958,"orca":108.482},{"t":1792604004,"jupiter":108.5469,"pyth":108.4958,"orca":108.5171},{"t":1792604009,"jupiter":108.5898,"pyth":108.5454,"orca":108.553},{"t":1792604014,"jupiter":108.5626,"pyth":108.5454,"orca":108.553},{"t":1792604019,"jupiter":108.5111,"pyth":108.4996,"orca":108.5517},{"t":1792604024,"jupiter":108.5133,"pyth":108.4996,"orca":108.547},{"t":1792604029,"jupiter":108.5314,"pyth":108.496,"orca":108.5342},{"t":1792604034,"jupiter":108.5379,"pyth":108.496,"orca":108.5342},{"t":1792604039,"jupiter":108.5335,"pyth":108.5162,"orca":108.5342},{"t":1792604044,"jupiter":108.5055,"pyth":108.5162,"orca":108.5341},{"t":1792604049,"jupiter":108.449,"pyth":108.4648,"orca":108.4912},{"t":1792604054,"jupiter":108.4541,"pyth":108.4648,"orca":108.4844},{"t":1792604059,"jupiter":108.4492,"pyth":108.4318,"orca":108.4807},{"t":1792604064,"jupiter":108.4512,"pyth":108.4318,"orca":108.4799},{"t":1792604069,"jupiter":108.4304,"pyth":108.4239,"orca":108.4621},{"t":1792604074,"jupiter":108.4844,"pyth":108.4239,"orca":108.4621},{"t":1792604079,"jupiter":108.4951,"pyth":108.4239,"orca":108.4627},{"t":1792604084,"jupiter":108.4973,"pyth":108.4741,"orca":108.4649},{"t":1792604089,"jupiter":108.5411,"pyth":108.491,"orca":108.5065},{"t":1792604094,"jupiter":108.5431,"pyth":108.491,"orca":108.5064},{"t":1792604099,"jupiter":108.5322,"pyth":108.5239,"orca":108.5064},{"t":1792604104,"jupiter":108.5315,"pyth":108.5239,"orca":108.5064},{"t":1792604109,"jupiter":108.5496,"pyth":108.5153,"orca":108.5129},{"t":1792604114,"jupiter":108.5613,"pyth":108.5153,"orca":108.5152},{"t":1792604119,"jupiter":108.5427,"pyth":108.5416,"orca":108.5228},{"t":1792604124,"jupiter":108.5538,"pyth":108.5416,"orca":108.5228},{"t":1792604129,"jupiter":108.5464,"pyth":108.5287,"orca":108.5228},{"t":1792604134,"jupiter":108.5758,"pyth":108.5287,"orca":108.5302},{"t":1792604139,"jupiter":108.5791,"pyth":108.564,"orca":108.5425},{"t":1792604144,"jupiter":108.5736,"pyth":108.564,"orca":108.5504},{"t":1792604149,"jupiter":108.5793,"pyth":108.564,"orca":108.5503},{"t":1792604154,"jupiter":108.5973,"pyth":108.564,"orca":108.5503},{"t":1792604159,"jupiter":108.5974,"pyth":108.5663,"orca":108.5599},{"t":1792604164,"jupiter":108.5959,"pyth":108.5663,"orca":108.5613},{"t":1792604169,"jupiter":108.5939,"pyth":108.5732,"orca":108.5613},{"t":1792604174,"jupiter":108.6016,"pyth":108.5732,"orca":108.5686},{"t":1792604179,"jupiter":108.566,"pyth":108.5839,"orca":108.5686},{"t":1792604184,"jupiter":108.5446,"pyth":108.5839,"orca":108.5686},{"t":1792604189,"jupiter":108.6076,"pyth":108.5245,"orca":108.5686},{"t":1792604194,"jupiter":108.6004,"pyth":108.5245,"orca":108.5686},{"t":1792604199,"jupiter":108.6143,"pyth":108.5939,"orca":108.5727},{"t":1792604204,"jupiter":108.5963,"pyth":108.5939,"orca":108.5727},{"t":1792604209,"jupiter":108.5974,"pyth":108.5746,"orca":108.5727},{"t":1792604214,"jupiter":108.6169,"pyth":108.5746,"orca":108.5727},{"t":1792604219,"jupiter":108.616,"pyth":108.5915,"orca":108.5807},{"t":1792604224,"jupiter":108.6318,"pyth":108.5915,"orca":108.5826},{"t":1792604229,"jupiter":108.6195,"pyth":108.605,"orca":108.5855},{"t":1792604234,"jupiter":108.6312,"pyth":108.605,"orca":108.5856},{"t":1792604239,"jupiter":108.6077,"pyth":108.6025,"orca":108.5858},{"t":1792604244,"jupiter":108.6207,"pyth":108.6025,"orca":108.5972},{"t":1792604249,"jupiter":108.6294,"pyth":108.6013,"orca":108.5973},{"t":1792604254,"jupiter":108.6208,"pyth":108.6013,"orca":108.5973},{"t":1792604259,"jupiter":108.6274,"pyth":108.6013,"orca":108.5973},{"t":1792604264,"jupiter":108.6399,"pyth":108.6109,"orca":108.5973},{"t":1792604269,"jupiter":108.6136,"pyth":108.6109,"orca":108.5973},{"t":1792604274,"jupiter":108.6223,"pyth":108.6109,"orca":108.5972},{"t":1792604279,"jupiter":108.6323,"pyth":108.6109,"orca":108.5991},{"t":1792604284,"jupiter":108.649,"pyth":108.6089,"orca":108.6142},{"t":1792604289,"jupiter":108.6461,"pyth":108.6275,"orca":108.6142},{"t":1792604294,"jupiter":108.6439,"pyth":108.6275,"orca":108.6142},{"t":1792604299,"jupiter":108.6432,"pyth":108.6275,"orca":108.6142},{"t":1792604304,"jupiter":108.6495,"pyth":108.6253,"orca":108.6151},{"t":1792604309,"jupiter":108.6098,"pyth":108.6335,"orca":108.6151},{"t":1792604314,"jupiter":108.6352,"pyth":108.6335,"orca":108.6151},{"t":1792604319,"jupiter":108.6442,"pyth":108.618,"orca":108.6151},{"t":1792604324,"jupiter":108.6476,"pyth":108.618,"orca":108.6151},{"t":1792604329,"jupiter":108.684,"pyth":108.6651,"orca":108.6504},{"t":1792604334,"jupiter":108.6775,"pyth":108.6651,"orca":108.6549},{"t":1792604339,"jupiter":108.6747,"pyth":108.6629,"orca":108.6551},{"t":1792604344,"jupiter":108.6576,"pyth":108.6629,"orca":108.6551},{"t":1792604349,"jupiter":108.6569,"pyth":108.6418,"orca":108.6549},{"t":1792604354,"jupiter":108.6152,"pyth":108.6418,"orca":108.6549},{"t":1792604359,"jupiter":108.5942,"pyth":108.594,"orca":108.6319},{"t":1792604364,"jupiter":108.5759,"pyth":108.594,"orca":108.6188},{"t":1792604369,"jupiter":108.5779,"pyth":108.5656,"orca":108.6107},{"t":1792604374,"jupiter":108.5771,"pyth":108.5656,"orca":108.6107},{"t":1792604379,"jupiter":108.5843,"pyth":108.5656,"orca":108.6107},{"t":1792604384,"jupiter":108.6063,"pyth":108.5655,"orca":108.6107},{"t":1792604389,"jupiter":108.5964,"pyth":108.5909,"orca":108.6107},{"t":1792604394,"jupiter":108.6003,"pyth":108.5909,"orca":108.6107},{"t":1792604399,"jupiter":108.607,"pyth":108.5908,"orca":108.6107},{"t":1792604404,"jupiter":108.609,"pyth":108.5908,"orca":108.6107},{"t":1792604409,"jupiter":108.616,"pyth":108.5908,"orca":108.6107},{"t":1792604414,"jupiter":108.6472,"pyth":108.5956,"orca":108.6107},{"t":1792604419,"jupiter":108.6473,"pyth":108.6311,"orca":108.6107},{"t":1792604424,"jupiter":108.6446,"pyth":108.6311,"orca":108.6108},{"t":1792604429,"jupiter":108.666,"pyth":108.6311,"orca":108.6316},{"t":1792604434,"jupiter":108.6736,"pyth":108.6345,"orca":108.6432},{"t":1792604439,"jupiter":108.6847,"pyth":108.6579,"orca":108.647},{"t":1792604444,"jupiter":108.6791,"pyth":108.6579,"orca":108.6511},{"t":1792604449,"jupiter":108.6708,"pyth":108.6625,"orca":108.6511},{"t":1792604454,"jupiter":108.6608,"pyth":108.6625,"orca":108.6511},{"t":1792604459,"jupiter":108.6696,"pyth":108.6436,"orca":108.6511},{"t":1792604464,"jupiter":108.6745,"pyth":108.6436,"orca":108.6511},{"t":1792604469,"jupiter":108.6643,"pyth":108.6607,"orca":108.6511},{"t":1792604474,"jupiter":108.6035,"pyth":108.6607,"orca":108.6465},{"t":1792604479,"jupiter":108.6005,"pyth":108.5904,"orca":108.6392},{"t":1792604484,"jupiter":108.5886,"pyth":108.5904,"orca":108.6286},{"t":1792604489,"jupiter":108.5875,"pyth":108.5904,"orca":108.6216},{"t":1792604494,"jupiter":108.5839,"pyth":108.5742,"orca":108.6211},{"t":1792604499,"jupiter":108.7012,"pyth":108.6729,"orca":108.655},{"t":1792604504,"jupiter":108.7024,"pyth":108.6729,"orca":108.6785},{"t":1792604509,"jupiter":108.7182,"pyth":108.6851,"orca":108.6818},{"t":1792604514,"jupiter":108.7121,"pyth":108.6851,"orca":108.6819},{"t":1792604519,"jupiter":108.7025,"pyth":108.6904,"orca":108.6819},{"t":1792604524,"jupiter":108.6671,"pyth":108.6904,"orca":108.6819},{"t":1792604529,"jupiter":108.6805,"pyth":108.6541,"orca":108.6819},{"t":1792604534,"jupiter":108.6746,"pyth":108.6541,"orca":108.6819},{"t":1792604539,"jupiter":108.6609,"pyth":108.6555,"orca":108.6819},{"t":1792604544,"jupiter":108.6602,"pyth":108.6555,"orca":108.6819},{"t":1792604549,"jupiter":108.632,"pyth":108.6555,"orca":108.6697},{"t":1792604554,"jupiter":108.6182,"pyth":108.6436,"orca":108.6507},{"t":1792604559,"jupiter":108.6081,"pyth":108.6012,"orca":108.6417},{"t":1792604564,"jupiter":108.5837,"pyth":108.6012,"orca":108.6224},{"t":1792604569,"jupiter":108.5826,"pyth":108.5709,"orca":108.6162},{"t":1792604574,"jupiter":108.5814,"pyth":108.5709,"orca":108.611},{"t":1792604579,"jupiter":108.5813,"pyth":108.5723,"orca":108.6106},{"t":1792604584,"jupiter":108.5706,"pyth":108.5723,"orca":108.6106},{"t":1792604589,"jupiter":108.5391,"pyth":108.5475,"orca":108.5757},{"t":1792604594,"jupiter":108.5781,"pyth":108.5475,"orca":108.5754},{"t":1792604599,"jupiter":108.5904,"pyth":108.5475,"orca":108.5754},{"t":1792604604,"jupiter":108.5954,"pyth":108.5582,"orca":108.5754},{"t":1792604609,"jupiter":108.5931,"pyth":108.5808,"orca":108.5766},{"t":1792604614,"jupiter":108.5972,"pyth":108.5808,"orca":108.5766},{"t":1792604619,"jupiter":108.5962,"pyth":108.5841,"orca":108.5766},{"t":1792604624,"jupiter":108.622,"pyth":108.5841,"orca":108.5766},{"t":1792604629,"jupiter":108.5646,"pyth":108.6052,"orca":108.5912},{"t":1792604634,"jupiter":108.5609,"pyth":108.6052,"orca":108.5912},{"t":1792604639,"jupiter":108.5724,"pyth":108.5456,"orca":108.5911},{"t":1792604644,"jupiter":108.5663,"pyth":108.5456,"orca":108.5911},{"t":1792604649,"jupiter":108.549,"pyth":108.5492,"orca":108.5911},{"t":1792604654,"jupiter":108.53,"pyth":108.5492,"orca":108.5675},{"t":1792604659,"jupiter":108.5199,"pyth":108.5129,"orca":108.5578},{"t":1792604664,"jupiter":108.5027,"pyth":108.5129,"orca":108.5431},{"t":1792604669,"jupiter":108.5047,"pyth":108.4907,"orca":108.5431},{"t":1792604674,"jupiter":108.5147,"pyth":108.4907,"orca":108.5429},{"t":1792604679,"jupiter":108.5181,"pyth":108.4907,"orca":108.5429},{"t":1792604684,"jupiter":108.516,"pyth":108.4907,"orca":108.5428},{"t":1792604689,"jupiter":108.5063,"pyth":108.4907,"orca":108.5424},{"t":1792604694,"jupiter":108.504,"pyth":108.5027,"orca":108.5409},{"t":1792604699,"jupiter":108.5061,"pyth":108.4909,"orca":108.5392},{"t":1792604704,"jupiter":108.542,"pyth":108.4909,"orca":108.5392},{"t":1792604709,"jupiter":108.5389,"pyth":108.5225,"orca":108.5392},{"t":1792604714,"jupiter":108.5803,"pyth":108.5225,"orca":108.5459},{"t":1792604719,"jupiter":108.5607,"pyth":108.5651,"orca":108.546},{"t":1792604724,"jupiter":108.5571,"pyth":108.5651,"orca":108.546},{"t":1792604729,"jupiter":108.5584,"pyth":108.545,"orca":108.5459},{"t":1792604734,"jupiter":108.541,"pyth":108.545,"orca":108.5459},{"t":1792604739,"jupiter":108.5402,"pyth":108.5262,"orca":108.5459},{"t":1792604744,"jupiter":108.5412,"pyth":108.5262,"orca":108.5459},{"t":1792604749,"jupiter":108.5414,"pyth":108.528,"orca":108.5459},{"t":1792604754,"jupiter":108.5415,"pyth":108.528,"orca":108.5459},{"t":1792604759,"jupiter":108.5375,"pyth":108.5259,"orca":108.5458},{"t":1792604764,"jupiter":108.5207,"pyth":108.5259,"orca":108.5458},{"t":1792604769,"jupiter":108.5244,"pyth":108.5117,"orca":108.5458},{"t":1792604774,"jupiter":108.5233,"pyth":108.5117,"orca":108.5458},{"t":1792604779,"jupiter":108.5241,"pyth":108.5116,"orca":108.5437},{"t":1792604784,"jupiter":108.586,"pyth":108.5116,"orca":108.5604},{"t":1792604789,"jupiter":108.5961,"pyth":108.5818,"orca":108.5604},{"t":1792604794,"jupiter":108.5797,"pyth":108.5818,"orca":108.5599},{"t":1792604799,"jupiter":108.5929,"pyth":108.572,"orca":108.5599},{"t":1792604804,"jupiter":108.5866,"pyth":108.572,"orca":108.56},{"t":1792604809,"jupiter":108.5899,"pyth":108.572,"orca":108.5606},{"t":1792604814,"jupiter":108.6079,"pyth":108.5709,"orca":108.5748},{"t":1792604819,"jupiter":108.5971,"pyth":108.5852,"orca":108.5748},{"t":1792604824,"jupiter":108.5968,"pyth":108.5852,"orca":108.5748},{"t":1792604829,"jupiter":108.5903,"pyth":108.5831,"orca":108.5748},{"t":1792604834,"jupiter":108.5965,"pyth":108.5831,"orca":108.5748},{"t":1792604839,"jupiter":108.5766,"pyth":108.5822,"orca":108.5748},{"t":1792604844,"jupiter":108.579,"pyth":108.5822,"orca":108.5748},{"t":1792604849,"jupiter":108.5393,"pyth":108.5414,"orca":108.5702},{"t":1792604854,"jupiter":108.5449,"pyth":108.5414,"orca":108.5702},{"t":1792604859,"jupiter":108.5337,"pyth":108.5251,"orca":108.5665},{"t":1792604864,"jupiter":108.5552,"pyth":108.5251,"orca":108.5516},{"t":1792604869,"jupiter":108.5439,"pyth":108.5376,"orca":108.5516},{"t":1792604874,"jupiter":108.5513,"pyth":108.5376,"orca":108.5517},{"t":1792604879,"jupiter":108.5544,"pyth":108.5358,"orca":108.5517},{"t":1792604884,"jupiter":108.5827,"pyth":108.5358,"orca":108.5518},{"t":1792604889,"jupiter":108.5285,"pyth":108.5608,"orca":108.5518},{"t":1792604894,"jupiter":108.5259,"pyth":108.5608,"orca":108.552},{"t":1792604899,"jupiter":108.5283,"pyth":108.5146,"orca":108.552},{"t":1792604904,"jupiter":108.5191,"pyth":108.5146,"orca":108.552},{"t":1792604909,"jupiter":108.518,"pyth":108.5046,"orca":108.552},{"t":1792604914,"jupiter":108.5095,"pyth":108.5046,"orca":108.5503},{"t":1792604919,"jupiter":108.542,"pyth":108.4993,"orca":108.5464},{"t":1792604924,"jupiter":108.5321,"pyth":108.4993,"orca":108.5464},{"t":1792604929,"jupiter":108.5359,"pyth":108.5248,"orca":108.5464},{"t":1792604934,"jupiter":108.5396,"pyth":108.5248,"orca":108.5465},{"t":1792604939,"jupiter":108.5313,"pyth":108.522,"orca":108.5465},{"t":1792604944,"jupiter":108.5139,"pyth":108.522,"orca":108.5465},{"t":1792604949,"jupiter":108.5055,"pyth":108.522,"orca":108.5425},{"t":1792604954,"jupiter":108.4908,"pyth":108.522,"orca":108.5285},{"t":1792604959,"jupiter":108.4904,"pyth":108.477,"orca":108.5283},{"t":1792604964,"jupiter":108.481,"pyth":108.477,"orca":108.5156},{"t":1792604969,"jupiter":108.4715,"pyth":108.4655,"orca":108.507},{"t":1792604974,"jupiter":108.4705,"pyth":108.4655,"orca":108.507},{"t":1792604979,"jupiter":108.4502,"pyth":108.4567,"orca":108.4898},{"t":1792604984,"jupiter":108.451,"pyth":108.4567,"orca":108.4898},{"t":1792604989,"jupiter":108.436,"pyth":108.4388,"orca":108.4745},{"t":1792604994,"jupiter":108.4238,"pyth":108.4388,"orca":108.4621},{"t":1792604999,"jupiter":108.422,"pyth":108.4079,"orca":108.4569},{"t":1792605004,"jupiter":108.4257,"pyth":108.4079,"orca":108.4569},{"t":1792605009,"jupiter":108.4605,"pyth":108.4071,"orca":108.4567},{"t":1792605014,"jupiter":108.4788,"pyth":108.4071,"orca":108.4567},{"t":1792605019,"jupiter":108.4789,"pyth":108.4609,"orca":108.4567},{"t":1792605024,"jupiter":108.4667,"pyth":108.4609,"orca":108.4567},{"t":1792605029,"jupiter":108.47,"pyth":108.4545,"orca":108.4571},{"t":1792605034,"jupiter":108.484,"pyth":108.4545,"orca":108.4572},{"t":1792605039,"jupiter":108.489,"pyth":108.4687,"orca":108.4577},{"t":1792605044,"jupiter":108.5151,"pyth":108.4687,"orca":108.4729},{"t":1792605049,"jupiter":108.5254,"pyth":108.4953,"orca":108.4808},{"t":1792605054,"jupiter":108.5164,"pyth":108.4953,"orca":108.4817},{"t":1792605059,"jupiter":108.5129,"pyth":108.4929,"orca":108.4817},{"t":1792605064,"jupiter":108.5063,"pyth":108.4929,"orca":108.4817},{"t":1792605069,"jupiter":108.5122,"pyth":108.4835,"orca":108.4817},{"t":1792605074,"jupiter":108.5163,"pyth":108.4835,"orca":108.4883},{"t":1792605079,"jupiter":108.5317,"pyth":108.4835,"orca":108.4883},{"t":1792605084,"jupiter":108.5336,"pyth":108.496,"orca":108.4941},{"t":1792605089,"jupiter":108.532,"pyth":108.5158,"orca":108.5071},{"t":1792605094,"jupiter":108.5216,"pyth":108.5158,"orca":108.5071},{"t":1792605099,"jupiter":108.5193,"pyth":108.5008,"orca":108.5072},{"t":1792605104,"jupiter":108.5245,"pyth":108.5008,"orca":108.5072},{"t":1792605109,"jupiter":108.5196,"pyth":108.5034,"orca":108.5072},{"t":1792605114,"jupiter":108.5194,"pyth":108.5034,"orca":108.5072},{"t":1792605119,"jupiter":108.5161,"pyth":108.5008,"orca":108.5072},{"t":1792605124,"jupiter":108.5168,"pyth":108.5008,"orca":108.5072},{"t":1792605129,"jupiter":108.5187,"pyth":108.5026,"orca":108.5072},{"t":1792605134,"jupiter":108.5272,"pyth":108.5026,"orca":108.5072},{"t":1792605139,"jupiter":108.5025,"pyth":108.5026,"orca":108.5072},{"t":1792605144,"jupiter":108.502,"pyth":108.5026,"orca":108.5072},{"t":1792605149,"jupiter":108.5013,"pyth":108.4857,"orca":108.5072},{"t":1792605154,"jupiter":108.5024,"pyth":108.4857,"orca":108.5072},{"t":1792605159,"jupiter":108.5195,"pyth":108.503,"orca":108.5072},{"t":1792605164,"jupiter":108.528,"pyth":108.503,"orca":108.5072},{"t":1792605169,"jupiter":108.5334,"pyth":108.5153,"orca":108.5072},{"t":1792605174,"jupiter":108.5334,"pyth":108.5153,"orca":108.5072},{"t":1792605179,"jupiter":108.5387,"pyth":108.5125,"orca":108.5072},{"t":1792605184,"jupiter":108.5526,"pyth":108.5125,"orca":108.5127},{"t":1792605189,"jupiter":108.5584,"pyth":108.5258,"orca":108.525},{"t":1792605194,"jupiter":108.5588,"pyth":108.5258,"orca":108.5249},{"t":1792605199,"jupiter":108.5506,"pyth":108.5408,"orca":108.5249},{"t":1792605204,"jupiter":108.5475,"pyth":108.5408,"orca":108.5249},{"t":1792605209,"jupiter":108.5762,"pyth":108.5419,"orca":108.5326},{"t":1792605214,"jupiter":108.578,"pyth":108.5419,"orca":108.5523},{"t":1792605219,"jupiter":108.5969,"pyth":108.5634,"orca":108.5605},{"t":1792605224,"jupiter":108.6088,"pyth":108.5634,"orca":108.5693},{"t":1792605229,"jupiter":108.6185,"pyth":108.594,"orca":108.5795},{"t":1792605234,"jupiter":108.6174,"pyth":108.594,"orca":108.5853},{"t":1792605239,"jupiter":108.6246,"pyth":108.6054,"orca":108.5865}]};
+const PRICES={"generatedAt":"2026-10-21T17:53:59.000Z","mode":"recorded","pair":"SOL/USDC","venues":[{"id":"jupiter","label":"Jupiter quote","price":108.624648,"ts":1792605239,"source":"lite-api quote, 1 SOL -> USDC"},{"id":"pyth","label":"Pyth oracle","price":108.60542862,"confBps":2.68,"publishTime":1792605236,"postedSlot":459720770,"currentSlot":459720770,"source":"on-chain PriceUpdateV2 via RPC"},{"id":"orca","label":"Orca SOL/USDC pool","price":108.58645232409829,"ts":1792605239,"source":"whirlpool sqrtPrice via RPC"}],"gapBps":{"jupiterVsPyth":1.8,"orcaVsPyth":-1.7,"jupiterVsOrca":3.5}};
+const REC=SERIES.points,COL={jupiter:'#b3a5ff',pyth:'#f4f4f6',orca:'#3ddc97'},NAME={jupiter:'Jupiter quote',pyth:'Pyth oracle',orca:'Orca pool'};
+let P=REC,N=P.length,live=false,g,lo,hi,gm;
+const tEl=$('#t');
+/* default scrub: the point of widest spread unless #t given */
+let widest=0,wi=0;REC.forEach((p,i)=>{const s=Math.max(p.jupiter,p.pyth,p.orca)-Math.min(p.jupiter,p.pyth,p.orca);if(s>widest){widest=s;wi=i}});
+const W=1600,PL=110,PR=30;
+const xa=i=>PL+(1600-PL-PR)*i/(N-1),xb=i=>PL+(1000-PL-PR)*i/(N-1);
+const y1=v=>15+235*(1-(v-lo)/(hi-lo)),y2=v=>20+230*(1-(v+gm)/(2*gm));
+const c1=$('#c1'),c2=$('#c2');
+let band,cur1,cur2,d1,d2;
+/* (re)draw both charts from P. Recorded: the 481 recorded points. Live: the live points collected since you switched Live on (max 120). */
+function draw(){
+  N=P.length;tEl.max=N-1;
+  lo=1e9;hi=-1e9;P.forEach(p=>['jupiter','pyth','orca'].forEach(k=>{lo=Math.min(lo,p[k]);hi=Math.max(hi,p[k])}));
+  const pad=(hi-lo)*.12||0.01;lo-=pad;hi+=pad;
+  g=P.map(p=>({j:bps(p.jupiter,p.pyth),o:bps(p.orca,p.pyth)}));
+  gm=Math.max(5,...g.flatMap(q=>[Math.abs(q.j),Math.abs(q.o)]));gm=Math.ceil(gm/5)*5;
+  c1.innerHTML='';c2.innerHTML='';
+  for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4;S('line',{x1:PL,x2:1600-PR,y1:y1(v),y2:y1(v),stroke:'#2c2c34'},c1);S('text',{x:PL-12,y:y1(v)+6,'text-anchor':'end','font-size':22,class:'m'},c1,'$'+f2(v))}
+  for(const k of ['jupiter','pyth','orca'])S('polyline',{points:P.map((p,i)=>xa(i).toFixed(1)+','+y1(p[k]).toFixed(1)).join(' '),fill:'none',stroke:COL[k],'stroke-width':k==='pyth'?3.5:2.5},c1);
+  band=S('rect',{fill:'#ffc15a','fill-opacity':.35,stroke:'#ffc15a','stroke-width':2,rx:3},c1);
+  cur1=S('line',{y1:5,y2:255,stroke:'#ffc15a','stroke-width':2},c1);
+  S('text',{x:PL+8,y:290,'font-size':20,class:'m'},c1,'USDC per SOL'+(live?' (LIVE, a new point every 5 s)':''));
+  S('line',{x1:PL,x2:1000-PR,y1:y2(0),y2:y2(0),stroke:'#4a4670'},c2);
+  [-gm,gm].forEach(v=>{S('text',{x:PL-12,y:y2(v)+6,'text-anchor':'end','font-size':22,class:'m'},c2,(v>0?'+':'')+v);S('line',{x1:PL,x2:1000-PR,y1:y2(v),y2:y2(v),stroke:'#2c2c34'},c2)});
+  S('text',{x:PL-12,y:y2(0)+6,'text-anchor':'end','font-size':22,class:'m'},c2,'0');
+  S('polyline',{points:g.map((q,i)=>xb(i).toFixed(1)+','+y2(q.j).toFixed(1)).join(' '),fill:'none',stroke:COL.jupiter,'stroke-width':2.5},c2);
+  S('polyline',{points:g.map((q,i)=>xb(i).toFixed(1)+','+y2(q.o).toFixed(1)).join(' '),fill:'none',stroke:COL.orca,'stroke-width':2.5},c2);
+  S('text',{x:PL,y:300,'font-size':20,class:'m'},c2,'Gap vs Pyth, bps: Jupiter lavender, Orca mint');
+  cur2=S('line',{y1:10,y2:255,stroke:'#ffc15a','stroke-width':2},c2);
+  d1=S('circle',{r:7,fill:COL.jupiter},c2);d2=S('circle',{r:7,fill:COL.orca},c2);
+}
+const rd=$('#read');
+function render(){
+  const i=Math.min(+tEl.value,N-1),p=P[i],X=xa(i),X2=xb(i);
+  cur1.setAttribute('x1',X);cur1.setAttribute('x2',X);cur2.setAttribute('x1',X2);cur2.setAttribute('x2',X2);
+  const mx=Math.max(p.jupiter,p.pyth,p.orca),mn=Math.min(p.jupiter,p.pyth,p.orca);
+  band.setAttribute('x',X-9);band.setAttribute('width',18);band.setAttribute('y',y1(mx));band.setAttribute('height',Math.max(3,y1(mn)-y1(mx)));
+  d1.setAttribute('cx',X2);d1.setAttribute('cy',y2(g[i].j));d2.setAttribute('cx',X2);d2.setAttribute('cy',y2(g[i].o));
+  const el=p.t-P[0].t;
+  $('#to').textContent='+'+(el<120?el+' s':Math.round(el/60*10)/10+' min');
+  rd.innerHTML='';
+  H('div',{class:'lab'},rd,(live?'LIVE ':'')+dateOf(p.t));
+  ['jupiter','pyth','orca'].forEach(k=>{const r=H('div',{class:'row',style:'justify-content:space-between;font-size:1.3rem;margin-top:.2rem'},rd);
+    const s=H('span',{},r);const dot=H('span',{style:'color:'+COL[k]},s,'● ');s.append(NAME[k]);
+    const sg=k==='pyth'?'':'  '+(bps(p[k],p.pyth)>=0?'+':'')+f2(bps(p[k],p.pyth),1)+' bps';
+    const v=H('span',{class:'num'},r,'$'+f2(p[k],3));H('span',{class:'mut',style:'font-size:.95rem'},v,sg)});
+  const sp=bps(mx,mn);
+  const b=H('div',{class:'box warn',style:'margin-top:.6rem;padding:.4rem .8rem'},rd);
+  H('div',{class:'lab warnc',style:'color:var(--warn)'},b,'Spread (highest vs lowest)');
+  H('div',{class:'big num',style:'color:var(--warn)'},b,f2(sp,1)+' bps');
+  H('div',{class:'mut',style:'font-size:.9rem;margin-top:.3rem'},rd,'Typical trading cost is a few bps. A gap bigger than the cost is a candidate, not a profit.');
+}
+function paintSrc(){
+  if(live)LIVE.liveSource($('#src'),N+' live points so far, one every 5 s (kept: last '+LIVE.MAX_POINTS+').');
+  else sourceLine($("#src"),{prices:PRICES,series:SERIES},'Series of '+N+' points every '+SERIES.intervalSec+' s, '+f2((P[N-1].t-P[0].t)/60,0)+' minutes, starting '+dateOf(P[0].t)+'.',P[0].t);
+}
+function useRecorded(){live=false;P=REC;draw();tEl.value=wi;render();paintSrc()}
+tEl.addEventListener('input',render);
+draw();tEl.value=HASH.has('t')?Math.round(+hv('t')*(N-1)):wi;render();paintSrc();
+LIVE.startLive((snap,hist)=>{
+  if(hist.length<2)return; /* need two points to draw a line; recorded chart stays until then */
+  const follow=!live||+tEl.value>=N-1;
+  live=true;P=hist.slice();draw();if(follow)tEl.value=N-1;render();paintSrc();
+},{onMode:on=>{if(!on)useRecorded()},recordedNote:'bundled data, captured '+(PRICES.generatedAt||'').slice(0,10)});
+</script></body></html>

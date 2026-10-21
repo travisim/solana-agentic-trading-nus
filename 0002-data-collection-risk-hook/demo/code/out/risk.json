@@ -1,0 +1,154 @@
+{
+  "rules": [
+    {
+      "id": "max-notional",
+      "description": "Reject any order bigger than the notional limit",
+      "limit": 1000,
+      "unit": "USD"
+    },
+    {
+      "id": "max-oracle-gap",
+      "description": "Reject if the order price is too far from the oracle price",
+      "limit": 50,
+      "unit": "bps"
+    },
+    {
+      "id": "max-oracle-age",
+      "description": "Reject if the oracle price is older than the limit",
+      "limit": 60,
+      "unit": "seconds"
+    },
+    {
+      "id": "unit-sanity",
+      "description": "Reject non-positive, non-numeric or wrong-unit values (e.g. cents, lamports)",
+      "limit": null,
+      "unit": null
+    }
+  ],
+  "context": {
+    "oraclePrice": 108.60542862,
+    "oracleAgeSec": 3
+  },
+  "decisions": [
+    {
+      "label": "normal buy",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 250,
+        "price": 108.61
+      },
+      "oracleAgeSec": 3,
+      "ok": true,
+      "rule": null,
+      "reason": "within all limits"
+    },
+    {
+      "label": "normal sell",
+      "order": {
+        "side": "sell",
+        "sizeUsd": 500,
+        "price": 108.61
+      },
+      "oracleAgeSec": 3,
+      "ok": true,
+      "rule": null,
+      "reason": "within all limits"
+    },
+    {
+      "label": "right at the notional limit",
+      "order": {
+        "side": "sell",
+        "sizeUsd": 1000,
+        "price": 108.61
+      },
+      "oracleAgeSec": 3,
+      "ok": true,
+      "rule": null,
+      "reason": "within all limits"
+    },
+    {
+      "label": "40 bps from oracle",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 250,
+        "price": 109.04
+      },
+      "oracleAgeSec": 3,
+      "ok": true,
+      "rule": null,
+      "reason": "within all limits"
+    },
+    {
+      "label": "oversized order",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 5000,
+        "price": 108.61
+      },
+      "oracleAgeSec": 3,
+      "ok": false,
+      "rule": "max-notional",
+      "reason": "5000 USD exceeds the 1000 USD limit"
+    },
+    {
+      "label": "buy 100 bps above oracle",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 250,
+        "price": 109.69
+      },
+      "oracleAgeSec": 3,
+      "ok": false,
+      "rule": "max-oracle-gap",
+      "reason": "price is 99.9 bps from the oracle, limit is 50 bps"
+    },
+    {
+      "label": "sell 100 bps below oracle",
+      "order": {
+        "side": "sell",
+        "sizeUsd": 250,
+        "price": 107.52
+      },
+      "oracleAgeSec": 3,
+      "ok": false,
+      "rule": "max-oracle-gap",
+      "reason": "price is 99.9 bps from the oracle, limit is 50 bps"
+    },
+    {
+      "label": "stale oracle (300 s old)",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 250,
+        "price": 108.61
+      },
+      "oracleAgeSec": 300,
+      "ok": false,
+      "rule": "max-oracle-age",
+      "reason": "oracle is 300 s old, limit is 60 s"
+    },
+    {
+      "label": "price in cents, not dollars",
+      "order": {
+        "side": "buy",
+        "sizeUsd": 250,
+        "price": 10860.54
+      },
+      "oracleAgeSec": 3,
+      "ok": false,
+      "rule": "unit-sanity",
+      "reason": "price 10860.54 is 100.0x the oracle price 108.61; wrong unit?"
+    },
+    {
+      "label": "negative size",
+      "order": {
+        "side": "buy",
+        "sizeUsd": -50,
+        "price": 108.61
+      },
+      "oracleAgeSec": 3,
+      "ok": false,
+      "rule": "unit-sanity",
+      "reason": "size -50 USD is not a positive number"
+    }
+  ]
+}

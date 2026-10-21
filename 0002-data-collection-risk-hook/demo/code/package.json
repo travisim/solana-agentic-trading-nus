@@ -1,0 +1,19 @@
+{
+  "name": "data-risk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build night 1: Data Collection and Risk Hook. Reads public mainnet data; every write is devnet only; no real funds.",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "demo": "node src/demo.ts",
+    "demo:live": "node src/demo.ts --live",
+    "collect": "node src/collect.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

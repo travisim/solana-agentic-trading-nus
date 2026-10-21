@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Strategy Map</title>
+<style>/* Shared look: Workshop 1 deck (black, lavender, mint, thin-outline rounded boxes). No libraries, no web fonts. */
+:root{
+  --bg:#000; --fg:#f4f4f6; --muted:#9a9aa2; --lav:#b3a5ff; --mint:#3ddc97; --warn:#ffc15a; --bad:#ff7a85;
+  --line:#4a4670; --line-soft:#2c2c34; --card:#07070b;
+  --font:"Helvetica Neue",Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-contrast:more){:root{--muted:#cfcfd6;--line:#8d82d6;--line-soft:#6a6a76}}
+*{box-sizing:border-box}
+html{font-size:clamp(12px,min(1.25vw,2.05vh),22px);background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:300;line-height:1.3;min-height:100vh}
+.page{max-width:1800px;margin:0 auto;padding:1.1rem 3rem .8rem;display:flex;flex-direction:column;height:100vh;gap:.6rem}
+h1{font-weight:300;font-size:2.8rem;line-height:1.05;margin:0;letter-spacing:-.01em}
+.cap{color:var(--lav);font-size:1.3rem;margin:0;font-weight:300}
+.src{color:var(--muted);font-size:.72rem;margin-top:auto;padding-top:.3rem;flex:none;display:flex;justify-content:space-between;gap:1rem}
+.src .fx{color:var(--warn)}
+main{flex:1;display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--card);padding:.8rem 1.1rem}
+.box.mint{border-color:var(--mint)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)} .box.lav{border-color:var(--lav)}
+.lab{color:var(--lav);font-size:1.05rem}
+.big{font-size:2rem;font-weight:300}
+.mut{color:var(--muted)} .mint{color:var(--mint)} .lavc{color:var(--lav)} .badc{color:var(--bad)} .warnc{color:var(--warn)}
+.row{display:flex;gap:1rem;align-items:center}
+.grid{display:grid;gap:1rem}
+.num{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border:1.5px solid currentColor;border-radius:99px;padding:.05rem .7rem;font-size:.95rem;white-space:nowrap}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--font);font-weight:300;fill:var(--fg)}
+svg .m{fill:var(--muted)} svg .l{fill:var(--lav)}
+/* controls */
+.ctl{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr 6.5rem;align-items:center;gap:1rem;font-size:1.1rem}
+.ctl output{text-align:right;color:var(--mint);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2.2rem;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000;margin-top:calc(-.75rem + 2px)}
+input[type=range]::-moz-range-thumb{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--mint);border:2px solid #000}
+:focus-visible{outline:3px solid var(--warn);outline-offset:3px;border-radius:.4rem}
+input[type=range]:focus-visible{outline-offset:0}
+button{font:inherit;font-size:1.05rem;color:var(--fg);background:var(--card);border:1.5px solid var(--line);border-radius:.8rem;padding:.5rem 1rem;cursor:pointer}
+button:hover{border-color:var(--lav)}
+button[aria-pressed=true],button[aria-checked=true]{border-color:var(--mint);color:var(--mint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tr{transition:all .25s ease}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+/* live mode bar (shared/live.js) */
+.page{position:relative}
+.livebar{position:absolute;top:1.1rem;right:3rem;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;font-size:1rem;z-index:2}
+.livebar .lvtop,.livebar .lvsub{display:flex;align-items:center;gap:.6rem}
+.livebar .seg{display:inline-flex}
+.livebar .seg button{font-size:1rem;padding:.15rem .9rem;border-radius:0;margin:0}
+.livebar .seg button:first-child{border-radius:.7rem 0 0 .7rem}
+.livebar .seg button:last-child{border-radius:0 .7rem .7rem 0;margin-left:-1.5px}
+.livebar .lvtxt{font-size:.8rem}
+.livebar .pill{font-size:.85rem}
+.livebar [hidden]{display:none}
+.livestrip{border-color:var(--mint)}
+.livestrip .tag{color:var(--mint);font-size:.9rem;border:1.5px solid var(--mint);border-radius:99px;padding:0 .6rem;margin-right:.5rem}
+</style></head><body>
+<div class="page">
+<h1>Seven strategy families, and what data each needs</h1>
+<p class="cap">Click a family. The data layers it depends on light up. Most edges vanish after costs and latency.</p>
+<main id="main" aria-label="Seven strategy families, and what data each needs demo">
+<div class="grid" style="grid-template-columns:1.2fr 1fr;flex:1;min-height:0">
+  <div class="grid" id="fam" style="grid-template-columns:1fr 1fr;grid-auto-rows:1fr;align-content:stretch" role="radiogroup" aria-label="Strategy families"></div>
+  <div class="grid" style="grid-template-rows:auto auto 1fr;gap:1rem">
+    <div class="box" id="idea" aria-live="polite"></div>
+    <div class="box livestrip" id="sig" aria-live="polite" hidden></div>
+    <div class="grid" id="lay" style="grid-template-rows:repeat(4,1fr)"></div>
+  </div>
+</div>
+</main>
+<div class="src" id="src"></div>
+</div>
+<script>const NS="http://www.w3.org/2000/svg";
+const $=(s,r=document)=>r.querySelector(s);
+function S(tag,attrs={},parent,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,text){const e=document.createElement(tag);for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+const HASH=new URLSearchParams(location.hash.slice(1));
+const hv=(k,d)=>HASH.has(k)?HASH.get(k):d;
+const bps=(a,b)=>(a/b-1)*1e4;
+const f2=(x,n=2)=>Number(x).toFixed(n);
+function dateOf(sec){return new Date(sec*1000).toISOString().replace('T',' ').slice(0,16)+' UTC'}
+/* footer caption: says whether the data is recorded/live/fixture and its date */
+function sourceLine(el,data,what,extraTs){
+  const fx=Object.values(data).some(d=>d&&d.fixture);
+  const d0=Object.values(data).find(d=>d.generatedAt)||data[Object.keys(data)[0]];
+  const mode=d0.mode||'recorded';
+  const when=(d0.generatedAt||'').slice(0,10)||(extraTs?dateOf(extraTs).slice(0,10):'date unknown');
+  el.innerHTML='';
+  const a=H('span',{},el);
+  if(fx){H('span',{class:'fx'},a,'PLACEHOLDER FIXTURE DATA, not real. ')}
+  else a.textContent=(mode==='live'?'Live data':'Recorded data')+', captured '+when+'. ';
+  a.appendChild(document.createTextNode(what+' Public mainnet reads, no keys.'));
+  H('span',{},el,'Build night 1');
+}
+</script>
+<script>/* Live mode for the lab demos. Plain JS, no libraries, inlined into every demo by build.mjs.
+ * Reads only: public Solana RPC, the Jupiter quote API, and two on-chain accounts (Pyth price, Orca pool).
+ * No keys, no wallets, no writes. Recorded data stays the default; Live is opt-in.
+ *
+ * Browser-safe endpoints (tested Oct 22, 2026):
+ *   RPC      https://solana-rpc.publicnode.com   (CORS open; api.mainnet.solana.com returns 403 to browser origins)
+ *   Jupiter  https://lite-api.jup.ag/swap/v1/quote
+ * The decoders below are plain-JS ports of demo-repo/code/src/collectors/{jupiter,pyth,orca}.ts.
+ *
+ * Test switches (URL): ?live=1 starts live. &fail=N makes the Nth live tick fail, to test the fallback (fail=1: first tick).
+ */
+const LIVE=(()=>{
+const RPC='https://solana-rpc.publicnode.com';
+const SOL='So11111111111111111111111111111111111111112', USDC='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const JUP_URL='https://lite-api.jup.ag/swap/v1/quote?inputMint='+SOL+'&outputMint='+USDC+'&amount=1000000000&slippageBps=50';
+const PYTH_PROGRAM='rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ', PYTH_ACCOUNT='7UVimffxr9ow1uXYxsr4LHAcV58mLzhmwaeKvJ1pjLiE';
+const PYTH_FEED='ef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d', PYTH_DISC='22f123639d7ef4cd';
+const WHIRL_PROGRAM='whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc', ORCA_POOL='Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE';
+const POLL_MS=5000, MAX_POINTS=120, TIMEOUT_MS=8000;
+const params=new URLSearchParams(location.search+'&'+location.hash.slice(1));
+const FAIL_AT=params.has('fail')?(+params.get('fail')||1):0;
+
+class RateLimit extends Error{constructor(h){super('HTTP 429 (rate limited) from '+h);this.rate=true}}
+async function getJson(url,init){
+  const host=new URL(url).host, ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),TIMEOUT_MS);
+  try{const r=await fetch(url,Object.assign({signal:ctl.signal},init));
+    if(r.status===429)throw new RateLimit(host);
+    if(!r.ok)throw new Error('HTTP '+r.status+' from '+host);
+    return await r.json()}
+  catch(e){if(e.name==='AbortError')throw new Error('timeout from '+host);throw e}
+  finally{clearTimeout(to)}
+}
+async function getAccount(address){
+  const j=await getJson(RPC,{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getAccountInfo',params:[address,{encoding:'base64',commitment:'confirmed'}]})});
+  if(j.error)throw new Error('RPC error: '+j.error.message);
+  const v=j.result&&j.result.value; if(!v)throw new Error('account '+address+' not found');
+  const bin=atob(v.data[0]), bytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return {bytes,owner:v.owner,slot:j.result.context.slot};
+}
+const ALPHA='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function base58(bytes){let n=0n;for(const b of bytes)n=(n<<8n)|BigInt(b);let o='';while(n>0n){o=ALPHA[Number(n%58n)]+o;n/=58n}
+  for(const b of bytes){if(b!==0)break;o='1'+o}return o}
+const hex=(b,a,z)=>Array.from(b.slice(a,z),x=>x.toString(16).padStart(2,'0')).join('');
+
+/* venue price: what 1 SOL sells for, routed by Jupiter */
+async function fetchJupiterQuote(){
+  const q=await getJson(JUP_URL); if(!q.outAmount)throw new Error('Jupiter quote had no outAmount');
+  return {price:Number(q.outAmount)/1e6};
+}
+/* oracle price: the Pyth PriceUpdateV2 account, decoded from raw bytes (layout in code/src/collectors/pyth.ts) */
+async function fetchPythPrice(){
+  const a=await getAccount(PYTH_ACCOUNT), b=a.bytes;
+  if(a.owner!==PYTH_PROGRAM)throw new Error('unexpected Pyth account owner');
+  if(b.length<133||hex(b,0,8)!==PYTH_DISC)throw new Error('not a Pyth PriceUpdateV2 account');
+  if(hex(b,41,73)!==PYTH_FEED)throw new Error('Pyth account holds a different feed');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength), exp=v.getInt32(89,true);
+  const price=Number(v.getBigInt64(73,true))*10**exp, conf=Number(v.getBigInt64(81,true))*10**exp;
+  return {price,confBps:conf/price*1e4,publishTime:Number(v.getBigInt64(93,true)),postedSlot:Number(v.getBigUint64(125,true)),slot:a.slot};
+}
+/* pool price: Orca Whirlpool SOL/USDC, price from sqrtPrice (Q64.64) (layout in code/src/collectors/orca.ts) */
+async function fetchOrcaPrice(){
+  const a=await getAccount(ORCA_POOL), b=a.bytes;
+  if(a.owner!==WHIRL_PROGRAM)throw new Error('unexpected pool owner');
+  if(b.length<213)throw new Error('Whirlpool account too short');
+  if(base58(b.slice(101,133))!==SOL||base58(b.slice(181,213))!==USDC)throw new Error('pool is not SOL/USDC');
+  const v=new DataView(b.buffer,b.byteOffset,b.byteLength);
+  const sq=v.getBigUint64(65,true)|(v.getBigUint64(73,true)<<64n), root=Number(sq)/2**64;
+  return {price:root*root*1e3,slot:a.slot};
+}
+/* one tick: all three reads in parallel, one snapshot out */
+let tickNo=0; const JUP={q:null,at:0,note:null}, JUP_EVERY_MS=20000;
+async function fetchSnapshot(){
+  if(FAIL_AT&&++tickNo>=FAIL_AT)throw new RateLimit('forced-failure.test (?fail='+FAIL_AT+')');
+  // Jupiter's free quote API throttles per IP (a whole classroom shares one), so ask it at most every 20 s and
+  // keep going on the last quote (or the pool price) if it says 429. Only Pyth/Orca RPC failures fall back to recorded.
+  const jupP=(Date.now()-JUP.at<JUP_EVERY_MS&&JUP.q)?Promise.resolve(null):fetchJupiterQuote().then(q=>{JUP.q=q;JUP.at=Date.now();JUP.note=null;return q},e=>{JUP.at=Date.now()-JUP_EVERY_MS+5000;JUP.note=e&&e.rate?'Jupiter throttled, using last quote':'Jupiter unavailable, using last quote';return null});
+  const [,p,o]=await Promise.all([jupP,fetchPythPrice(),fetchOrcaPrice()]);
+  const t=Math.floor(Date.now()/1000);
+  const jup=JUP.q?JUP.q.price:o.price;
+  return {t,jupiter:jup,jupiterNote:JUP.q?JUP.note:(JUP.note||'Jupiter unavailable, showing pool price'),pyth:p.price,orca:o.price,confBps:p.confBps,publishTime:p.publishTime,postedSlot:p.postedSlot,
+    slot:Math.max(p.slot,o.slot),oracleAgeSec:Math.max(0,t-p.publishTime)};
+}
+
+/* ---- state, pill UI, polling, fallback ---- */
+const S={live:false,hist:[],last:null,err:null,timer:null,busy:false,onTick:null,onMode:null,bar:null,recNote:'bundled data'};
+const el=(tag,cls,parent,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e};
+const clock=t=>new Date(t*1000).toLocaleTimeString('en-GB');
+function paint(extra){
+  const B=S.bar; if(!B)return;
+  B.rec.setAttribute('aria-pressed',String(!S.live)); B.liv.setAttribute('aria-pressed',String(S.live));
+  B.pill.className='pill '+(S.live?'mint':'lavc'); B.pill.textContent=S.live?'LIVE':'RECORDED';
+  B.err.hidden=!S.err; if(S.err){B.err.textContent=S.err.short;B.err.title=S.err.detail}
+  if(S.live&&S.last)B.txt.textContent='updated '+clock(S.last.t)+' · slot '+S.last.slot.toLocaleString('en-US')+(extra?' · '+extra:'');
+  else if(S.live)B.txt.textContent='connecting to public Solana data...'+(extra?' '+extra:'');
+  else B.txt.textContent=S.recNote;
+}
+function schedule(ms){clearTimeout(S.timer);S.timer=null;if(S.live&&!document.hidden)S.timer=setTimeout(tick,ms)}
+async function tick(){
+  if(!S.live||S.busy||document.hidden)return;
+  S.busy=true;
+  try{
+    const snap=await fetchSnapshot(); if(!S.live)return;
+    S.last=snap; S.hist.push({t:snap.t,jupiter:snap.jupiter,pyth:snap.pyth,orca:snap.orca});
+    if(S.hist.length>MAX_POINTS)S.hist.shift();
+    paint(snap.jupiterNote); if(S.onTick)S.onTick(snap,S.hist);
+  }catch(e){ if(S.live)fallback(e) }
+  finally{S.busy=false; schedule(POLL_MS)}
+}
+function fallback(e){
+  S.err={short:e&&e.rate?'rate limited, back to recorded':'live data failed, back to recorded',detail:String(e&&e.message||e)};
+  setLive(false,true);
+}
+function setLive(on,keepErr){
+  if(on===S.live)return;
+  S.live=on; clearTimeout(S.timer);
+  if(on){S.err=null;S.hist=[];S.last=null;paint();tick()}
+  else{S.last=null;if(!keepErr)S.err=null;paint()}
+  if(S.onMode)S.onMode(on,S.err);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!S.live)return;
+  if(document.hidden){clearTimeout(S.timer);S.timer=null;paint('paused, tab hidden')}
+  else{paint();tick()}
+});
+/* startLive(onTick, {onMode, recordedNote}): builds the Recorded/Live switch and pill, starts live if ?live=1 */
+function startLive(onTick,opts){
+  opts=opts||{}; S.onTick=onTick; S.onMode=opts.onMode||null; if(opts.recordedNote)S.recNote=opts.recordedNote;
+  const bar=el('div','livebar'); bar.setAttribute('role','group'); bar.setAttribute('aria-label','Data mode: recorded or live');
+  const top=el('div','lvtop',bar), sub=el('div','lvsub',bar), seg=el('div','seg',top);
+  const rec=el('button',null,seg,'Recorded'), liv=el('button',null,seg,'Live'); rec.type=liv.type='button';
+  const pill=el('span','pill lavc',top,'RECORDED'); pill.title='Live reads: Jupiter quote, Pyth price account, Orca pool account (public RPC)';
+  const txt=el('span','lvtxt mut',sub), err=el('span','pill badc',sub); err.hidden=true;
+  err.setAttribute('role','status');
+  S.bar={rec,liv,pill,txt,err};
+  rec.onclick=()=>setLive(false); liv.onclick=()=>setLive(true);
+  document.querySelector('.page').appendChild(bar);
+  paint();
+  if(params.get('live')==='1')setLive(true);
+  return {setLive,isLive:()=>S.live};
+}
+/* footer caption while live (the recorded caption comes from sourceLine in common.js) */
+function liveSource(elm,what){
+  elm.innerHTML=''; const a=el('span',null,elm,'Live data'+(S.last?', updated '+clock(S.last.t):'')+'. '+what+' Public mainnet reads, no keys, nothing is written.');
+  el('span',null,elm,'Build night 1');
+}
+return {startLive,fetchJupiterQuote,fetchPythPrice,fetchOrcaPrice,fetchSnapshot,liveSource,
+  isLive:()=>S.live,last:()=>S.last,hist:()=>S.hist,MAX_POINTS,POLL_MS};
+})();
+</script>
+<script>
+const STR={"feeBps":5,"slippageBps":2,"note":"simulated on recorded data; not advice","strategies":[{"id":"cross-venue-arb","name":"Cross-venue arbitrage","family":"Cross-venue arbitrage","dataNeeds":["venue"],"trades":0,"pnlGrossUsd":0,"pnlNetUsd":0,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"basis","name":"Pool vs oracle basis","family":"Oracle/venue basis","dataNeeds":["venue","oracle"],"trades":19,"pnlGrossUsd":1.31,"pnlNetUsd":-25.29,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"trend","name":"Moving-average trend","family":"Trend / momentum","dataNeeds":["venue"],"trades":10,"pnlGrossUsd":0.61,"pnlNetUsd":-13.39,"hitRate":0.2,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"mean-reversion","name":"Mean reversion (z-score)","family":"Mean reversion / stat arb","dataNeeds":["venue"],"trades":9,"pnlGrossUsd":1.03,"pnlNetUsd":-11.57,"hitRate":0,"notionalUsd":1000,"legsPerTrade":2,"paysSlippage":true},{"id":"market-maker","name":"Market maker around Pyth","family":"Market making","dataNeeds":["oracle","venue","inventory"],"trades":7,"pnlGrossUsd":0.05,"pnlNetUsd":-3.45,"hitRate":0.429,"notionalUsd":1000,"legsPerTrade":1,"paysSlippage":false}]};
+const PRICES={"generatedAt":"2026-10-21T17:53:59.000Z","mode":"recorded","pair":"SOL/USDC","venues":[{"id":"jupiter","label":"Jupiter quote","price":108.624648,"ts":1792605239,"source":"lite-api quote, 1 SOL -> USDC"},{"id":"pyth","label":"Pyth oracle","price":108.60542862,"confBps":2.68,"publishTime":1792605236,"postedSlot":459720770,"currentSlot":459720770,"source":"on-chain PriceUpdateV2 via RPC"},{"id":"orca","label":"Orca SOL/USDC pool","price":108.58645232409829,"ts":1792605239,"source":"whirlpool sqrtPrice via RPC"}],"gapBps":{"jupiterVsPyth":1.8,"orcaVsPyth":-1.7,"jupiterVsOrca":3.5}};
+const LAYERS={venue:'Venue price',oracle:'Oracle price',ordering:'Ordering',inventory:'Inventory'};
+const FAM=[
+ {n:'Cross-venue arbitrage',sid:'cross-venue-arb',need:['venue','ordering','inventory'],idea:'Buy where it is cheaper, sell where it is dearer, at the same moment.'},
+ {n:'Oracle / venue basis',sid:'basis',need:['venue','oracle'],idea:'Trade the gap between a pool price and the oracle price, betting it closes.'},
+ {n:'Market making',sid:'market-maker',need:['venue','oracle','ordering','inventory'],idea:'Quote both sides around a fair price; earn the spread, carry the inventory risk.'},
+ {n:'Trend / momentum',sid:'trend',need:['venue'],idea:'Buy what has been rising, sell what has been falling, using a moving average.'},
+ {n:'Mean reversion / stat arb',sid:'mean-reversion',need:['venue'],idea:'Bet that a price far from its recent average will drift back toward it.'},
+ {n:'Funding / basis carry',sid:null,need:['venue','oracle','inventory'],idea:'Hold spot against a perpetual and collect the funding payments. Not simulated tonight.'},
+ {n:'Liquidation / event-driven',sid:null,need:['oracle','ordering','venue'],idea:'React to oracle moves and liquidations faster than others. Latency decides it. Not simulated tonight.'}];
+let sel=Math.max(0,+hv('f','1')),LV=null;
+/* Live signal: the SAME entry rules and numbers as code/src/strategies/*.ts, evaluated on the live tick. It shows what the rule says now; it places nothing. */
+function signal(f,snap,hist){
+  const gap=(a,b)=>(a/b-1)*1e4,fx=x=>(x>=0?'+':'')+f2(x,1);
+  switch(f.sid){
+  case 'cross-venue-arb':{const g=gap(snap.jupiter,snap.orca);return {head:'Jupiter vs Orca gap now: '+fx(g)+' bps',body:Math.abs(g)>=8?'At or above the 8 bps entry threshold: the rule would trade. Then fees and slippage still have to be paid.':'Below the 8 bps entry threshold: the rule makes no trade. (In the recorded 40 minutes the largest gap was 6.3 bps.)',fire:Math.abs(g)>=8}}
+  case 'basis':{const g=gap(snap.orca,snap.pyth);return {head:'Orca vs Pyth gap now: '+fx(g)+' bps',body:Math.abs(g)>4?'Beyond the 4 bps entry: the rule would '+(g>0?'sell the rich pool':'buy the cheap pool')+' and wait for the gap to close.':'Inside the 4 bps entry band: no trade.',fire:Math.abs(g)>4}}
+  case 'market-maker':{const bid=snap.pyth*(1-4/1e4),ask=snap.pyth*(1+4/1e4);return {head:'Quotes around Pyth $'+f2(snap.pyth,3)+': bid $'+f2(bid,3)+', ask $'+f2(ask,3),body:snap.orca<=bid?'Orca is at or below our bid: that quote would fill.':snap.orca>=ask?'Orca is at or above our ask: that quote would fill.':'Orca $'+f2(snap.orca,3)+' is between bid and ask: no fill this tick.',fire:snap.orca<=bid||snap.orca>=ask}}
+  case 'trend':{if(hist.length<60)return {head:'Collecting points: '+hist.length+' of 60',body:'The 12-point and 60-point moving averages need 60 live points, about 5 minutes at one point every 5 s.'};
+    const px=hist.map(p=>p.jupiter),m=(a)=>a.reduce((x,y)=>x+y,0)/a.length,fa=m(px.slice(-12)),sl=m(px.slice(-60));return {head:'Fast average $'+f2(fa,3)+' vs slow $'+f2(sl,3),body:fa>sl?'Fast above slow: the rule is long.':'Fast below slow: the rule is short.',fire:true}}
+  case 'mean-reversion':{if(hist.length<61)return {head:'Collecting points: '+hist.length+' of 61',body:'The z-score looks at the last 60 live points plus the newest, about 5 minutes at one point every 5 s.'};
+    const px=hist.map(p=>p.jupiter),w=px.slice(-61,-1),mu=w.reduce((x,y)=>x+y,0)/60,sd=Math.sqrt(w.reduce((x,y)=>x+(y-mu)**2,0)/60);
+    if(!sd)return {head:'Price has not moved in the window',body:'No z-score.'};const z=(px[px.length-1]-mu)/sd;
+    return {head:'Z-score now: '+fx(z),body:Math.abs(z)>2?'Beyond 2: the rule would '+(z>0?'sell':'buy')+' and bet on a snap back.':'Inside +/-2: no trade.',fire:Math.abs(z)>2}}
+  default:return {head:'Not simulated tonight. Live inputs it would read: Pyth $'+f2(snap.pyth,3)+', oracle age '+snap.oracleAgeSec+' s, slot '+snap.slot.toLocaleString('en-US'),body:'This family needs data we do not collect tonight (funding rates, liquidation feeds).'}
+  }}
+function paintSig(){
+  const B=$('#sig');B.hidden=!LV;if(!LV)return;B.innerHTML='';
+  const f=FAM[sel],r=signal(f,LV,LIVE.hist());
+  const t=H('div',{class:'row',style:'gap:.5rem'},B);H('span',{class:'tag'},t,'LIVE');H('span',{class:'lab'},t,'Signal on live data, not a trade');
+  H('div',{style:'font-size:1.2rem;margin:.3rem 0 .2rem',class:r.fire?'mint':''},B,r.head);H('div',{class:'mut',style:'font-size:.95rem'},B,r.body);
+}
+const fam=$('#fam');
+function render(){
+  [...fam.children].forEach((b,i)=>{b.setAttribute('aria-checked',String(i===sel));b.style.borderColor=i===sel?'var(--mint)':''});
+  const f=FAM[sel],s=f.sid&&STR.strategies.find(x=>x.id===f.sid);
+  const I=$('#idea');I.innerHTML='';I.className='box mint';
+  H('div',{class:'lab'},I,'The idea');H('div',{style:'font-size:1.5rem;margin:.2rem 0 .5rem'},I,f.n);H('div',{},I,f.idea);
+  const m=H('div',{class:'mut',style:'font-size:.95rem;margin-top:.6rem'},I);
+  m.textContent=s?'Sample on recorded data, after '+STR.feeBps+' bps fee + '+STR.slippageBps+' bps slippage: '+(s.pnlNetUsd>=0?'+':'')+f2(s.pnlNetUsd)+' USD net over '+s.trades+' trades. Simulated, on recorded data; not advice.':'No sample strategy for this family tonight.';
+  paintSig();
+  const L=$('#lay');L.innerHTML='';
+  Object.entries(LAYERS).forEach(([k,name])=>{const on=f.need.includes(k);
+    const b=H('div',{class:'box tr '+(on?'lav':''),style:on?'background:#14112a':'opacity:.55'},L);
+    const r=H('div',{class:'row',style:'justify-content:space-between;height:100%'},b);
+    H('span',{style:'font-size:1.4rem;color:'+(on?'var(--fg)':'var(--muted)')},r,name);
+    H('span',{class:'pill '+(on?'mint':'mut')},r,on?'needed':'not needed')});
+}
+FAM.forEach((f,i)=>{const b=H('button',{type:'button',role:'radio',style:'text-align:left;font-size:1.3rem;display:flex;flex-direction:column;justify-content:center;gap:.2rem'},fam);
+  H('span',{},b,f.n);H('span',{class:'mut',style:'font-size:.85rem'},b,f.need.map(k=>LAYERS[k]).join(', '));
+  b.onclick=()=>{sel=i;render()}});
+const nb=H('div',{class:'box',style:'display:flex;align-items:center;border-style:dashed'},fam);H('div',{class:'lavc',style:'font-size:1.5rem'},nb,'Most edges vanish after costs and latency.');
+function paintSrc(){LIVE.isLive()?LIVE.liveSource($('#src'),'The signal box applies each sample strategy\'s entry rule to the live prices. The P&L line above is still simulated on recorded data.'):
+  sourceLine($('#src'),{strategies:STR,prices:PRICES},'Sample results simulated on recorded data; fee '+STR.feeBps+' bps, slippage '+STR.slippageBps+' bps.')}
+render();paintSrc();
+LIVE.startLive(snap=>{LV=snap;paintSig();paintSrc()},{onMode:on=>{if(!on)LV=null;paintSig();paintSrc()},recordedNote:'bundled data, captured '+(PRICES.generatedAt||'').slice(0,10)});
+</script></body></html>
