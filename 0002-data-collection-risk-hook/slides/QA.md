@@ -26,7 +26,7 @@ Rules for every answer: reads use public mainnet data, every write is devnet onl
 ## Slide 2: Where we are
 
 1. **What happened in Workshop 1?** We picked a trading bot and built a first one (Tue 13 Oct). Tonight is the first build night.
-2. **What is next?** Build night 2 on Tue 27 Oct: data bars and change alerts. Bring your chart from tonight.
+2. **What is next?** Build night 2 on Thu 29 Oct: data bars and change alerts. Bring your chart from tonight.
 3. **What is the question for tonight?** Which data would hurt your agent most if it went stale? Think about it during the talk.
 4. **I missed Workshop 1. Am I lost?** No. Everything tonight runs from the repo and the demos; the recorded data is included.
 
@@ -165,7 +165,7 @@ Rules for every answer: reads use public mainnet data, every write is devnet onl
 ## Slide 21: Share back
 
 1. **What do I push?** Your branch to your own repo. Then send the repo link to the leads; we use it for reporting.
-2. **What do I bring on Tuesday?** Your chart. We start build night 2 (Tue 27 Oct) with those.
+2. **What do I bring on Thursday?** Your chart. We start build night 2 (Thu 29 Oct) with those.
 3. **Is it graded?** No. It is for sharing and for our reporting.
 
 ## Slide 22: Get the code
@@ -183,8 +183,8 @@ Rules for every answer: reads use public mainnet data, every write is devnet onl
 
 ## Slide 24: Solana
 
-1. **What do I do before I leave?** Push your branch, and bring your chart next Tuesday.
-2. **When is the next session?** Build night 2, Tue 27 Oct 2026, 18:00 to 20:00.
+1. **What do I do before I leave?** Push your branch, and bring your chart next Thursday.
+2. **When is the next session?** Build night 2, Thu 29 Oct 2026, 18:00 to 20:00.
 3. **Is there a feedback form?** Yes, the leads share it after the session; please fill it in.
 
 ---

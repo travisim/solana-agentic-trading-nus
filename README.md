@@ -10,14 +10,14 @@ Slides, interactive demos and sample code from the NUS Solana University program
 |---|---|---|---|---|
 | 0001 | 2026-10-13 | Workshop 1: Solana, Trading and Your First Bot | coming (added 2 days before) | |
 | 0002 | 2026-10-22 | Build night 1: Data Collection and Risk Hook | [`0002-data-collection-risk-hook/`](0002-data-collection-risk-hook/) | [demos](https://nus-solana-demos.vercel.app/0002/) |
-| 0003 | 2026-10-27 | Build night 2: Data Bars and Change Alerts | coming (added 2 days before) | |
-| 0004 | 2026-11-03 | Workshop 2: Labeling Trades and Forming Teams | coming (added 2 days before) | |
-| 0005 | 2026-11-10 | Build night 3: Position Sizing and the Trade Ledger | coming (added 2 days before) | |
-| 0006 | 2027-01-19 | Workshop 3: Deploy a Trading Venue Component on Devnet | coming (added 2 days before) | |
-| 0007 | 2027-01-26 | Build night 4: Backtest Validation and Failure Testing | coming (added 2 days before) | |
-| 0008 | 2027-02-02 | Workshop 4: Performance Scorecard and Shipping | coming (added 2 days before) | |
-| 0009 | 2027-02-09 | Build night 5: Demo Rehearsal | coming (added 2 days before) | |
-| 0010 | 2027-02-16 | Demo Day: Demo Day | coming (added 2 days before) | |
+| 0003 | 2026-10-29 | Build night 2: Data Bars and Change Alerts | coming (added 2 days before) | |
+| 0004 | 2026-11-05 | Workshop 2: Labeling Trades and Forming Teams | coming (added 2 days before) | |
+| 0005 | 2026-11-12 | Build night 3: Position Sizing and the Trade Ledger | coming (added 2 days before) | |
+| 0006 | 2027-01-21 | Workshop 3: Deploy a Trading Venue Component on Devnet | coming (added 2 days before) | |
+| 0007 | 2027-01-28 | Build night 4: Backtest Validation and Failure Testing | coming (added 2 days before) | |
+| 0008 | 2027-02-04 | Workshop 4: Performance Scorecard and Shipping | coming (added 2 days before) | |
+| 0009 | 2027-02-11 | Build night 5: Demo Rehearsal | coming (added 2 days before) | |
+| 0010 | 2027-02-18 | Demo Day: Demo Day | coming (added 2 days before) | |
 
 Each session folder has the same layout:
 

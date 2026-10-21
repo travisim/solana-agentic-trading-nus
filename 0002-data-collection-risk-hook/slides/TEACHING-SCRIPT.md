@@ -9,7 +9,7 @@ Background reading for you only (not for slides): Advances in Financial Machine 
 [18:00] Welcome, thanks for coming. I'm Travis. Tonight is a build night, so the plan is: a short talk, a few demos where you guess the answer first, and then most of the time you build. Tonight's topic is data collection and a risk hook. If you haven't run the setup yet, no stress, we'll sort it at the start of the mission.
 
 ## Slide 2: Where we are
-[18:02] Quick progress circle. Workshop 1, on the 13th, we picked a trading bot and built a first one. Tonight is the first build night: we look at what data an agent actually needs, and how to stop it doing something silly. Next Tuesday, the 27th, is build night 2: data bars and change alerts. Go round the room: one line each, what did you build or try since Workshop 1, and is anything stuck? Then the question for tonight, on the slide: which data would hurt your agent most if it went stale? Keep that in your head. We come back to it at the end.
+[18:02] Quick progress circle. Workshop 1, on the 13th, we picked a trading bot and built a first one. Tonight is the first build night: we look at what data an agent actually needs, and how to stop it doing something silly. Next Thursday, the twenty-ninth, is build night 2: data bars and change alerts. Go round the room: one line each, what did you build or try since Workshop 1, and is anything stuck? Then the question for tonight, on the slide: which data would hurt your agent most if it went stale? Keep that in your head. We come back to it at the end.
 
 ## Slide 3: Tonight
 [18:10] Here is the shape of the night. Ten minutes of talk, twenty minutes of demos, twenty minutes of guided mission where we all do the same small thing, then fifty minutes of free build on whatever you want. Last ten minutes: show and tell and push. The demos are not me talking at you. Before each one I'll ask you to predict the result. Be wrong out loud, it's more useful.
@@ -66,7 +66,7 @@ Background reading for you only (not for slides): Advances in Financial Machine 
 [19:55] If you want to keep going after tonight. Beginner: change a limit and watch which orders flip. Standard: run a second strategy from the map with honest costs and compare the charts. Advanced: add a new pool or venue collector, or a staleness check that fires on old oracle data. Everything stays on recorded data or devnet.
 
 ## Slide 21: Share back
-[19:57] Share back. Tonight: push your branch to your own repo. Tuesday the 27th: bring your chart, we start with those. Any time: send your repo link to the leads. We use it for our reporting. Thank you. See you Tuesday for build night 2.
+[19:57] Share back. Tonight: push your branch to your own repo. Thursday the twenty-ninth: bring your chart, we start with those. Any time: send your repo link to the leads. We use it for our reporting. Thank you. See you Thursday for build night 2.
 
 ## Slide 22: Get the code
 [19:53] Here's the code. The repo link and the folder name go up here, and the QR goes straight to tonight's folder, so scan it now. Everything from every session lives in one repo, one folder per session. Two commands, from the demo slash code folder: npm install, then npm run demo with the recorded flag. That's it. Nothing else is needed: no keys, no AI credits, no wallet. Node is the only requirement. The slides are in the same folder under slides. If you haven't cloned it yet, do it now before you leave.
@@ -75,5 +75,5 @@ Background reading for you only (not for slides): Advances in Financial Machine 
 [19:58] If you want to talk trading, Solana or this series, here is how to reach me. LinkedIn on the left, Telegram on the right. Scan now, or take a photo of the slide.
 
 ## Slide 24: Solana
-[20:00] That's it for tonight. Push your branch before you leave, keep building if you want to, and bring your chart next Tuesday, the 27th, when we look at bars and change alerts. Thanks for coming. If you have questions or want help setting up, find me or Emma, or message us on Telegram.
+[20:00] That's it for tonight. Push your branch before you leave, keep building if you want to, and bring your chart next Thursday, the twenty-ninth, when we look at bars and change alerts. Thanks for coming. If you have questions or want help setting up, find me or Emma, or message us on Telegram.
 
