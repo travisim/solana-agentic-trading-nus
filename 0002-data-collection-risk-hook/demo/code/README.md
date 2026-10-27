@@ -66,7 +66,7 @@ See the end of this file (pasted from a real run). Your numbers will be the same
 
 ## Branch out
 
-Pick a tier. Push your work to your own branch and bring a chart next Tuesday.
+Pick a tier. Push your work to your own branch and bring a chart next Thursday.
 
 **Beginner**
 - No AI credits needed: open `code/src/risk.ts` and hand-edit one number in `DEFAULT_LIMITS` (for example `maxNotionalUsd: 1000` to `100`). Run `npm run demo` and watch which example orders flip from ACCEPT to REJECT.

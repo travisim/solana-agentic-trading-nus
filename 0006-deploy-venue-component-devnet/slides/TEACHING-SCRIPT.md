@@ -118,4 +118,4 @@ Book ideas (inspired by AFML 19.3 tick rule and Roll model, 19.5 VPIN) belong he
 [19:59] If you want to follow up, ask a question, or share what you built, here are LinkedIn and Telegram. Scan either one. Thanks everyone. Push your code before you leave, and I will see you at build night 4 next Thursday.
 
 ## Slide 38: Solana
-[20:00] End of session. Leave this slide up while people pack up. Remind everyone to submit the post-workshop feedback form and that the report goes out within forty-eight hours, so by Saturday the twenty-third of January.
+[20:00] End of session. Leave this slide up while people pack up. Remind everyone to submit the post-workshop feedback form and that the report goes out within forty-eight hours, so by Thursday the twenty-first of January.

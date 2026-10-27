@@ -19,7 +19,7 @@ Rules for every answer: reads use public mainnet data; every write is devnet onl
 **Q: Do I need the earlier sessions?** No. Everything tonight runs on recorded data and starts from scratch; the earlier sessions collected the data we reuse.
 **Q: Do I need AI credits, a wallet or an API key?** No. The agent is an offline rule, the demos run in the browser, the code runs with `--recorded`.
 **Q: What do we leave with?** A lane, a team or a solo plan, and a one-page brief with three first tasks.
-**Q: Can I work alone?** Yes. A solo builder gets a lane and a brief too; we pair for reviews on 12 Nov.
+**Q: Can I work alone?** Yes. A solo builder gets a lane and a brief too; we pair for reviews on 10 Nov.
 
 ## Slide 4: A decision needs a checkable outcome
 **Q: What is a basis point?** One hundredth of a percent. 6 bps is 0.06%.

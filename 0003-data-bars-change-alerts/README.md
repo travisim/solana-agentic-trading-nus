@@ -103,7 +103,7 @@ Run the sample bar builder, **predict the bar count first**, then change the thr
 
 ## Build menu and branch out
 
-Pick a tier. Push your work to your own branch and bring a chart next Tuesday (Workshop 2).
+Pick a tier. Push your work to your own branch and bring a chart next Thursday (Workshop 2).
 
 **Beginner (no AI credits needed)**
 - Hand-edit one number: `npm run demo -- --threshold-usd 25000`, then `--threshold-usd 100000`. Predict the dollar-bar count before each run, then compare. Or open `src/demo.ts` and change `num("cusum-bps", 15)` to `8`.

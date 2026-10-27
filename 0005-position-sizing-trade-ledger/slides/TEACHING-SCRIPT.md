@@ -80,4 +80,4 @@ This is the last session before the academic break. The restart note on slide 19
 [19:58] If you want to stay in touch: LinkedIn and Telegram, both on the slide. Send your repo link, a question, or a chart. Thank you for coming. Have a good break, rest, and see you on the nineteenth.
 
 ## Slide 25: Solana
-[20:00] Thank you. Slide stays up while people pack up. Leads: collect the restart notes list and send the 48-hour report by Saturday 14 November.
+[20:00] Thank you. Slide stays up while people pack up. Leads: collect the restart notes list and send the 48-hour report by Thursday 12 November.

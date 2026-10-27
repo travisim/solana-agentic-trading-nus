@@ -165,7 +165,7 @@ Rules for every answer: reads use public mainnet data, every write is devnet onl
 ## Slide 21: Share back
 
 1. **What do I push?** Your branch to your own repo. Then send the repo link to the leads; we use it for reporting.
-2. **What do I bring on Thursday?** Your chart. We start build night 2 (Thu 29 Oct) with those.
+2. **What do I bring next Thursday?** Your chart. We start build night 2 (Thu 29 Oct) with those.
 3. **Is it graded?** No. It is for sharing and for our reporting.
 
 ## Slide 22: Get the code
